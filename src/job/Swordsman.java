@@ -1,0 +1,65 @@
+package job;
+
+import stat.StatBlock;
+
+import java.util.Map;
+
+public class Swordsman extends Job {
+
+    /**
+     * Mapa declarativo de los bonus de stat por nivel de job, ajustado a la
+     * tabla de bonus clásica de iRO Wiki para el Swordsman.
+     * Cada entrada representa el StatBlock específico que se gana en ese nivel.
+     */
+    private static final Map<Integer, StatBlock> JOB_BONUS_SCHEDULE = Map.ofEntries(
+            // STR Bonuses
+            Map.entry(2,  new StatBlock(1, 0, 0, 0, 0, 0)),
+            Map.entry(14, new StatBlock(1, 0, 0, 0, 0, 0)),
+            Map.entry(33, new StatBlock(1, 0, 0, 0, 0, 0)),
+            Map.entry(40, new StatBlock(1, 0, 0, 0, 0, 0)),
+            Map.entry(47, new StatBlock(1, 0, 0, 0, 0, 0)),
+            Map.entry(49, new StatBlock(1, 0, 0, 0, 0, 0)),
+            Map.entry(50, new StatBlock(1, 0, 0, 0, 0, 0)),
+
+            // AGI Bonuses
+            Map.entry(30, new StatBlock(0, 1, 0, 0, 0, 0)),
+            Map.entry(46, new StatBlock(0, 1, 0, 0, 0, 0)),
+
+            // VIT Bonuses
+            Map.entry(6,  new StatBlock(0, 0, 1, 0, 0, 0)),
+            Map.entry(18, new StatBlock(0, 0, 1, 0, 0, 0)),
+            Map.entry(38, new StatBlock(0, 0, 1, 0, 0, 0)),
+            Map.entry(42, new StatBlock(0, 0, 1, 0, 0, 0)),
+
+            // DEX Bonuses
+            Map.entry(10, new StatBlock(0, 0, 0, 0, 1, 0)),
+            Map.entry(22, new StatBlock(0, 0, 0, 0, 1, 0)),
+            Map.entry(36, new StatBlock(0, 0, 0, 0, 1, 0)),
+
+            // LUK Bonuses
+            Map.entry(26, new StatBlock(0, 0, 0, 0, 0, 1)),
+            Map.entry(44, new StatBlock(0, 0, 0, 0, 0, 1))
+    );
+
+    @Override
+    public String getJobName() {
+        return "Swordsman";
+    }
+
+
+    public StatBlock getJobStatBonuses(int jobLevel) {
+        StatBlock accumulatedBonuses = new StatBlock(0, 0, 0, 0, 0, 0);
+
+        for (Map.Entry<Integer, StatBlock> entry : JOB_BONUS_SCHEDULE.entrySet()) {
+            if (entry.getKey() <= jobLevel) {
+                accumulatedBonuses = accumulatedBonuses.add(entry.getValue());
+            }
+        }
+        return accumulatedBonuses;
+    }
+
+    @Override
+    public int getVitHpFactor() {
+        return 20; // Mantenemos la regla de que los Swordsman son más resistentes
+    }
+}

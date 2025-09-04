@@ -1,0 +1,20 @@
+Resumen de Diseño para el Copiloto
+1. Filosofía de Stats Simplificados
+El objetivo es crear un sistema inspirado en RO, pero más simple, moderno y predecible ("digerible").
+
+Se mantienen los 6 stats primarios (STR, AGI, VIT, INT, DEX, LUK) para conservar la diversidad de builds.
+
+Cada stat tendrá un rol claro y definido para evitar los solapamientos confusos del sistema original.
+
+Las fórmulas para calcular los stats secundarios (HP, ATK, etc.) serán principalmente lineales y aditivas, en lugar de multiplicativas y basadas en porcentajes. El objetivo es que el jugador entienda de forma intuitiva el beneficio de cada punto de stat (ej: "1 VIT = +15 HP").
+
+2. Arquitectura de Jobs (Composición sobre Herencia)
+Se usará el principio de diseño "Composición sobre Herencia" para manejar las clases de los personajes.
+
+Un Actor no ES un Job (es decir, no usaremos class Swordsman extends Actor).
+
+En su lugar, un Actor TIENE un Job. La clase Actor contendrá un campo para su job actual (ej: private Job currentJob;).
+
+Existirá una interfaz o clase base Job, con implementaciones concretas para cada job (NoviceJob, SwordsmanJob, etc.). Estos objetos Job contendrán los datos específicos de esa clase: bonus a los stats, factores para las fórmulas de HP/SP, etc.
+
+Este enfoque permite cambiar de Job de forma dinámica y flexible, y mantiene el código del Actor limpio y desacoplado de las reglas de cada Job.
