@@ -14,7 +14,9 @@ import enums.Size;
  */
 public abstract class Job {
 
+// id here...
 
+    // We are lending base Race/Elment/Size from here
 
     /**
      * Cada Job debe tener un nombre único.

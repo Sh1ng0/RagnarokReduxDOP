@@ -1,9 +1,7 @@
 package job;
 
-/**
- * Implementación de Job que actúa como un "adaptador" para los datos de un monstruo.
- * En lugar de calcular bonus, simplemente devuelve los stats fijos de la plantilla del monstruo.
- */
+// Deprecated: Los monstruos carecen de progresión, es absurdo forzarlos al sistema de jobs, el punto final de las similitudes
+// entre character y monster reside ahora en "ActorState" el record que representa el estado en batalla del coso.
 
 @Deprecated
 public class MonsterJob {

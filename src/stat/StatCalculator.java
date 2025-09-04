@@ -2,7 +2,7 @@ package stat;
 
 
 import character.CharacterData;
-import character.CharacterState;
+import character.ActorState;
 import job.Job;
 
 /**
@@ -13,7 +13,7 @@ import job.Job;
  */
 public class StatCalculator {
 
-    public CharacterState buildState(CharacterData data, Job job){
+    public ActorState buildState(CharacterData data, Job job){
 
 // Final primary stats calc
         StatBlock totalStats = calculateTotalStats(data,Job);

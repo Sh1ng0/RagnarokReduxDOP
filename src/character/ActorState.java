@@ -10,7 +10,7 @@ import stat.StatBlock;
  * Este es el objeto que el motor de combate (el switch DOP) utilizará.
  * No contiene lógica, solo los datos finales ya calculados.
  */
-public record CharacterState(
+public record ActorState(
         long id,
         String name,
         int currentHp,

@@ -1,0 +1,34 @@
+# Documentación de Arquitectura Interna
+
+Este documento resume las decisiones de diseño clave tomadas para el motor de combate.
+
+##  philosophies Principales
+
+* **Simplificación sobre Complejidad:** Las fórmulas y sistemas se basan en lógica lineal y aditiva en lugar de los complejos porcentajes del juego original para que sean más predecibles y "digeribles".
+* **Separación de Responsabilidades:** Se distingue claramente entre la lógica de *cálculo* de estado, los *datos persistentes* y el *estado de combate* final.
+* **Composición sobre Herencia:** Se favorece la composición para sistemas como los Jobs, permitiendo mayor flexibilidad y un código más limpio.
+
+## El Flujo de Datos Principal: La Receta, la Cocina y el Plato
+
+La arquitectura sigue una analogía de tres pasos para generar el estado de un personaje:
+
+1.  **`CharacterData` (La Receta):** Es un `record` que contiene los datos puros y persistentes de un personaje (lo que se guardaría en una base de datos). Incluye `id`, `name`, `baseLevel`, `baseStr`, etc.
+2.  **`StatCalculator` (La Cocina):** Es una clase de servicio "sin estado". Su única función es tomar la "receta" (`CharacterData`) y otros "ingredientes" (`Job`, `Equipment`) para ejecutar toda la lógica de cálculo.
+3.  **`CharacterState` (El Plato):** Es el resultado final, un `record` inmutable que representa la "foto" completa y calculada de un personaje en un instante. Este es el único objeto que el motor de combate ve y utiliza.
+
+## Arquitectura por Entidad
+
+### Jugadores (Camino Dinámico)
+
+Los jugadores, al ser entidades que crecen y cambian, utilizan el flujo completo:
+* Sus datos se cargan en un `CharacterData`.
+* El `StatCalculator` usa estos datos junto con la lógica del `Job` del jugador para construir el `CharacterState`.
+* El sistema de **`Job`** es una `abstract class` que proporciona valores y bonus por defecto, permitiendo que clases concretas (`SwordsmanJob`) especifiquen sus bonus únicos de forma declarativa a través de un `Map`.
+
+### Monstruos (Camino Estático)
+
+Los monstruos tienen stats fijos y no necesitan el complejo pipeline de cálculo.
+* Sus datos se definen en un `record` plantilla: **`MonsterData`**.
+* Una clase **`MonsterFactory`** actúa como un simple mapeador que convierte un `MonsterData` directamente en un `CharacterState`, sin cálculos intermedios.
+
+Este doble camino asegura que el motor de combate siempre trabaje con el mismo tipo de objeto (`CharacterState`), manteniendo la eficiencia y la simplicidad.

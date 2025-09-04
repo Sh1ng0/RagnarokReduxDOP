@@ -1,8 +1,7 @@
 package monster;
 
-import character.CharacterState;
-import stat.StatBlock;
 
+// this dictates monster generation, they lack progression, so a Factory is the more sound decish
 public class MonsterFactory {
 //    public static CharacterState createStateFrom(MonsterData data) {
         // Simplemente mapea los valores fijos del monstruo al formato

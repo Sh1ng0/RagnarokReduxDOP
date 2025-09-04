@@ -5,7 +5,7 @@ import stat.StatBlock;
 import java.util.Map;
 
 public class Swordsman extends Job {
-
+// we need id's
     /**
      * Mapa declarativo de los bonus de stat por nivel de job, ajustado a la
      * tabla de bonus clásica de iRO Wiki para el Swordsman.
