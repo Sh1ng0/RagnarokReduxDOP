@@ -1,6 +1,7 @@
 package stat;
 
 
+import actor.Position;
 import character.CharacterData;
 import actor.ActorState;
 import enums.Element;
@@ -16,34 +17,40 @@ import job.Job;
  */
 public class StatCalculator {
 
+    private static final int TICKS_PER_SECOND = 20;
+
     public ActorState buildState(CharacterData data, Job job) {
-        // Paso 1: Calcular stats primarios totales
+
         StatBlock totalStats = calculateTotalStats(data, job);
 
-        // Paso 2: Calcular stats secundarios básicos (HP/SP)
+        // HP / SP
         int maxHp = calculateMaxHp(data, job, totalStats);
         int maxSp = calculateMaxSp(data, job, totalStats);
 
-        // --- PASO 3: CALCULAR NUEVOS STATS DE COMBATE ---
-        Attack attack = calculateAttack(data, totalStats);
-        int defense = calculateDefense(totalStats);
-        int hitRate = calculateHitRate(data, totalStats);
-        int fleeRate = calculateFleeRate(data, totalStats);
-        int criticalRate = calculateCriticalRate(totalStats);
-        int magicAttack = calculateMagicAttack(totalStats);
-        int magicDefense = calculateMagicDefense(totalStats);
-        double attackSpeed = 150.0; // Valor fijo por ahora
+        // SECONDARY STATS
 
-        // Paso 4: Obtener propiedades finales
+        Attack attack = calculateAttack(data, totalStats);
+
+        Defense defense = calculateDefense(totalStats);
+        int hitRate = calculateHitRate(data, totalStats);
+        Flee flee = calculateFlee(data, totalStats);
+        int criticalRate = calculateCriticalRate(totalStats);
+        MagicAttack magicAttack = calculateMagicAttack(totalStats);
+        MagicDefense magicDefense = calculateMagicDefense(totalStats);
+        int attackDelayInTicks = calculateAttackDelayInTicks(job, totalStats);
+
+        // RACE / SIZE / ELEMENT
         Race finalRace = job.getBaseRace();
         Size finalSize = job.getBaseSize();
         Element finalElement = job.getBaseElement();
 
-        // Paso 5: Ensamblar y devolver el "plato final" completo.
+        // build
         return new ActorState(
+                0,
+                Position.ORIGIN,
                 data.id(),
                 data.name(),
-                maxHp, // Asumimos que al calcular, el currentHp es el máximo
+                maxHp,
                 maxHp,
                 maxSp,
                 maxSp,
@@ -53,17 +60,14 @@ public class StatCalculator {
                 finalElement,
                 attack,
                 hitRate,
-                attackSpeed,
+                attackDelayInTicks,
                 criticalRate,
                 magicAttack,
                 defense,
                 magicDefense,
-                fleeRate
+                flee
         );
     }
-
-
-
 
     private StatBlock calculateTotalStats(CharacterData data, Job job){
 
@@ -73,19 +77,21 @@ public class StatCalculator {
 
     }
 
+    // HP / SP
+
     private int calculateMaxHp(CharacterData data, Job job, StatBlock totalStats) {
-        // ... (sin cambios)
+
         return job.getBaseHp() + (totalStats.vit() * job.getVitHpFactor()) + (data.baseLevel() * job.getLevelHpFactor());
     }
 
     private int calculateMaxSp(CharacterData data, Job job, StatBlock totalStats) {
-        // ... (sin cambios)
+
         return job.getBaseSp() + (totalStats.intel() * job.getIntSpFactor());
     }
 
 
 
-    // --- NUEVOS MÉTODOS DE CÁLCULO ---
+    // ATTACK
 
     private Attack calculateAttack(CharacterData data, StatBlock totalStats) {
         int calculatedStatusAttack = totalStats.str() + (totalStats.dex() / 5) + (totalStats.luk() / 5);
@@ -95,28 +101,86 @@ public class StatCalculator {
         return new Attack(calculatedStatusAttack, calculatedWeaponAttack);
     }
 
-    private int calculateDefense(StatBlock totalStats) {
-        return totalStats.vit() / 2;
+    // DEFENSE
+
+    private Defense calculateDefense(StatBlock totalStats) {
+        // La defensa del equipo es porcentual. Placeholder hasta que haya equipo.
+        int equipDef = 0;
+
+        // La defensa de la VIT es plana y directa.
+        int vitDef = totalStats.vit();
+
+        return new Defense(equipDef, vitDef);
     }
 
-    private int calculateMagicDefense(StatBlock totalStats) {
-        return totalStats.intel() / 2;
+    // MAGIC DEFENSE
+
+    private MagicDefense calculateMagicDefense(StatBlock totalStats) {
+        //Equipment stuff
+        int equipMdef = 0;
+
+        int intMdef = totalStats.intel();
+
+        return new MagicDefense(equipMdef, intMdef);
     }
+
+    // HIT
 
     private int calculateHitRate(CharacterData data, StatBlock totalStats) {
         return 175 + data.baseLevel() + totalStats.dex();
     }
 
-    private int calculateFleeRate(CharacterData data, StatBlock totalStats) {
-        return 100 + data.baseLevel() + totalStats.agi();
+    // FLEE
+
+    private Flee calculateFlee(CharacterData data, StatBlock totalStats) {
+        // La esquiva normal, basada en AGI y Nivel Base.
+        int calculatedNormalFlee = 100 + data.baseLevel() + totalStats.agi();
+
+        // La esquiva de la suerte, basada en LUK habrá que ver si la tratamos como un procentaje, trabajo del DOP
+        int calculatedLuckyDodge = 1 + (totalStats.luk() / 10);
+
+        return new Flee(calculatedNormalFlee, calculatedLuckyDodge);
     }
+
+    // CRITICAL RATE
 
     private int calculateCriticalRate(StatBlock totalStats) {
         return 1 + (totalStats.luk() / 3);
     }
 
-    private int calculateMagicAttack(StatBlock totalStats) {
-        return totalStats.intel() + (totalStats.intel() / 2);
+    // MAGIC ATTACK
+
+    private MagicAttack calculateMagicAttack(StatBlock totalStats) {
+        int intel = totalStats.intel();
+
+        // Max
+        int termMax = intel / 5;
+        int maxMatk = intel + (termMax * termMax);
+
+        // Min
+        int termMin = intel / 7;
+        int minMatk = intel + (termMin * termMin);
+
+        return new MagicAttack(minMatk, maxMatk);
+    }
+
+
+    // ASPD keep an eye for balancing!!
+    private int calculateAttackDelayInTicks(Job job, StatBlock totalStats) {
+
+        double baseDelayInSeconds = job.getBaseAttackDelaySeconds();
+
+        // 2. AGI y DEX reducen este retraso.
+        // La fórmula es arbitraria, podemos ajustarla para el balanceo.
+        double speedFactor = totalStats.agi() + (totalStats.dex() / 10.0);
+        double finalDelayInSeconds = baseDelayInSeconds - (speedFactor * 0.01);
+
+        // 3. Establecemos un límite mínimo para que el retraso no sea cero o negativo.
+        // Ningún ataque puede ser más rápido que 4 ticks (0.2 segundos), por ejemplo.
+        double cappedDelay = Math.max(0.2, finalDelayInSeconds);
+
+        // 4. Convertimos el resultado final a ticks.
+        return (int) (cappedDelay * TICKS_PER_SECOND);
     }
 
 }

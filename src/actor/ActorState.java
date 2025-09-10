@@ -3,8 +3,7 @@ package actor;
 import enums.Element;
 import enums.Race;
 import enums.Size;
-import stat.Attack;
-import stat.StatBlock;
+import stat.*;
 
 /**
  * Un record inmutable que representa la "foto" de un personaje en un instante.
@@ -12,6 +11,10 @@ import stat.StatBlock;
  * No contiene lógica, solo los datos finales ya calculados.
  */
 public record ActorState(
+
+        // UI stuff
+        long nextActionTick,
+        Position position,
         // Identificadores básicos
         long id,
         String name,
@@ -34,20 +37,20 @@ public record ActorState(
         // Atributos de ataque físico
         Attack attack,
         int hitRate,       // Precisión
-        double attackSpeed,  // ASPD
+        int attackDelayInTicks,  // ASPD
         int criticalRate,
 
         // Atributos de ataque mágico (opcional por ahora, pero bueno tenerlos)
-        int magicAttack,
+        MagicAttack magicAttack,
 
         // Atributos de defensa física
-        int defense, // El DEF del equipo, que resta directamente
-           // El DEF de la VIT, que resta porcentualmente
+        Defense defense,
+
 
         // Atributos de defensa mágica
-        int magicDefense,
+        MagicDefense magicDefense,
 
 
         // Atributos de evasión
-        int fleeRate       // Evasión
+        Flee flee       // Evasión
 ) {}

@@ -20,9 +20,9 @@ public record MonsterData(
         Element element,
 
         // Stats secundarios de combate
-        int attack,
+        int baseAttack,
         int hitRate,
-        double attackSpeed,
+        int attackDelayInTicks,
         int criticalRate,
         int magicAttack,
         int defense,

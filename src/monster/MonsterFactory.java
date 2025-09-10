@@ -2,8 +2,8 @@ package monster;
 
 
 import actor.ActorState;
-import stat.StatBlock;
-
+import actor.Position;
+import stat.*;
 
 
 // this dictates monster generation, they lack progression, so a Factory is the more sound decish
@@ -15,7 +15,17 @@ public class MonsterFactory {
                 data.intel(), data.dex(), data.luk()
         );
 
+        Attack monsterAttack = new Attack(data.baseAttack(), 0);
+        Defense monsterDefense = new Defense(0, data.vit());
+        MagicDefense monsterMagicDefense = new MagicDefense(0, data.intel());
+        Flee monsterFlee = new Flee(data.fleeRate(), 0);
+
+        MagicAttack monsterMagicAttack = new MagicAttack(0, 0);
+
         return new ActorState(
+
+                0,
+                Position.ORIGIN,
                 data.id(),
                 data.name(),
                 data.maxHp(),    // El monstruo aparece con HP al máximo.
@@ -26,14 +36,14 @@ public class MonsterFactory {
                 data.race(),
                 data.size(),
                 data.element(),
-                data.attack(),
+                monsterAttack,
                 data.hitRate(),
-                data.attackSpeed(),
+                data.attackDelayInTicks(),
                 data.criticalRate(),
-                data.magicAttack(),
-                data.defense(),
-                data.magicDefense(),
-                data.fleeRate()
+                monsterMagicAttack,
+                monsterDefense,
+                monsterMagicDefense,
+                monsterFlee
         );
 
 

@@ -42,6 +42,9 @@ public abstract class Job {
         return accumulatedBonuses;
     }
 
+    public double getBaseAttackDelaySeconds() {
+        return 2.0; // Un valor por defecto de 2 segundos entre ataques.
+    }
 
     public Race getBaseRace() {
         return Race.DEMI_HUMAN; // Por defecto para la mayoría de jobs de jugador
