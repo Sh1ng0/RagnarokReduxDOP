@@ -1,21 +1,42 @@
 package monster;
 
 
+import actor.ActorState;
+import stat.StatBlock;
+
+
+
 // this dictates monster generation, they lack progression, so a Factory is the more sound decish
 public class MonsterFactory {
-//    public static CharacterState createStateFrom(MonsterData data) {
-        // Simplemente mapea los valores fijos del monstruo al formato
-        // que el motor de combate entiende. No hay cálculos complejos.
-//        StatBlock monsterStats = new StatBlock(data.str(), data.agi(), ...);
+    public static ActorState createStateFrom(MonsterData data) {
 
-//        return new CharacterState(
-//                data.id(),
-//                data.name(),
-//                data.maxHp(),
-//                monsterStats,
-//                data.race(),
-//                data.size(),
-//                data.element()
-//        );
-//    }
+        StatBlock monsterStats = new StatBlock(
+                data.str(), data.agi(), data.vit(),
+                data.intel(), data.dex(), data.luk()
+        );
+
+        return new ActorState(
+                data.id(),
+                data.name(),
+                data.maxHp(),    // El monstruo aparece con HP al máximo.
+                data.maxHp(),
+                data.maxSp(),    // Y con SP al máximo.
+                data.maxSp(),
+                monsterStats,    // El bloque de stats primarios.
+                data.race(),
+                data.size(),
+                data.element(),
+                data.attack(),
+                data.hitRate(),
+                data.attackSpeed(),
+                data.criticalRate(),
+                data.magicAttack(),
+                data.defense(),
+                data.magicDefense(),
+                data.fleeRate()
+        );
+
+
+
+    }
 }

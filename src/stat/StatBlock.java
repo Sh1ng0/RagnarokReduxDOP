@@ -9,6 +9,8 @@ public record StatBlock(
         int luk
 ) {
 
+    public static final StatBlock ZERO = new StatBlock(0, 0, 0, 0, 0, 0);
+
     public StatBlock add(StatBlock other) {
         return new StatBlock(
                 this.str + other.str,

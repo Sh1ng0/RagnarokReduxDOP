@@ -5,18 +5,27 @@ import enums.Race;
 import enums.Size;
 
 public record MonsterData(
+
         long id,
         String name,
-        int level,
         int maxHp,
-        int str,
-        int vit,
-        int agi,
-        int intel,
-        int dex,
-        int luk,
+        int maxSp,
+
+        // Stats primarios
+        int str, int agi, int vit, int intel, int dex, int luk,
+
+        // Propiedades
         Race race,
+        Size size,
         Element element,
-        Size size
-        // ...y cualquier otro dato fijo del monstruo
+
+        // Stats secundarios de combate
+        int attack,
+        int hitRate,
+        double attackSpeed,
+        int criticalRate,
+        int magicAttack,
+        int defense,
+        int magicDefense,
+        int fleeRate
 ) {}

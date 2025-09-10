@@ -4,13 +4,18 @@ import stat.StatBlock;
 
 import java.util.Map;
 
-public class Swordsman extends Job {
+public class Swordman extends Job {
 // we need id's
     /**
      * Mapa declarativo de los bonus de stat por nivel de job, ajustado a la
      * tabla de bonus clásica de iRO Wiki para el Swordsman.
      * Cada entrada representa el StatBlock específico que se gana en ese nivel.
      */
+
+
+
+
+
     private static final Map<Integer, StatBlock> JOB_BONUS_SCHEDULE = Map.ofEntries(
             // STR Bonuses
             Map.entry(2,  new StatBlock(1, 0, 0, 0, 0, 0)),
@@ -46,20 +51,14 @@ public class Swordsman extends Job {
         return "Swordsman";
     }
 
-
-    public StatBlock getJobStatBonuses(int jobLevel) {
-        StatBlock accumulatedBonuses = new StatBlock(0, 0, 0, 0, 0, 0);
-
-        for (Map.Entry<Integer, StatBlock> entry : JOB_BONUS_SCHEDULE.entrySet()) {
-            if (entry.getKey() <= jobLevel) {
-                accumulatedBonuses = accumulatedBonuses.add(entry.getValue());
-            }
-        }
-        return accumulatedBonuses;
+    @Override
+    protected Map<Integer, StatBlock> getJobBonusSchedule() {
+        return JOB_BONUS_SCHEDULE;
     }
+
 
     @Override
     public int getVitHpFactor() {
-        return 20; // Mantenemos la regla de que los Swordsman son más resistentes
+        return 20;
     }
 }

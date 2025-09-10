@@ -5,6 +5,10 @@ import enums.Race;
 import enums.Size;
 import stat.StatBlock;
 
+import java.util.Map;
+
+
+
 /**
  * Implementación del Job "Novice".
  * Hereda todos los valores por defecto de la clase Job,
@@ -17,20 +21,8 @@ public class Novice extends Job {
         return "Novice";
     }
 
-    public StatBlock getJobStatBonuses(int jobLevel) {
-        // El default devuelve un bloque vacío (todo a cero)
-        return new StatBlock(0, 0, 0, 0, 0, 0);
+    @Override
+    protected Map<Integer, StatBlock> getJobBonusSchedule() {
+        return Map.of();
     }
-
-    // --- Propiedades Base (con defaults para humanos) ---
-    public Race getBaseRace() { return Race.DEMI_HUMAN; }
-    public Size getBaseSize() { return Size.MEDIUM; }
-    public Element getBaseElement() { return Element.NEUTRAL; }
-
-    // --- Factores de Fórmula (con defaults de nuestro sistema simplificado) ---
-    public int getBaseHp() { return 50; }
-    public int getVitHpFactor() { return 15; }
-    public int getLevelHpFactor() { return 5; }
-    public int getBaseSp() { return 10; }
-    public int getIntSpFactor() { return 10; }
 }
