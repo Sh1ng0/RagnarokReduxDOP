@@ -32,11 +32,17 @@ public class StatCalculator {
         Attack attack = calculateAttack(data, totalStats);
 
         Defense defense = calculateDefense(totalStats);
+
         int hitRate = calculateHitRate(data, totalStats);
+
         Flee flee = calculateFlee(data, totalStats);
+
         int criticalRate = calculateCriticalRate(totalStats);
+
         MagicAttack magicAttack = calculateMagicAttack(totalStats);
+
         MagicDefense magicDefense = calculateMagicDefense(totalStats);
+
         int attackDelayInTicks = calculateAttackDelayInTicks(job, totalStats);
 
         // RACE / SIZE / ELEMENT

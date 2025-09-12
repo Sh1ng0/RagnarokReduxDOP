@@ -4,6 +4,7 @@ package com.ragnarok.engine.stat;
 import com.ragnarok.engine.character.CharacterData;
 import com.ragnarok.engine.job.Job;
 import com.ragnarok.engine.job.Novice;
+import com.ragnarok.engine.job.Swordman;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -352,6 +353,58 @@ class StatCalculatorTest {
         // ASSERT
         assertThat(resultingState.magicAttack().minMatk()).isEqualTo(expectedMinMatk);
         assertThat(resultingState.magicAttack().maxMatk()).isEqualTo(expectedMaxMatk);
+    }
+
+    @Test
+    @DisplayName("debería construir un ActorState completo y correcto para un arquetipo de Swordman")
+    void shouldCorrectlyBuildStateForSwordmanArchetype() {
+        // ARRANGE
+
+        CharacterData characterData = new CharacterData(
+                12L, "Veteran Swordsman",
+                50, 40, "SWORDMAN",
+                50, 27, 23, 1, 30, 1,
+                List.of()
+        );
+
+        Job swordmanJob = new Swordman();
+
+        // ACT
+        var resultingState = statCalculator.buildState(characterData, swordmanJob);
+
+        // ASSERT
+
+
+        // 1. Stats Totales (Base + Job Bonus)
+        assertThat(resultingState.totalStats().str()).isEqualTo(54); // 50 + 4
+        assertThat(resultingState.totalStats().agi()).isEqualTo(28); // 27 + 1
+        assertThat(resultingState.totalStats().vit()).isEqualTo(26); // 23 + 3
+        assertThat(resultingState.totalStats().intel()).isEqualTo(1);  // 1 + 0
+        assertThat(resultingState.totalStats().dex()).isEqualTo(33); // 30 + 3
+        assertThat(resultingState.totalStats().luk()).isEqualTo(2);  // 1 + 1
+
+        // 2. Recursos (HP/SP)
+        assertThat(resultingState.maxHp()).isEqualTo(567);
+        assertThat(resultingState.maxSp()).isEqualTo(60);
+
+        // 3. Atributos Ofensivos
+        assertThat(resultingState.attack().statAttack()).isEqualTo(60);
+        assertThat(resultingState.attack().weaponAttack()).isZero();
+        assertThat(resultingState.hitRate()).isEqualTo(258);
+        assertThat(resultingState.criticalRate()).isEqualTo(1);
+        assertThat(resultingState.attackDelayInTicks()).isEqualTo(15);
+
+        // 4. Atributos Mágicos
+        assertThat(resultingState.magicAttack().minMatk()).isEqualTo(1);
+        assertThat(resultingState.magicAttack().maxMatk()).isEqualTo(1);
+
+        // 5. Atributos Defensivos
+        assertThat(resultingState.defense().flatReduction()).isEqualTo(26);
+        assertThat(resultingState.defense().percentageReduction()).isZero();
+        assertThat(resultingState.magicDefense().flatReduction()).isEqualTo(1);
+        assertThat(resultingState.magicDefense().percentageReduction()).isZero();
+        assertThat(resultingState.flee().normalFlee()).isEqualTo(178);
+        assertThat(resultingState.flee().luckyDodge()).isEqualTo(1);
     }
 
 
