@@ -5,6 +5,8 @@ import com.ragnarok.engine.enums.Race;
 import com.ragnarok.engine.enums.Size;
 import com.ragnarok.engine.stat.*;
 
+import java.util.Map;
+
 /**
  * Un record inmutable que representa la "foto" de un personaje en un instante.
  * Este es el objeto que el motor de combate (el switch DOP) utilizará.
@@ -52,5 +54,7 @@ public record ActorState(
 
 
         // Atributos de evasión
-        Flee flee       // Evasión
+        Flee flee,
+
+        Map<String, Integer> availableSkills
 ) {}

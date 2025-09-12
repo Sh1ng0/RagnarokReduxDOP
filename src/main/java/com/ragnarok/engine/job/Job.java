@@ -60,6 +60,17 @@ public abstract class Job {
         return Element.NEUTRAL; // Por defecto
     }
 
+    /**
+     * Devuelve 'true' si esta clase de personaje tiene la habilidad
+     * innata de equipar dos armas de una mano (dual wield).
+     * Por defecto, la mayoría de las clases no pueden.
+     * @return boolean
+     */
+    // Si puede dual wield se tendrá en cuenta para las skills que puede lanzar, se ajusta su aspd, y etc
+    public boolean canDualWield() {
+        return false;
+    }
+
 
 
     public int getBaseHpConstant() {

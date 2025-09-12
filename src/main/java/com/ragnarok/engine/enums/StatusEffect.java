@@ -1,4 +1,12 @@
 package com.ragnarok.engine.enums;
 
-public interface StatusEffect {
+public enum StatusEffect {
+
+    STUN,
+    POISON,
+    SILENCE,
+    BLEED,
+    FREEZE,
+    BLIND
+
 }
