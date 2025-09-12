@@ -27,4 +27,11 @@ public class Novice extends Job {
     protected Map<Integer, StatBlock> getJobBonusSchedule() {
         return Map.of();
     }
+
+    // ASPD
+
+    @Override
+    public double getBaseAttackDelaySeconds() {
+        return 1.3;
+    }
 }

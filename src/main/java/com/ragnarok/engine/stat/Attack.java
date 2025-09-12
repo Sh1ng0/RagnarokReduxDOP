@@ -7,11 +7,11 @@ package com.ragnarok.engine.stat;
  * equipo (Weapon ATK).
  */
 public record Attack(
-        int statusAttack,
+        int statAttack,
         int weaponAttack
 ) {
 
     public int total() {
-        return statusAttack + weaponAttack;
+        return statAttack + weaponAttack;
     }
 }

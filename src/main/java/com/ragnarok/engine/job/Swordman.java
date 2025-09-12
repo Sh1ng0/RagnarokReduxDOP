@@ -66,4 +66,11 @@ public class Swordman extends Job {
         return 8;
     }
 
+    // ASPD
+
+    @Override
+    public double getBaseAttackDelaySeconds() {
+        return 1.1;
+    }
+
 }

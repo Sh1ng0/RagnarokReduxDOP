@@ -33,14 +33,14 @@ public record ActorState(
         Size size,
         Element element,
 
-        // --- NUEVOS STATS SECUNDARIOS ---
+
         // Atributos de ataque físico
         Attack attack,
         int hitRate,       // Precisión
         int attackDelayInTicks,  // ASPD
         int criticalRate,
 
-        // Atributos de ataque mágico (opcional por ahora, pero bueno tenerlos)
+        // Atributos de ataque mágico
         MagicAttack magicAttack,
 
         // Atributos de defensa física
