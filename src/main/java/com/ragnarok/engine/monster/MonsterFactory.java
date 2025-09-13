@@ -5,6 +5,8 @@ import com.ragnarok.engine.actor.ActorState;
 import com.ragnarok.engine.actor.Position;
 import com.ragnarok.engine.stat.*;
 
+import java.util.Collections;
+
 
 // this dictates monster generation, they lack progression, so a Factory is the more sound decish
 public class MonsterFactory {
@@ -43,7 +45,8 @@ public class MonsterFactory {
                 monsterMagicAttack,
                 monsterDefense,
                 monsterMagicDefense,
-                monsterFlee
+                monsterFlee,
+                Collections.emptyMap() // MIRAR ESTO UN MONSTRUO DEBE PODER TIRAR SKILLS
         );
 
 

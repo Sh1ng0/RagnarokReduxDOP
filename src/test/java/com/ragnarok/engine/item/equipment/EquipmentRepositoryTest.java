@@ -1,6 +1,7 @@
 package com.ragnarok.engine.item.equipment;
 
-import com.ragnarok.engine.item.equip.EquipmentItem;
+import com.ragnarok.engine.item.equip.Equipment;
+import com.ragnarok.engine.item.equip.WeaponItem;
 import com.ragnarok.engine.repository.EquipmentRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class EquipmentRepositoryTest {
         long cottonShirtId = 1001L;
 
         // ACT
-        EquipmentItem foundItem = EquipmentRepository.findById(cottonShirtId);
+        Equipment foundItem = EquipmentRepository.findById(cottonShirtId);
 
         // ASSERT
         assertThat(foundItem).isNotNull();
@@ -54,13 +55,13 @@ class EquipmentRepositoryTest {
         List<Long> itemIds = List.of(1001L, 2001L);
 
         // ACT
-        List<EquipmentItem> foundItems = EquipmentRepository.findByIds(itemIds);
+        List<Equipment> foundItems = EquipmentRepository.findByIds(itemIds);
 
         // ASSERT
         assertThat(foundItems).isNotNull();
         assertThat(foundItems).hasSize(2);
         // Extraemos los nombres para verificar que son los items correctos.
-        assertThat(foundItems).extracting(EquipmentItem::name)
+        assertThat(foundItems).extracting(Equipment::name)
                 .containsExactlyInAnyOrder("Cotton Shirt", "Knife");
     }
 
@@ -72,8 +73,8 @@ class EquipmentRepositoryTest {
         List<Long> nullList = null;
 
         // ACT
-        List<EquipmentItem> resultFromEmpty = EquipmentRepository.findByIds(emptyList);
-        List<EquipmentItem> resultFromNull = EquipmentRepository.findByIds(nullList);
+        List<Equipment> resultFromEmpty = EquipmentRepository.findByIds(emptyList);
+        List<Equipment> resultFromNull = EquipmentRepository.findByIds(nullList);
 
         // ASSERT
         assertThat(resultFromEmpty).isNotNull().isEmpty();

@@ -34,4 +34,9 @@ public class Novice extends Job {
     public double getBaseAttackDelaySeconds() {
         return 1.3;
     }
+
+    @Override
+    public boolean canDualWield() {
+        return false;
+    }
 }

@@ -2,7 +2,9 @@ package com.ragnarok.engine.item.defaults;
 
 
 
+import com.ragnarok.engine.item.equip.ArmorType;
 import com.ragnarok.engine.item.equip.EquipmentType;
+import com.ragnarok.engine.item.equip.WeaponType;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,24 +22,14 @@ public final class EquipmentDefaults {
 
     // --- Listas de Compatibilidad Estándar ---
 
-    /**
-     * Compatibilidad para la mayoría de dagas (pueden ir con otra daga o un escudo).
-     */
-    public static final List<EquipmentType> STANDARD_DAGGER_COMPATIBILITY = List.of(EquipmentType.DAGGER, EquipmentType.SHIELD);
+    public static final List<EquipmentType> STANDARD_DAGGER_COMPATIBILITY =
+            List.of(WeaponType.DAGGER, ArmorType.SHIELD); // Ahora es válido y seguro
 
-    /**
-     * Compatibilidad para pistolas de una mano (solo con otra pistola).
-     */
-    public static final List<EquipmentType> STANDARD_PISTOL_COMPATIBILITY = List.of(EquipmentType.GUN);
+    public static final List<EquipmentType> STANDARD_PISTOL_COMPATIBILITY =
+            List.of(WeaponType.GUN);
 
-    /**
-     * Compatibilidad para espadas de una mano.
-     */
-    public static final List<EquipmentType> STANDARD_1H_SWORD_COMPATIBILITY = List.of(EquipmentType.ONE_HANDED_SWORD, EquipmentType.SHIELD);
+    public static final List<EquipmentType> STANDARD_1H_SWORD_COMPATIBILITY =
+            List.of(WeaponType.ONE_HANDED_SWORD, ArmorType.SHIELD); // También válido
 
-
-    /**
-     * Constante para items no compatibles (armas a dos manos, armaduras, etc.).
-     */
     public static final List<EquipmentType> NON_COMPATIBLE = Collections.emptyList();
 }

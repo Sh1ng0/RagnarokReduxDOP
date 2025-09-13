@@ -1,9 +1,7 @@
 package com.ragnarok.engine.repository;
 
 import com.ragnarok.engine.enums.Element;
-import com.ragnarok.engine.item.equip.EquipmentBonuses;
-import com.ragnarok.engine.item.equip.EquipmentItem;
-import com.ragnarok.engine.item.equip.EquipmentType;
+import com.ragnarok.engine.item.equip.*;
 import com.ragnarok.engine.stat.StatBlock;
 
 import java.util.Collections;
@@ -16,7 +14,7 @@ import java.util.Map;
  */
 public final class EquipmentRepository {
 
-    private static final Map<Long, EquipmentItem> ITEMS;
+    private static final Map<Long, Equipment> ITEMS;
 
     static {
         // --- Definición de Items de Ejemplo ---
@@ -26,8 +24,8 @@ public final class EquipmentRepository {
                 StatBlock.ZERO, 0, 0, 0, 2, 0, 0, 0, 0,
                 Collections.emptyMap(), Collections.emptyMap()
         );
-        var cottonShirt = new EquipmentItem(
-                1001L, "Cotton Shirt", Element.NEUTRAL, EquipmentType.ARMOR,
+        var cottonShirt = new ArmorItem(
+                1001L, "Cotton Shirt", Element.NEUTRAL, ArmorType.ARMOR,
                 cottonShirtBonuses, 1, Collections.emptyList(), 1
         );
 
@@ -36,8 +34,8 @@ public final class EquipmentRepository {
                 StatBlock.ZERO, 0, 0, 10, 0, 0, 0, 0, 0,
                 Collections.emptyMap(), Collections.emptyMap()
         );
-        var knife = new EquipmentItem(
-                2001L, "Knife", Element.NEUTRAL, EquipmentType.DAGGER,
+        var knife = new WeaponItem(
+                2001L, "Knife", Element.NEUTRAL, WeaponType.DAGGER,
                 knifeBonuses, 1, Collections.emptyList(), 2
         );
 
@@ -60,8 +58,8 @@ public final class EquipmentRepository {
      * @return el EquipmentItem correspondiente.
      * @throws IllegalArgumentException si no se encuentra el item.
      */
-    public static EquipmentItem findById(long itemId) {
-        EquipmentItem item = ITEMS.get(itemId);
+    public static Equipment findById(long itemId) {
+        Equipment item = ITEMS.get(itemId);
         if (item == null) {
             throw new IllegalArgumentException("No se encontró ningún EquipmentItem con el ID: " + itemId);
         }
@@ -73,7 +71,7 @@ public final class EquipmentRepository {
      * @param itemIds la lista de IDs a buscar.
      * @return una lista inmutable con los EquipmentItems encontrados.
      */
-    public static List<EquipmentItem> findByIds(List<Long> itemIds) {
+    public static List<Equipment> findByIds(List<Long> itemIds) {
         if (itemIds == null || itemIds.isEmpty()) {
             return Collections.emptyList();
         }
@@ -83,3 +81,17 @@ public final class EquipmentRepository {
     }
 
 }
+
+//EJEMPLO DE USO PARA EL FUTURO
+//
+//Equipment item = EquipmentRepository.findById(2001L);
+//
+//if (item instanceof WeaponItem weapon) {
+//        // Es un arma, podemos acceder a sus propiedades únicas
+//        System.out.println("Tipo de arma: " + weapon.type());
+//        System.out.println("Compatibilidad: " + weapon.compatibleOffHandTypes());
+//
+//        } else if (item instanceof ArmorItem armor) {
+//        // Es una armadura
+//        System.out.println("Tipo de armadura: " + armor.type());
+//        }

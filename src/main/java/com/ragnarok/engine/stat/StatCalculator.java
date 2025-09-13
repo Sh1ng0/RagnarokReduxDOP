@@ -9,6 +9,9 @@ import com.ragnarok.engine.enums.Race;
 import com.ragnarok.engine.enums.Size;
 import com.ragnarok.engine.job.Job;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * El motor de cálculo de stats para JUGADORES.
  * Esta clase es un servicio "sin estado" (stateless). No almacena datos de un personaje,
@@ -50,6 +53,9 @@ public class StatCalculator {
         Size finalSize = job.getBaseSize();
         Element finalElement = job.getBaseElement();
 
+        // empty for now (Still to be implemented the skill stuff
+        Map<String, Integer> availableSkills = Collections.emptyMap();
+
         // build
         return new ActorState(
                 0,
@@ -71,7 +77,11 @@ public class StatCalculator {
                 magicAttack,
                 defense,
                 magicDefense,
-                flee
+                flee,
+                availableSkills
+
+
+
         );
     }
 

@@ -73,4 +73,9 @@ public class Swordman extends Job {
         return 1.1;
     }
 
+    @Override
+    public boolean canDualWield() {
+        return false;
+    }
+
 }

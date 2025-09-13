@@ -28,5 +28,7 @@ public record CharacterData(
 
         // Equipo (IDs de items)
         List<Long> equippedItemIds
+
+        // SKILLS?
 ) {
 }

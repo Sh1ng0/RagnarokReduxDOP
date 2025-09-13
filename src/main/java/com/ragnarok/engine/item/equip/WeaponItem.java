@@ -9,12 +9,12 @@ import java.util.List;
  * Representa una pieza de equipo con todas sus propiedades base.
  * Es un objeto de datos inmutable.
  */
-public record EquipmentItem(
+public record WeaponItem(
 
         long id,
         String name,
         Element element,
-        EquipmentType type,
+        WeaponType type,
         EquipmentBonuses bonuses,
         int requiredLevel,
         List<String> equippableJobs,
@@ -25,12 +25,12 @@ public record EquipmentItem(
          * Si un item está en la mano principal, el item de la mano secundaria
          * debe ser de un tipo contenido en esta lista.
          */
-        List<EquipmentType> compatibleOffHandTypes
+        List<EquipmentType> compatibleOffHandTypes  // <---- Alright a shield is an armor, so this solves the fact that a shield IS armor and CAN be wielded.
 
-) {
+) implements Equipment {
     // Constructor compacto para simplificar la creación de items que no son dual-wieldables.
-    public EquipmentItem(long id, String name, Element element, EquipmentType type, EquipmentBonuses bonuses,
-                         int requiredLevel, List<String> equippableJobs, int cardSlots) {
+    public WeaponItem(long id, String name, Element element, WeaponType type, EquipmentBonuses bonuses,
+                      int requiredLevel, List<String> equippableJobs, int cardSlots) {
         this(id, name, element, type, bonuses, requiredLevel, equippableJobs, cardSlots, Collections.emptyList());
     }
 
