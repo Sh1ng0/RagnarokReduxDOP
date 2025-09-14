@@ -1,6 +1,7 @@
 package com.ragnarok.engine.stat;
 
 
+import com.ragnarok.engine.actor.CharacterEquipment;
 import com.ragnarok.engine.actor.Position;
 import com.ragnarok.engine.character.CharacterData;
 import com.ragnarok.engine.actor.ActorState;
@@ -11,6 +12,7 @@ import com.ragnarok.engine.job.Job;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * El motor de cálculo de stats para JUGADORES.
@@ -56,6 +58,10 @@ public class StatCalculator {
         // empty for now (Still to be implemented the skill stuff
         Map<String, Integer> availableSkills = Collections.emptyMap();
 
+        // Equipment stuff
+
+        CharacterEquipment playerEquipment = CharacterEquipment.UNEQUIPPED;
+
         // build
         return new ActorState(
                 0,
@@ -78,7 +84,8 @@ public class StatCalculator {
                 defense,
                 magicDefense,
                 flee,
-                availableSkills
+                availableSkills,
+                Optional.of(playerEquipment)
 
 
 

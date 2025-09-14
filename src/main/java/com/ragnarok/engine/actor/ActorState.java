@@ -6,6 +6,7 @@ import com.ragnarok.engine.enums.Size;
 import com.ragnarok.engine.stat.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Un record inmutable que representa la "foto" de un personaje en un instante.
@@ -56,5 +57,9 @@ public record ActorState(
         // Atributos de evasión
         Flee flee,
 
-        Map<String, Integer> availableSkills
+        Map<String, Integer> availableSkills,
+
+        Optional<CharacterEquipment> equipment
+
+
 ) {}
