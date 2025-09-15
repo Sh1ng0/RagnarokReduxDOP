@@ -1,7 +1,7 @@
 package com.ragnarok.engine.stat;
 
 
-import com.ragnarok.engine.actor.CharacterEquipment;
+import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.actor.Position;
 import com.ragnarok.engine.character.CharacterData;
 import com.ragnarok.engine.actor.ActorState;
@@ -68,6 +68,8 @@ public class StatCalculator {
                 Position.ORIGIN,
                 data.id(),
                 data.name(),
+                data.baseLevel(),
+                job.getId(),
                 maxHp,
                 maxHp,
                 maxSp,

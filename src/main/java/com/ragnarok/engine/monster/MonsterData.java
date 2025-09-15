@@ -8,6 +8,7 @@ public record MonsterData(
 
         long id,
         String name,
+        int level,
         int maxHp,
         int maxSp,
 

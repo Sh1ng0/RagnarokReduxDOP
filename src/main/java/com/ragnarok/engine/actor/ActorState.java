@@ -1,5 +1,6 @@
 package com.ragnarok.engine.actor;
 
+import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.enums.Element;
 import com.ragnarok.engine.enums.Race;
 import com.ragnarok.engine.enums.Size;
@@ -21,6 +22,9 @@ public record ActorState(
         // Identificadores básicos
         long id,
         String name,
+        int baseLevel,
+        String jobId,
+
 
         // Recursos de combate (HP/SP)
         int currentHp,
@@ -62,4 +66,29 @@ public record ActorState(
         Optional<CharacterEquipment> equipment
 
 
-) {}
+        // WIther para devolver una modificación en los equipos equipadoS
+
+
+
+
+) {
+
+    public ActorState withEquipment(CharacterEquipment newEquipment) {
+        // WIther para devolver una modificación en los equipos equipadoS
+    return new ActorState(
+            this.nextActionTick, this.position, this.id, this.name, this.baseLevel, this.jobId,
+            this.currentHp, this.maxHp, this.currentSp, this.maxSp, this.totalStats,
+            this.race, this.size, this.element, this.attack, this.hitRate,
+            this.attackDelayInTicks, this.criticalRate, this.magicAttack, this.defense,
+            this.magicDefense, this.flee, this.availableSkills,
+            Optional.of(newEquipment)
+    );
+}  }
+
+
+
+
+
+
+
+
