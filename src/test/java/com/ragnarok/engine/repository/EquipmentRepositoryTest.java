@@ -1,7 +1,6 @@
-package com.ragnarok.engine.item.equipment;
+package com.ragnarok.engine.repository;
 
 import com.ragnarok.engine.item.equip.model.Equipment;
-import com.ragnarok.engine.repository.EquipmentRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

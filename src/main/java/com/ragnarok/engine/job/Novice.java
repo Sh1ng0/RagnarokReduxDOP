@@ -1,7 +1,10 @@
 package com.ragnarok.engine.job;
 
+import com.ragnarok.engine.enums.JobTier;
 import com.ragnarok.engine.stat.StatBlock;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 
@@ -38,5 +41,19 @@ public class Novice extends Job {
     @Override
     public boolean canDualWield() {
         return false;
+    }
+
+
+
+    // Job path
+
+    @Override
+    public JobTier getJobTier() {
+        return JobTier.NOVICE;
+    }
+
+    @Override
+    public List<String> getPreviousJobIds() {
+        return Collections.emptyList();
     }
 }

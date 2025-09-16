@@ -1,8 +1,11 @@
-package com.ragnarok.engine.item.equip;
+package com.ragnarok.engine.item.equip.service;
 
 import com.ragnarok.engine.actor.ActorState;
 import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.enums.EquipmentSlot;
+import com.ragnarok.engine.item.equip.model.ArmorItem;
+import com.ragnarok.engine.item.equip.model.Equipment;
+import com.ragnarok.engine.item.equip.model.WeaponItem;
 
 import java.util.ArrayList;
 import java.util.List;

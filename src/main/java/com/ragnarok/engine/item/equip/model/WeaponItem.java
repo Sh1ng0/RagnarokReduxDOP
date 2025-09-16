@@ -1,4 +1,4 @@
-package com.ragnarok.engine.item.equip;
+package com.ragnarok.engine.item.equip.model;
 
 import com.ragnarok.engine.enums.Element;
 
@@ -25,7 +25,7 @@ public record WeaponItem(
          * Si un item está en la mano principal, el item de la mano secundaria
          * debe ser de un tipo contenido en esta lista.
          */
-        List<EquipmentType> compatibleOffHandTypes  // <---- Alright a shield is an armor, so this solves the fact that a shield IS armor and CAN be wielded.
+        List<EquipmentType> compatibleOffHandTypes// <---- Alright a shield is an armor, so this solves the fact that a shield IS armor and CAN be wielded.
 
 ) implements Equipment {
     // Constructor compacto para simplificar la creación de items que no son dual-wieldables.

@@ -1,32 +1,75 @@
-package com.ragnarok.engine.item.equip;
+package com.ragnarok.engine.item.equip.model;
 
 import com.ragnarok.engine.enums.StatusEffect;
 import com.ragnarok.engine.stat.StatBlock;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Agrupa todos los posibles bonus que un objeto de equipo puede otorgar.
- * Reutiliza StatBlock para los stats primarios.
+ * A comprehensive, immutable record that groups all possible bonuses an item can grant.
+ * This single structure is used for weapons, armor, and accessories to maintain simplicity and flexibility.
+ * It also serves as the container for bonuses granted by cards.
  */
 public record EquipmentBonuses(
-        // Bonus a stats primarios y secundarios
+        // Bonus a stats primarios (1)
         StatBlock primaryStats,
+
+        // Bonus planos (flat) a stats secundarios (9)
         int maxHp, int maxSp, int attack, int defense,
-        int magicAttack, int magicDefense, int criticalRate, int flee,
+        int magicAttack, int magicDefense, int criticalRate, int flee, int hit,
 
-        // PLACEHOLDERS
-        /**
-         * Mapa de estados que puede infligir el arma y su probabilidad (0.0 a 1.0).
-         * Ej: Map.of(StatusEffect.STUN, 0.05) -> 5% de probabilidad de aturdir.
-         */
-        Map<StatusEffect, Double> inflictStatusOnHit,
+        // Bonus porcentuales a stats secundarios (3)
+        double maxHpPercent, double maxSpPercent, double attackPercent,
 
-        /**
-         * Mapa de skills que el objeto permite lanzar y a qué nivel.
-         * Ej: Map.of("HEAL", 3) -> Permite lanzar Heal a nivel 3.
-         */
-        Map<String, Integer> grantSkills
+        // Efectos especiales y habilidades (3)
+        Map<String, Integer> grantSkills,
+        List<AutocastBonus> autocastOnHit,
+        List<AutocastBonus> autocastWhenHit
 ) {
-    // ... constructores ...
+    /**
+     * A constant representing zero bonuses across the board.
+     */
+    public static final EquipmentBonuses ZERO = new EquipmentBonuses(
+            StatBlock.ZERO, // primaryStats
+            0, 0, 0, 0, 0, 0, 0, 0, 0, // 9 flat bonuses
+            0.0, 0.0, 0.0,             // 3 percent bonuses
+            Collections.emptyMap(), Collections.emptyList(), Collections.emptyList() // 3 special effects
+    );
+
+    /**
+     * Combines this EquipmentBonuses with another, summing their values.
+     *
+     * @param other The other EquipmentBonuses to add.
+     * @return A new EquipmentBonuses instance with the combined bonuses.
+     */
+    public EquipmentBonuses add(EquipmentBonuses other) {
+        // NOTE: La implementación de la suma se hará más adelante.
+        return this; // Placeholder
+    }
+
+    // --- Wither Methods for Convenience ---
+
+    public EquipmentBonuses withPrimaryStats(StatBlock primaryStats) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastOnHit, autocastWhenHit);
+    }
+
+    public EquipmentBonuses withMaxHp(int maxHp) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastOnHit, autocastWhenHit);
+    }
+
+    public EquipmentBonuses withMaxSp(int maxSp) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastOnHit, autocastWhenHit);
+    }
+
+    public EquipmentBonuses withAttack(int attack) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastOnHit, autocastWhenHit);
+    }
+
+    public EquipmentBonuses withDefense(int defense) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastOnHit, autocastWhenHit);
+    }
+
+    // ... (and so on for other fields as needed)
 }

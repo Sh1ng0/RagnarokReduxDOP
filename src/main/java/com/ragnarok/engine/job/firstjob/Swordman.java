@@ -1,7 +1,10 @@
-package com.ragnarok.engine.job;
+package com.ragnarok.engine.job.firstjob;
 
+import com.ragnarok.engine.enums.JobTier;
+import com.ragnarok.engine.job.Job;
 import com.ragnarok.engine.stat.StatBlock;
 
+import java.util.List;
 import java.util.Map;
 
 public class Swordman extends Job {
@@ -61,6 +64,7 @@ public class Swordman extends Job {
     protected Map<Integer, StatBlock> getJobBonusSchedule() {
         return JOB_BONUS_SCHEDULE;
     }
+
     @Override
     public int getLevelHpFactor() {
         return 8;
@@ -76,6 +80,18 @@ public class Swordman extends Job {
     @Override
     public boolean canDualWield() {
         return false;
+    }
+
+    // Job path
+
+    @Override
+    public JobTier getJobTier() {
+        return JobTier.FIRST;
+    }
+
+    @Override
+    public List<String> getPreviousJobIds() {
+        return List.of("NOVICE");
     }
 
 }

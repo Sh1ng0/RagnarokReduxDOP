@@ -1,4 +1,4 @@
-package com.ragnarok.engine.item.equip;
+package com.ragnarok.engine.item.equip.model;
 
 public enum ArmorType implements EquipmentType {
     SHIELD,

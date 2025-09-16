@@ -14,6 +14,11 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+
+// QUIZA ESTO DEBERÍA DIVIDIRSE EN 3 CALCULADORAS ya que conforme se escale, se puede volver muy monolítica
+// - Baseline
+// - Stats de equipo
+// - Skill buffs (?) other (?)
 /**
  * El motor de cálculo de stats para JUGADORES.
  * Esta clase es un servicio "sin estado" (stateless). No almacena datos de un personaje,

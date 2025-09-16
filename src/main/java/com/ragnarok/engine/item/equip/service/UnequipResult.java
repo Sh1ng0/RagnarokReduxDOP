@@ -1,6 +1,7 @@
-package com.ragnarok.engine.item.equip;
+package com.ragnarok.engine.item.equip.service;
 
 import com.ragnarok.engine.actor.ActorState;
+import com.ragnarok.engine.item.equip.model.Equipment;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.ragnarok.engine.item.equip;
+package com.ragnarok.engine.item.equip.model;
 
 public enum WeaponType implements EquipmentType {
 
@@ -11,6 +11,7 @@ public enum WeaponType implements EquipmentType {
     ONE_HANDED_ROD(false),
     KATAR(false),
     SPEAR(false),
+    ONE_HANDED_AXE(false),
 
 
 

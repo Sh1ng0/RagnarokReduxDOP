@@ -12,5 +12,6 @@ public enum Element {
     HOLY,
     SHADOW,
     UNDEAD,
-    GHOST
+    GHOST,
+    POISON
 }

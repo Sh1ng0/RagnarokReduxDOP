@@ -3,7 +3,7 @@ package com.ragnarok.engine.repository;
 
 import com.ragnarok.engine.job.Job;
 import com.ragnarok.engine.job.Novice;
-import com.ragnarok.engine.job.Swordman;
+import com.ragnarok.engine.job.firstjob.Swordman;
 
 import java.util.Map;
 import java.util.function.Function;

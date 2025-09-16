@@ -1,10 +1,12 @@
 package com.ragnarok.engine.job;
 
 import com.ragnarok.engine.enums.Element;
+import com.ragnarok.engine.enums.JobTier;
 import com.ragnarok.engine.enums.Race;
 import com.ragnarok.engine.enums.Size;
 import com.ragnarok.engine.stat.StatBlock;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -94,6 +96,19 @@ public abstract class Job {
      * Devuelve cuántos puntos de SP base se ganan por cada Nivel Base.
      */
     public int getLevelSpFactor() {
-        return 1; // Los Novice ganan muy poco SP por nivel
+        return 1;
     }
+
+    /**
+     * Returns the hierarchical tier this Job belongs to.
+     * @return The JobTier enum constant.
+     */
+    public abstract JobTier getJobTier();
+
+    /**
+     * Returns a list of Job IDs from which this Job can evolve.
+     * For first jobs, this will typically be "NOVICE". For Novice, it's empty.
+     * @return An immutable list of prerequisite Job IDs.
+     */
+    public abstract List<String> getPreviousJobIds();
 }

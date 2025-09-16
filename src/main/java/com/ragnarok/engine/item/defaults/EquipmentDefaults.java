@@ -2,9 +2,9 @@ package com.ragnarok.engine.item.defaults;
 
 
 
-import com.ragnarok.engine.item.equip.ArmorType;
-import com.ragnarok.engine.item.equip.EquipmentType;
-import com.ragnarok.engine.item.equip.WeaponType;
+import com.ragnarok.engine.item.equip.model.ArmorType;
+import com.ragnarok.engine.item.equip.model.EquipmentType;
+import com.ragnarok.engine.item.equip.model.WeaponType;
 
 import java.util.Collections;
 import java.util.List;

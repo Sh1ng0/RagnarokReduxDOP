@@ -1,3 +1,5 @@
+package com.ragnarok.engine;
+
 public class Main {
     public static void main(String[] args) {
         // TODO
@@ -6,6 +8,5 @@ public class Main {
         // Work on CharacterData and MonsterFactory regarding the above
 
         // *Actor state of a character must mirror that of a monster
-
     }
 }

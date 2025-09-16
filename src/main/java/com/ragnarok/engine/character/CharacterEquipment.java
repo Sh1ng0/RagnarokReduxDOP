@@ -1,7 +1,7 @@
 package com.ragnarok.engine.character;
 
 import com.ragnarok.engine.enums.EquipmentSlot;
-import com.ragnarok.engine.item.equip.Equipment;
+import com.ragnarok.engine.item.equip.model.Equipment;
 
 /**
  * Un record inmutable que representa los slots de equipo de un personaje

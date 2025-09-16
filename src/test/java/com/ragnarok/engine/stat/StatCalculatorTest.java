@@ -4,7 +4,7 @@ package com.ragnarok.engine.stat;
 import com.ragnarok.engine.character.CharacterData;
 import com.ragnarok.engine.job.Job;
 import com.ragnarok.engine.job.Novice;
-import com.ragnarok.engine.job.Swordman;
+import com.ragnarok.engine.job.firstjob.Swordman;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
