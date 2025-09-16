@@ -4,85 +4,277 @@ import com.ragnarok.engine.actor.ActorState;
 import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.enums.EquipmentSlot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+/**
+ * A stateless service responsible for managing all of an actor's equipment logic.
+ * <p>
+ * Following the principles of Data-Oriented Programming (DOP), this service is
+ * completely <strong>stateless</strong>. It does not store any information between
+ * calls; each operation is atomic, and its result depends solely on the
+ * input parameters.
+ * <p>
+ * It operates on an immutable {@link ActorState} and, upon success, returns a new,
+ * modified {@code ActorState} via an {@link EquipResult} record. The original
+ * state is never modified.
+ * <p>
+ * It manages complex use cases, including:
+ * <ul>
+ * <li>Validation of level and job requirements.</li>
+ * <li>Equipping and unequipping of two-handed weapons.</li>
+ * <li>Symmetric compatibility validation for dual wield.</li>
+ * <li>Standard item swapping in single-use slots.</li>
+ * </ul>
+ */
 public class EquipmentService {
 
-    // Este método dice: Comprueba si este item es equipable por este actor, si lo es, equípalo y devuelve lo que esté en dicho slot
 
+    /**
+     * Attempts to equip an item to an actor, handling all validation and game logic.
+     * <p>
+     * This is the primary method of the service. It follows a strict order of operations:
+     * <ol>
+     * <li><b>Pre-validation (Guard Clauses):</b> Checks for level, job, and basic slot compatibility. If any check fails, the operation is aborted, returning the original state.</li>
+     * <li><b>Dual Wield Compatibility:</b> If equipping a weapon, it performs a symmetric check to ensure compatibility with the weapon in the other hand.</li>
+     * <li><b>Two-Handed Weapon Logic:</b>
+     * <ul>
+     * <li>If equipping a two-handed weapon, it "sweeps" both hands, returning any equipped items to the inventory.</li>
+     * <li>If equipping a one-handed item while a two-handed weapon is already equipped, it correctly unequips the two-handed weapon.</li>
+     * </ul>
+     * </li>
+     * <li><b>Standard Equip:</b> For any other case (e.g., single-slot items), it performs a simple swap, returning the previously equipped item.</li>
+     * </ol>
+     * The method is pure and adheres to immutability. It never modifies the input {@code currentState}.
+     *
+     * @param currentState The actor's state <strong>before</strong> the operation.
+     * @param itemToEquip The {@link Equipment} item to be equipped.
+     * @param targetSlot  The {@link EquipmentSlot} where the user intends to place the item.
+     * @return An {@link EquipResult} containing the new {@code ActorState} after the operation,
+     * and a list of items that were unequipped and should be returned to the inventory.
+     * If the operation fails any validation, the list of returned items will be empty and the state will be unchanged.
+     */
     public EquipResult equip(ActorState currentState, Equipment itemToEquip, EquipmentSlot targetSlot) {
 
-//        CharacterEquipment currentSlots = currentState.equipment().get();
+
 
         var equipmentOptional = currentState.equipment();
 
 
         if (equipmentOptional.isEmpty()) {
             System.out.println("LOG: Actor doesn't have an equip component");
-            return new EquipResult(currentState, Optional.empty());
+            return new EquipResult(currentState, List.of());
         }
 
-        // Validacion de nivel
+        // LEVEL
         if (currentState.baseLevel() < itemToEquip.requiredLevel()) {
             System.out.printf("LOG: Nivel insuficiente. Se requiere %d, el actor tiene %d.%n",
                     itemToEquip.requiredLevel(), currentState.baseLevel());
-            return new EquipResult(currentState, Optional.empty());
+            return new EquipResult(currentState, List.of());
         }
 
-        // Validación de job
+        // JOB
         List<String> equippableJobs = itemToEquip.equippableJobs();
         // Si el objeto es equipable por todos los jobs Collections.emptyList(), no pasa a la segunda parte de la puerta logica y da true igual
         if (!equippableJobs.isEmpty() && !equippableJobs.contains(currentState.jobId())) {
             System.out.printf("LOG: Job incompatible. El item es para %s, el actor es %s.%n",
                     equippableJobs, currentState.jobId());
-            return new EquipResult(currentState, Optional.empty());
+            return new EquipResult(currentState, List.of());
 
         }
 
-        // Compatibilidad de slots
+        // SLOT COMPATIBILITY
         boolean isSlotCompatible = isItemCompatibleWithSlot(itemToEquip, targetSlot);
         if (!isSlotCompatible) {
             System.out.printf("LOG: Item %s not compatible with slot %s.%n", itemToEquip.name(), targetSlot);
-            return new EquipResult(currentState, Optional.empty());
+            return new EquipResult(currentState, List.of());
         }
         System.out.println("LOG: El item pasó todas las validaciones (WIP).");
 
-        //Compatibilidad dos manos
-        // a bit of pattern matching...
-        if (itemToEquip instanceof WeaponItem weapon && weapon.type().isTwoHanded()){
+        CharacterEquipment currentSlots = equipmentOptional.get();
 
-// WE ARE HERE
+        // DUAL WIELD
+
+
+
+        if (itemToEquip instanceof WeaponItem newWeapon) {
+
+            Equipment prospectiveRightHand;
+            Equipment prospectiveLeftHand;
+
+            if (targetSlot == EquipmentSlot.RIGHT_HAND) {
+                prospectiveRightHand = newWeapon;
+                prospectiveLeftHand = currentSlots.leftHand();
+            } else { // targetSlot es LEFT_HAND
+                prospectiveRightHand = currentSlots.rightHand();
+                prospectiveLeftHand = newWeapon;
+            }
+
+
+            if (prospectiveRightHand instanceof WeaponItem mainHand && prospectiveLeftHand instanceof WeaponItem offHand) {
+
+                // La mano derecha (por convención) dicta lo que puede llevar la izquierda.
+                boolean isCompatible = mainHand.compatibleOffHandTypes().contains(offHand.type());
+
+                if (!isCompatible) {
+                    System.out.printf("LOG: Incompatible Dual Wield. %s no permite %s en la mano secundaria.%n",
+                            mainHand.name(), offHand.type());
+                    return new EquipResult(currentState, List.of());
+                }
+            }
+        }
+
+
+
+        // TWO HAND
+
+        if (itemToEquip instanceof WeaponItem weapon && weapon.type().isTwoHanded()) {
+
+
+            System.out.println("LOG: Two handed weapon, sweeping both hand items.");
+
+            List<Equipment> returnedItems = new ArrayList<>();
+
+
+            if (currentSlots.rightHand() != null) {
+                returnedItems.add(currentSlots.rightHand());
+            }
+            if (currentSlots.leftHand() != null) {
+                returnedItems.add(currentSlots.leftHand());
+            }
+
+            // Nuevo estado de equipo, todo a null y ponemos arma en la derecha (forzando la izquierda a null)
+            CharacterEquipment newSlots = currentSlots
+                    .with(EquipmentSlot.RIGHT_HAND, null)
+                    .with(EquipmentSlot.LEFT_HAND, null)
+                    .with(EquipmentSlot.RIGHT_HAND, itemToEquip);
+
+
+            ActorState newState = currentState.withEquipment(newSlots);
+
+
+            String returnedItemsNames = returnedItems.isEmpty()
+                    ? "ninguno"
+                    : String.join(", ", returnedItems.stream().map(Equipment::name).toList());
+
+            System.out.printf("LOG: Item %s equipado (2H). Item(s) devuelto(s): %s.%n",
+                    itemToEquip.name(), returnedItemsNames);
+
+            return new EquipResult(newState, returnedItems);
 
         }
 
-        // Dual wielding logic goes here
 
-        CharacterEquipment currentSlots = equipmentOptional.get();
+        // EQUIPPING OVER TWO HAND
 
-        // Esto guarda el item que estaba en dicho slot pa que no se pierda (puede ser null y no haber nada)
-        Equipment itemToReturn = currentSlots.get(targetSlot);
+        Equipment itemInRightHand = currentSlots.rightHand();
+        if (itemInRightHand instanceof WeaponItem equippedWeapon && equippedWeapon.type().isTwoHanded()) {
+
+            System.out.println("LOG: Detectada arma a dos manos equipada. Se procederá a desequipar.");
+
+
+            List<Equipment> returnedItems = List.of(itemInRightHand);
+
+
+            CharacterEquipment newSlots = currentSlots
+                    .with(EquipmentSlot.RIGHT_HAND, null) // Desequipa el arma 2H
+                    .with(targetSlot, itemToEquip);     // Equipa el nuevo item 1H
+
+
+            ActorState newState = currentState.withEquipment(newSlots);
+
+
+            String returnedItemsNames = String.join(", ", returnedItems.stream().map(Equipment::name).toList());
+
+            System.out.printf("LOG: Item %s equipado en %s. Item(s) devuelto(s): %s.%n",
+                    itemToEquip.name(), targetSlot, returnedItemsNames);
+
+            return new EquipResult(newState, returnedItems);
+        }
+
+
+        // EQUIP
+
+        Equipment itemPreviouslyInSlot = currentSlots.get(targetSlot);
+
+        // Creamos la lista de devueltos. Estará vacía o tendrá un solo item.
+        List<Equipment> returnedItems = new ArrayList<>();
+        if (itemPreviouslyInSlot != null) {
+            returnedItems.add(itemPreviouslyInSlot);
+        }
+
 
         CharacterEquipment newSlots = currentSlots.with(targetSlot, itemToEquip);
 
         ActorState newState = currentState.withEquipment(newSlots);
 
-       // CUANDO SE CREE EL SERVICIO DE INVENTARIO HABRÁ QUE REFACTORIZAR ESTO
-        System.out.printf("LOG: Item %s equipado en %s. Item devuelto: %s.%n",
-                itemToEquip.name(), targetSlot,
-                itemToReturn != null ? itemToReturn.name() : "ninguno");
 
-        return new EquipResult(newState, Optional.ofNullable(itemToReturn));
+        String returnedItemsNames = returnedItems.isEmpty()
+                ? "ninguno"
+                : String.join(", ", returnedItems.stream().map(Equipment::name).toList());
 
+        // CUANDO SE CREE EL SERVICIO DE INVENTARIO HABRÁ QUE REFACTORIZAR ESTO
+        System.out.printf("LOG: Item %s equipado en %s. Item(s) devuelto(s): %s.%n",
+                itemToEquip.name(), targetSlot, returnedItemsNames);
 
+        return new EquipResult(newState, returnedItems);
 
 
     }
 
+    /**
+     * Unequips an item from a specified slot on an actor.
+     * <p>
+     * This method is pure and adheres to immutability. It will return a new ActorState
+     * if an item is successfully unequipped. If the target slot is already empty,
+     * it will return the original state and an empty Optional.
+     *
+     * @param currentState The actor's state <strong>before</strong> the operation.
+     * @param targetSlot   The {@link EquipmentSlot} to clear.
+     * @return An {@link UnequipResult} containing the new state and the item that was removed.
+     */
+    public UnequipResult unequip(ActorState currentState, EquipmentSlot targetSlot) {
+        var equipmentOptional = currentState.equipment();
+
+        // Guard Clause: Actor cannot have equipment.
+        if (equipmentOptional.isEmpty()) {
+            return new UnequipResult(currentState, Optional.empty());
+        }
+
+        CharacterEquipment currentSlots = equipmentOptional.get();
+        Equipment itemInSlot = currentSlots.get(targetSlot);
+
+        // Guard Clause: The slot is already empty, nothing to do.
+        if (itemInSlot == null) {
+            return new UnequipResult(currentState, Optional.empty());
+        }
+
+        // --- Success Case ---
+
+        // Create the new equipment state with the target slot set to null.
+        CharacterEquipment newSlots = currentSlots.with(targetSlot, null);
+        ActorState newState = currentState.withEquipment(newSlots);
+
+        System.out.printf("LOG: Item %s unequipped from %s.%n", itemInSlot.name(), targetSlot);
+
+        return new UnequipResult(newState, Optional.of(itemInSlot));
+    }
 
 
 
+    /**
+     * Checks if a given piece of equipment can fundamentally be placed in a target slot.
+     * <p>
+     * This is a low-level validation helper that checks the physical compatibility
+     * between an item's type (e.g., Weapon, Shield, Armor) and a slot. It uses a
+     * {@code switch} expression with pattern matching over the sealed {@link Equipment}
+     * interface to apply the correct rules.
+     *
+     * @param item The {@link Equipment} to validate.
+     * @param slot The {@link EquipmentSlot} to check for compatibility.
+     * @return {@code true} if the item is compatible with the slot, {@code false} otherwise.
+     */
     private boolean isItemCompatibleWithSlot(Equipment item, EquipmentSlot slot) {
 
         return switch (item) {
@@ -106,6 +298,6 @@ public class EquipmentService {
 
     }
 
-    ;
+
 }
 

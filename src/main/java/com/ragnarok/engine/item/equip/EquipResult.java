@@ -2,7 +2,7 @@ package com.ragnarok.engine.item.equip;
 
 import com.ragnarok.engine.actor.ActorState;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * Representa el resultado de una operación de equipamiento.
@@ -11,5 +11,5 @@ import java.util.Optional;
  */
 public record EquipResult(
         ActorState newState,
-        Optional<Equipment> returnedItem
+        List<Equipment> returnedItems
 ) {}
