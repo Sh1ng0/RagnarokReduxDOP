@@ -1,7 +1,6 @@
 package com.ragnarok.engine.item.equipment;
 
-import com.ragnarok.engine.item.equip.Equipment;
-import com.ragnarok.engine.item.equip.WeaponItem;
+import com.ragnarok.engine.item.equip.model.Equipment;
 import com.ragnarok.engine.repository.EquipmentRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
