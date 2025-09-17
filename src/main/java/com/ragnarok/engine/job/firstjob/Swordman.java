@@ -17,7 +17,7 @@ public class Swordman extends Job {
 
     @Override
     public String getId() {
-        return "SWORDSMAN";
+        return "SWORDMAN";
     }
 
     @Override

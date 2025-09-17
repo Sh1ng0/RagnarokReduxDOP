@@ -55,10 +55,12 @@ public class EquipmentService {
      */
     public EquipResult equip(ActorState currentState, EquipInstance instanceToEquip, EquipmentSlot targetSlot) {
 
+        // GUARD ORDER
+
+        //  Fast Guards -> Contextual Guards -> Specific Cases -> General Case
 
 
         var equipmentOptional = currentState.equipment();
-
 
         if (equipmentOptional.isEmpty()) {
             System.out.println("LOG: Actor doesn't have an equip component");
@@ -90,13 +92,11 @@ public class EquipmentService {
             System.out.printf("LOG: Item %s not compatible with slot %s.%n", itemTemplate.name(), targetSlot);
             return new EquipResult(currentState, List.of());
         }
-        System.out.println("LOG: El item pasó todas las validaciones (WIP).");
+
 
         CharacterEquipment currentSlots = equipmentOptional.get();
 
         // DUAL WIELD
-
-
 
         if (itemTemplate instanceof WeaponTemplate newWeapon) {
             EquipInstance prospectiveRightHand;
@@ -121,7 +121,6 @@ public class EquipmentService {
                 }
             }
         }
-
 
 
 
@@ -157,16 +156,13 @@ public class EquipmentService {
 
         EquipInstance itemInRightHand = currentSlots.rightHand();
         if (itemInRightHand != null && itemInRightHand.getItemTemplate() instanceof WeaponTemplate equippedWeapon && equippedWeapon.type().isTwoHanded()) {
-            // REFACTOR: The returned list now contains the unique instance.
+
             List<EquipInstance> returnedItems = List.of(itemInRightHand);
             CharacterEquipment newSlots = currentSlots
                     .with(EquipmentSlot.RIGHT_HAND, null)
                     .with(targetSlot, instanceToEquip);
 
-
-
             ActorState newState = currentState.withEquipment(newSlots);
-
 
             String returnedItemsNames = String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
 
@@ -182,8 +178,6 @@ public class EquipmentService {
         EquipInstance itemPreviouslyInSlot = currentSlots.get(targetSlot);
         List<EquipInstance> returnedItems = new ArrayList<>();
         if (itemPreviouslyInSlot != null) returnedItems.add(itemPreviouslyInSlot);
-
-
 
         CharacterEquipment newSlots = currentSlots.with(targetSlot, instanceToEquip);
 

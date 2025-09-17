@@ -4,6 +4,8 @@ package com.ragnarok.engine.repository;
 import com.ragnarok.engine.job.Job;
 import com.ragnarok.engine.job.Novice;
 import com.ragnarok.engine.job.firstjob.Swordman;
+import com.ragnarok.engine.job.firstjob.Thief;
+import com.ragnarok.engine.job.secondjob_a.Assassin;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -22,8 +24,9 @@ public class JobRepository {
 
         JOBS = Stream.of(
                 new Novice(),
-                new Swordman()
-                // Otros jobs van aquí
+                new Swordman(),
+                new Assassin(),
+                new Thief()
         ).collect(Collectors.toUnmodifiableMap(Job::getId, Function.identity()));
 
 
