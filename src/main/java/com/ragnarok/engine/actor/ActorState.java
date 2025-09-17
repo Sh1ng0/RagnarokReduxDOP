@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Un record inmutable que representa la "foto" de un personaje en un instante.
- * Este es el objeto que el motor de combate (el switch DOP) utilizará.
- * No contiene lógica, solo los datos finales ya calculados.
+ * An immutable record that represents a snapshot of a character at a given moment.
+ * This is the object that the combat engine (the DOP switch) will use.
+ * It contains no logic, only the final, calculated data.
  */
 public record ActorState(
 

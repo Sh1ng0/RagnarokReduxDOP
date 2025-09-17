@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Representa una pieza de equipo con todas sus propiedades base.
- * Es un objeto de datos inmutable.
+ * Represents a piece of equipment with all its base properties.
+ * It is an immutable data object.
  */
 public record WeaponTemplate(
 
@@ -21,9 +21,9 @@ public record WeaponTemplate(
         int cardSlots,
 
         /**
-         * Lista de EquipmentType con los que este item es compatible para dual wield.
-         * Si un item está en la mano principal, el item de la mano secundaria
-         * debe ser de un tipo contenido en esta lista.
+         * A list of EquipmentTypes with which this item is compatible for dual wielding.
+         * If an item is in the main hand, the off-hand item
+         * must be of a type contained in this list.
          */
         List<EquipmentType> compatibleOffHandTypes// <---- Alright a shield is an armor, so this solves the fact that a shield IS armor and CAN be wielded.
 

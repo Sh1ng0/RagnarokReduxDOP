@@ -10,17 +10,17 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Clase de utilidad que contiene valores por defecto y constantes
- * para la creación de equipo estándar.
+ * A utility class that contains default values and constants
+ * for creating standard equipment.
  */
 public final class EquipmentDefaults {
 
     /**
-     * Constructor privado para prevenir la instanciación de esta clase de utilidad.
+     * Private constructor to prevent instantiation of this utility class.
      */
     private EquipmentDefaults() {}
 
-    // --- Listas de Compatibilidad Estándar ---
+    // --- Standard Compatibility Lists ---
 
     public static final List<EquipmentType> STANDARD_DAGGER_COMPATIBILITY =
             List.of(WeaponType.DAGGER, ArmorType.SHIELD); // Ahora es válido y seguro

@@ -1,11 +1,11 @@
 package com.ragnarok.engine.actor;
 
 /**
- * Representa un punto en el espacio 2D del juego.
+ * Represents a point in the game's 2D space.
  */
 public record Position(int x, int y) {
     /**
-     * Posición por defecto o de origen.
+     * The default or origin position.
      */
     public static final Position ORIGIN = new Position(0, 0);
 }

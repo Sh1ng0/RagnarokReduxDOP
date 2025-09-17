@@ -6,9 +6,9 @@ import com.ragnarok.engine.item.instance.EquipInstance;
 import java.util.List;
 
 /**
- * Representa el resultado de una operación de equipamiento.
- * Contiene el nuevo estado del actor y, opcionalmente, el item que fue
- * reemplazado y debe ser devuelto al inventario.
+ * An immutable record that encapsulates the result of an equipment change.
+ * This object holds the updated state of the actor and a reference to the item
+ * that was unequipped in the process, if any.
  */
 public record EquipResult(
         ActorState newState,

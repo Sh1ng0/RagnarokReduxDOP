@@ -21,8 +21,8 @@ public record CharacterEquipment(
 ) {
 
     /**
-     * Una instancia estática que representa a un personaje sin ningún equipo.
-     * Útil para inicializaciones.
+     * A static instance for an unequipped character.
+     * Useful for default values and initialization.
      */
     public static final CharacterEquipment UNEQUIPPED = new CharacterEquipment(
             null, null, null, null, null, null, null, null, null, null

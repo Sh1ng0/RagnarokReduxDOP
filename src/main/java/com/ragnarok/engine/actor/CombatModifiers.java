@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Agrupa todos los modificadores de daño relacionales y condicionales.
+ * Groups all relational and conditional damage modifiers.
  * <p>
- * Esta estructura de datos es inmutable y contiene mapas que definen bonificaciones
- * de daño infligido o reducciones de daño recibido contra/desde objetivos con
- * características específicas (raza, tamaño, elemento).
- * Los valores son Doubles que representan el porcentaje (ej: 0.20 para un 20%).
+ * This immutable data structure contains maps that define damage bonuses dealt to,
+ * or damage reductions received from, targets with specific characteristics
+ * (race, size, element).
+ * The values are Doubles representing the percentage (e.g., 0.20 for 20%).
  */
 public record CombatModifiers(
         // --- Modificadores Ofensivos (Daño Infligido) ---
@@ -28,8 +28,8 @@ public record CombatModifiers(
 ) {
 
     /**
-     * Una instancia estática y vacía para actores sin modificadores.
-     * Esto evita NullPointerExceptions y proporciona un valor por defecto seguro.
+     * A static, empty instance for actors with no modifiers.
+     * This prevents NullPointerExceptions and provides a safe default value.
      */
     public static final CombatModifiers EMPTY = new CombatModifiers(
             Map.of(), Map.of(), Map.of(),
@@ -37,8 +37,8 @@ public record CombatModifiers(
     );
 
     /**
-     * Constructor compacto que asegura que ningún mapa sea nulo.
-     * Si se pasa un mapa nulo, se reemplaza por un mapa vacío inmutable.
+     * Compact constructor that ensures no map is null.
+     * If a null map is passed, it is replaced with an empty, immutable map.
      */
     public CombatModifiers {
         damageBonusVsRace = Objects.requireNonNullElse(damageBonusVsRace, Map.of());

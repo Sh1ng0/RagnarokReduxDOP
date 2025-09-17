@@ -4,9 +4,9 @@ package com.ragnarok.engine.character;
 import java.util.List;
 
 /**
- * Representa los datos crudos y persistentes de un personaje,
- * tal como se cargarían desde una base de datos.
- * Es un DTO (Data Transfer Object) puro: solo contiene datos, no lógica.
+ * Represents a character's raw, persistent data,
+ * as it would be loaded from a database.
+ * It's a pure DTO (Data Transfer Object): it only contains data, no logic.
  */
 public record CharacterData(
         // Identificadores
