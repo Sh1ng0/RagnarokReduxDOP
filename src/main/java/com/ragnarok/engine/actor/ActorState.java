@@ -63,7 +63,7 @@ public record ActorState(
 
         Map<String, Integer> availableSkills,
 
-        Optional<CharacterEquipment> equipment
+        Optional<CharacterEquipment> equipment // Optional because monsters have no equipment
 
 
         // WIther para devolver una modificación en los equipos equipadoS

@@ -13,7 +13,7 @@ public class Swordman extends Job {
      * A declarative map of stat bonuses per job level, aligned with the
      * classic iRO Wiki bonus table for the Swordsman.
      * Each entry represents the specific StatBlock gained at that level.
-     */g
+     */
 
     @Override
     public String getId() {
@@ -24,7 +24,6 @@ public class Swordman extends Job {
     public String getJobName() {
         return "Swordsman";
     }
-
 
 
 
@@ -93,5 +92,7 @@ public class Swordman extends Job {
     public List<String> getPreviousJobIds() {
         return List.of("NOVICE");
     }
+
+
 
 }

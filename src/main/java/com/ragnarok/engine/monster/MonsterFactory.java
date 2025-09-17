@@ -32,7 +32,7 @@ public class MonsterFactory {
                 data.id(),   // Este es el id del template del bicho, "Es un poring"
                 data.name(),
                 data.level(),
-                String.valueOf(data.id()), // Este es el id del actor en pantalla "Es ESE poring que tengo delante"
+                String.valueOf(data.id()), // Este es el id del actor en pantalla "Es ESE poring que tengo delante"git
                 data.maxHp(),    // El monstruo aparece con HP al máximo.
                 data.maxHp(),
                 data.maxSp(),    // Y con SP al máximo.

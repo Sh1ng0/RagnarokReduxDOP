@@ -1,0 +1,24 @@
+Method for job bonus access
+
+/**
+ * Calcula la suma de todos los StatBlock de bonificación por nivel de job,
+ * desde el nivel 1 hasta el nivel actual del personaje.
+ *
+ * @param job       El job del personaje, para obtener su calendario de bonos.
+ * @param jobLevel  El nivel de job actual del personaje.
+ * @return Un único StatBlock con la suma de todos los bonos aplicables.
+ */
+private StatBlock calculateTotalJobBonuses(Job job, int jobLevel) {
+    Map<Integer, StatBlock> schedule = job.getJobBonusSchedule();
+    StatBlock totalBonus = StatBlock.ZERO; // Suponiendo un StatBlock estático con todo en 0
+
+    // Iteramos desde el nivel 1 hasta el nivel actual
+    for (int i = 1; i <= jobLevel; i++) {
+        // Obtenemos el bono para el nivel 'i', o un StatBlock vacío si no hay bono.
+        StatBlock bonusForLevel = schedule.getOrDefault(i, StatBlock.ZERO);
+        // Acumulamos el bono al total
+        totalBonus = totalBonus.plus(bonusForLevel);
+    }
+
+    return totalBonus;
+}
