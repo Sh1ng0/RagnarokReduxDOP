@@ -361,7 +361,7 @@ class StatCalculatorTest {
         // ARRANGE
 
         CharacterData characterData = new CharacterData(
-                12L, "Veteran Swordsman",
+                12L, "Dyrk",
                 50, 40, "SWORDMAN",
                 50, 27, 23, 1, 30, 1,
                 List.of()

@@ -5,7 +5,7 @@ import com.ragnarok.engine.enums.Element;
 import java.util.List;
 
 // Le decimos que solo WeaponItem y ArmorItem pueden ser "Equipment"
-public sealed interface Equipment permits WeaponItem, ArmorItem {
+public sealed interface EquipmentTemplate permits WeaponTemplate, ArmorTemplate {
     long id();
     String name();
     Element element();

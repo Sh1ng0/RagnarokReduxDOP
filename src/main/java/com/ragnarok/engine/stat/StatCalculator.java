@@ -166,6 +166,8 @@ public class StatCalculator {
 
     // HIT
 
+    // Seems too high somehow, keep an eye for balance
+
     private int calculateHitRate(CharacterData data, StatBlock totalStats) {
         return 175 + data.baseLevel() + totalStats.dex();
     }

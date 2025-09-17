@@ -1,7 +1,7 @@
 package com.ragnarok.engine.item.equip.service;
 
 import com.ragnarok.engine.actor.ActorState;
-import com.ragnarok.engine.item.equip.model.Equipment;
+import com.ragnarok.engine.item.instance.EquipInstance;
 
 import java.util.List;
 
@@ -12,5 +12,5 @@ import java.util.List;
  */
 public record EquipResult(
         ActorState newState,
-        List<Equipment> returnedItems
+        List<EquipInstance> returnedItems
 ) {}

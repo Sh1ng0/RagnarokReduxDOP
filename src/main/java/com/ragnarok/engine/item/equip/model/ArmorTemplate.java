@@ -4,7 +4,7 @@ import com.ragnarok.engine.enums.Element;
 
 import java.util.List;
 
-public record ArmorItem(
+public record ArmorTemplate(
         long id,
         String name,
         Element element,
@@ -13,6 +13,6 @@ public record ArmorItem(
         int requiredLevel,
         List<String> equippableJobs,
         int cardSlots
-) implements Equipment {
+) implements EquipmentTemplate {
 
 }

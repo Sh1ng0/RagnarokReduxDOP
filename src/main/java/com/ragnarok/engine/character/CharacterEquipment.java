@@ -1,25 +1,23 @@
 package com.ragnarok.engine.character;
 
 import com.ragnarok.engine.enums.EquipmentSlot;
-import com.ragnarok.engine.item.equip.model.Equipment;
+import com.ragnarok.engine.item.instance.EquipInstance;
 
 /**
- * Un record inmutable que representa los slots de equipo de un personaje
- * y qué item (si lo hay) está equipado en cada uno.
- * Un valor 'null' en un campo significa que el slot está vacío.
+ * An immutable record representing a character's equipped items.
+ * Each slot holds a unique {@link EquipInstance} or null if the slot is empty.
  */
 public record CharacterEquipment(
-
-        Equipment rightHand,
-        Equipment leftHand,
-        Equipment headTop,
-        Equipment headMid,
-        Equipment headLow,
-        Equipment armor,
-        Equipment garment,
-        Equipment footgear,
-        Equipment accessory1,
-        Equipment accessory2
+        EquipInstance rightHand,
+        EquipInstance leftHand,
+        EquipInstance headTop,
+        EquipInstance headMid,
+        EquipInstance headLow,
+        EquipInstance armor,
+        EquipInstance garment,
+        EquipInstance footgear,
+        EquipInstance accessory1,
+        EquipInstance accessory2
 ) {
 
     /**
@@ -31,9 +29,11 @@ public record CharacterEquipment(
     );
 
     /**
-     * Devuelve el objeto equipado en un slot específico.
+     * Returns the unique item instance equipped in a specific slot.
+     * @param slot The slot to check.
+     * @return The {@link EquipInstance} in that slot, or null if it's empty.
      */
-    public Equipment get(EquipmentSlot slot) {
+    public EquipInstance get(EquipmentSlot slot) {
         return switch (slot) {
             case RIGHT_HAND -> rightHand;
             case LEFT_HAND -> leftHand;
@@ -49,20 +49,35 @@ public record CharacterEquipment(
     }
 
     /**
-     * Devuelve una NUEVA instancia de CharacterEquipment con el slot especificado actualizado.
+     * Returns a NEW instance of CharacterEquipment with the specified slot updated.
+     * This ensures the object remains immutable.
+     *
+     * @param slot     The slot to update.
+     * @param instance The new {@link EquipInstance} to place in the slot (can be null).
+     * @return A new, updated CharacterEquipment record.
      */
-    public CharacterEquipment with(EquipmentSlot slot, Equipment item) {
+    public CharacterEquipment with(EquipmentSlot slot, EquipInstance instance) { // Note the parameter type change
         return switch (slot) {
-            case RIGHT_HAND -> new CharacterEquipment(item, leftHand, headTop, headMid, headLow, armor, garment, footgear, accessory1, accessory2);
-            case LEFT_HAND -> new CharacterEquipment(rightHand, item, headTop, headMid, headLow, armor, garment, footgear, accessory1, accessory2);
-            case ARMOR -> new CharacterEquipment(rightHand, leftHand, headTop, headMid, headLow, item, garment, footgear, accessory1, accessory2);
-            case HEAD_TOP -> new CharacterEquipment(rightHand, leftHand, item, headMid, headLow, armor, garment, footgear, accessory1, accessory2);
-            case HEAD_MID -> new CharacterEquipment(rightHand, leftHand, headTop, item, headLow, armor, garment, footgear, accessory1, accessory2);
-            case HEAD_LOW -> new CharacterEquipment(rightHand, leftHand, headTop, headMid, item, armor, garment, footgear, accessory1, accessory2);
-            case GARMENT -> new CharacterEquipment(rightHand, leftHand, headTop, headMid, headLow, armor, item, footgear, accessory1, accessory2);
-            case FOOTGEAR -> new CharacterEquipment(rightHand, leftHand, headTop, headMid, headLow, armor, garment, item, accessory1, accessory2);
-            case ACCESSORY_1 -> new CharacterEquipment(rightHand, leftHand, headTop, headMid, headLow, armor, garment, footgear, item, accessory2);
-            case ACCESSORY_2 -> new CharacterEquipment(rightHand, leftHand, headTop, headMid, headLow, armor, garment, footgear, accessory1, item);
+            case RIGHT_HAND ->
+                    new CharacterEquipment(instance, leftHand, headTop, headMid, headLow, armor, garment, footgear, accessory1, accessory2);
+            case LEFT_HAND ->
+                    new CharacterEquipment(rightHand, instance, headTop, headMid, headLow, armor, garment, footgear, accessory1, accessory2);
+            case ARMOR ->
+                    new CharacterEquipment(rightHand, leftHand, headTop, headMid, headLow, instance, garment, footgear, accessory1, accessory2);
+            case HEAD_TOP ->
+                    new CharacterEquipment(rightHand, leftHand, instance, headMid, headLow, armor, garment, footgear, accessory1, accessory2);
+            case HEAD_MID ->
+                    new CharacterEquipment(rightHand, leftHand, headTop, instance, headLow, armor, garment, footgear, accessory1, accessory2);
+            case HEAD_LOW ->
+                    new CharacterEquipment(rightHand, leftHand, headTop, headMid, instance, armor, garment, footgear, accessory1, accessory2);
+            case GARMENT ->
+                    new CharacterEquipment(rightHand, leftHand, headTop, headMid, headLow, armor, instance, footgear, accessory1, accessory2);
+            case FOOTGEAR ->
+                    new CharacterEquipment(rightHand, leftHand, headTop, headMid, headLow, armor, garment, instance, accessory1, accessory2);
+            case ACCESSORY_1 ->
+                    new CharacterEquipment(rightHand, leftHand, headTop, headMid, headLow, armor, garment, footgear, instance, accessory2);
+            case ACCESSORY_2 ->
+                    new CharacterEquipment(rightHand, leftHand, headTop, headMid, headLow, armor, garment, footgear, accessory1, instance);
         };
     }
 }
