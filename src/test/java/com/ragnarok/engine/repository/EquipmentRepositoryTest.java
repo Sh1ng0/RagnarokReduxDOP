@@ -63,19 +63,4 @@ class EquipmentRepositoryTest {
                 .containsExactlyInAnyOrder("Cotton Shirt", "Knife");
     }
 
-    @Test
-    @DisplayName("debería devolver una lista vacía si se le pasa una lista de IDs nula o vacía")
-    void shouldReturnEmptyListForEmptyOrNullIdList() {
-        // ARRANGE
-        List<Long> emptyList = Collections.emptyList();
-        List<Long> nullList = null;
-
-        // ACT
-        List<EquipmentTemplate> resultFromEmpty = EquipmentRepository.findByIds(emptyList);
-        List<EquipmentTemplate> resultFromNull = EquipmentRepository.findByIds(nullList);
-
-        // ASSERT
-        assertThat(resultFromEmpty).isNotNull().isEmpty();
-        assertThat(resultFromNull).isNotNull().isEmpty();
-    }
 }

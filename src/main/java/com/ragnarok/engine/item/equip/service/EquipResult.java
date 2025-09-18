@@ -11,6 +11,6 @@ import java.util.List;
  * that was unequipped in the process, if any.
  */
 public record EquipResult(
-        ActorState updateState,
+        ActorState updatedState,
         List<EquipInstance> returnedItems
 ) {}

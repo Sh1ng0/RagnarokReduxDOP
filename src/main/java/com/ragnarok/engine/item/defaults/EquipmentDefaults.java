@@ -29,7 +29,7 @@ public final class EquipmentDefaults {
             List.of(WeaponType.GUN);
 
     public static final List<EquipmentType> STANDARD_1H_SWORD_COMPATIBILITY =
-            List.of(WeaponType.ONE_HANDED_SWORD, ArmorType.SHIELD); // También válido
+            List.of(WeaponType.ONE_HANDED_SWORD, WeaponType.DAGGER, ArmorType.SHIELD); // También válido
 
     public static final List<EquipmentType> NON_COMPATIBLE = Collections.emptyList();
 }

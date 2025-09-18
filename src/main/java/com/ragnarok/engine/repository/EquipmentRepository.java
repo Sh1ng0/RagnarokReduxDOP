@@ -29,7 +29,7 @@ public final class EquipmentRepository {
 
         // Weapons
         var knife = new WeaponTemplate(2001L, "Knife", Element.NEUTRAL, WeaponType.DAGGER, EquipmentBonuses.ZERO.withAttack(10), 1, Collections.emptyList(), 2, EquipmentDefaults.STANDARD_DAGGER_COMPATIBILITY);
-        var basicSword = new WeaponTemplate(2002L, "Sword", Element.NEUTRAL, WeaponType.ONE_HANDED_SWORD, EquipmentBonuses.ZERO, 1, List.of("SWORDMAN"), 1, EquipmentDefaults.STANDARD_1H_SWORD_COMPATIBILITY);
+        var basicSword = new WeaponTemplate(2002L, "Sword", Element.NEUTRAL, WeaponType.ONE_HANDED_SWORD, EquipmentBonuses.ZERO, 1, List.of("SWORDMAN", "THIEF"), 1, EquipmentDefaults.STANDARD_1H_SWORD_COMPATIBILITY);
         var twoHandedSword = new WeaponTemplate(2003L, "Two-Handed Sword", Element.NEUTRAL, WeaponType.TWO_HANDED_SWORD, EquipmentBonuses.ZERO, 25, List.of("SWORDMAN"), 2);
         var highLevelSword = new WeaponTemplate(2004L, "Blade of the Heavens", Element.HOLY, WeaponType.ONE_HANDED_SWORD, EquipmentBonuses.ZERO, 99, List.of("SWORDMAN"), 0);
         var assassinKatar = new WeaponTemplate(2005L, "Katar of the Shadows", Element.POISON, WeaponType.KATAR, EquipmentBonuses.ZERO, 40, List.of("ASSASSIN"), 2);

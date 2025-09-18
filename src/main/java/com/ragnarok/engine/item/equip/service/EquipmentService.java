@@ -7,6 +7,8 @@ import com.ragnarok.engine.item.equip.model.ArmorTemplate;
 import com.ragnarok.engine.item.equip.model.EquipmentTemplate;
 import com.ragnarok.engine.item.equip.model.WeaponTemplate;
 import com.ragnarok.engine.item.instance.EquipInstance;
+import com.ragnarok.engine.job.Job;
+import com.ragnarok.engine.repository.JobRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ import java.util.Optional;
  * </ul>
  */
 public class EquipmentService {
+
 
 
     /**
@@ -77,13 +80,14 @@ public class EquipmentService {
         }
 
         // JOB
-        List<String> equippableJobs = itemTemplate.equippableJobs();
+//        List<String> equippableJobs = itemTemplate.equippableJobs();
         // Si el objeto es equipable por todos los jobs Collections.emptyList(), no pasa a la segunda parte de la puerta logica y da true igual
-        if (!itemTemplate.equippableJobs().isEmpty() && !equippableJobs.contains(currentState.jobId())) {
+        if (!canJobEquip(currentState, itemTemplate)) {
+            // El log ahora lo podemos mover dentro del método canJobEquip si queremos,
+            // o dejarlo aquí, pero la lógica de la llamada es lo importante.
             System.out.printf("LOG: Job incompatible. El item es para %s, el actor es %s.%n",
-                    equippableJobs, currentState.jobId());
+                    itemTemplate.equippableJobs(), currentState.jobId());
             return new EquipResult(currentState, List.of());
-
         }
 
         // SLOT COMPATIBILITY
@@ -185,11 +189,11 @@ public class EquipmentService {
 
 
         String returnedItemsNames = returnedItems.isEmpty()
-                ? "ninguno"
+                ? "none"
                 : String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
 
         // CUANDO SE CREE EL SERVICIO DE INVENTARIO HABRÁ QUE REFACTORIZAR ESTO
-        System.out.printf("LOG: Item %s equipado en %s. Item(s) devuelto(s): %s.%n",
+        System.out.printf("LOG: Item %s equiped in %s. Item(s) retrieved: %s.%n",
                 instanceToEquip.getName(), targetSlot, returnedItemsNames);
 
         return new EquipResult(newState, returnedItems);
@@ -274,6 +278,75 @@ public class EquipmentService {
 
     }
 
+
+    // Job stuff
+
+    /**
+     * Checks if an actor's job meets the equipment's job requirements,
+     * considering the full job hierarchy.
+     * <p>
+     * This method validates if the actor's current job, or any of its parent jobs
+     * (e.g., "Thief" for an "Assassin"), is present in the item's list of
+     * equippable jobs. If the item has an empty list of required jobs, it is
+     * considered equippable by all.
+     *
+     * @param actor The actor state, containing the {@code jobId} to be validated.
+     * @param item  The equipment template, containing the list of equippable job IDs.
+     * @return {@code true} if the actor's job is valid for the item, {@code false} otherwise.
+     */
+    private boolean canJobEquip(ActorState actor, EquipmentTemplate item) {
+        List<String> requiredJobs = item.equippableJobs();
+        if (requiredJobs.isEmpty()) {
+            return true;
+        }
+
+        Job characterJob;
+        try {
+            // Llamada estática directa. Mucho más limpio.
+            characterJob = JobRepository.findById(actor.jobId());
+        } catch (IllegalArgumentException e) {
+            // Si el JobId del actor no existe en el repo, es un estado inválido.
+            System.err.println("Error: Job no encontrado para el actor: " + actor.jobId());
+            return false;
+        }
+
+        return isJobFamilyMember(characterJob, requiredJobs);
+    }
+
+    /**
+     * Recursively checks if a given job or any of its ancestors belong to a list
+     * of required job IDs.
+     * <p>
+     * This helper method traverses up the job tree (via {@code getPreviousJobIds()})
+     * starting from the character's current job. It returns {@code true} as soon as
+     * it finds a match between any job in the hierarchy and the required list.
+     *
+     * @param currentJob     The job object to check against the required list.
+     * @param requiredJobIds The list of job IDs allowed to equip the item.
+     * @return {@code true} if a match is found anywhere in the job's inheritance chain,
+     * {@code false} otherwise.
+     */
+
+    private boolean isJobFamilyMember(Job currentJob, List<String> requiredJobIds) {
+        if (requiredJobIds.contains(currentJob.getId())) {
+            return true;
+        }
+
+        for (String parentId : currentJob.getPreviousJobIds()) {
+            try {
+                // Llamada estática directa aquí también.
+                Job parentJob = JobRepository.findById(parentId);
+                if (isJobFamilyMember(parentJob, requiredJobIds)) {
+                    return true;
+                }
+            } catch (IllegalArgumentException e) {
+                // Ignoramos si un job padre no se encuentra y continuamos.
+                continue;
+            }
+        }
+
+        return false;
+    }
 
 }
 

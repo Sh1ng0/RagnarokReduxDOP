@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Tests for EquipmentService")
 class EquipmentServiceTest {
 
+
+
     private EquipmentService equipmentService;
     private StatCalculator statCalculator;
 
@@ -69,35 +71,217 @@ class EquipmentServiceTest {
     @Test
     @DisplayName("Should equip an item on an empty slot successfully")
     void equip_onEmptySlot_shouldSucceed() {
-        // GIVEN (Arrange)
-        // El setUp() ya nos da un swordmanState con el equipo vacío.
-        // Obtenemos la instancia única de la espada de nuestro "inventario".
-        ActorState initialActorState = this.swordmanState;
-        EquipInstance swordToEquip = this.characterInventory.get(0); // SWORD_TPL instance
 
-        // Verificación inicial para asegurar que el slot está realmente vacío.
+        ActorState initialActorState = this.swordmanState;
+        EquipInstance swordToEquip = this.characterInventory.get(0);
+
+
         assertTrue(initialActorState.equipment().isPresent());
         assertNull(initialActorState.equipment().get().rightHand(), "Precondition failed: Right hand should be empty.");
 
-        // WHEN (Act)
-        // Ejecutamos la acción de equipar la espada en la mano derecha.
+
+
         EquipResult result = equipmentService.equip(initialActorState, swordToEquip, EquipmentSlot.RIGHT_HAND);
 
-        // THEN (Assert)
-        // 1. Verificamos que no se devolvió ningún ítem, ya que el slot estaba vacío.
+
+
         assertTrue(result.returnedItems().isEmpty(), "No items should be returned when equipping on an empty slot."); // <-- CORREGIDO
 
-        // 2. Obtenemos el nuevo estado y confirmamos que es una instancia diferente.
-        ActorState newState = result.newState();
+
+        ActorState newState = result.updatedState();
         assertNotSame(initialActorState, newState, "The new state must be a different instance from the original.");
 
-        // 3. Verificamos que el equipo ha sido actualizado correctamente.
         CharacterEquipment newEquipment = newState.equipment().orElseThrow();
         assertSame(swordToEquip, newEquipment.rightHand(), "The sword instance should be in the right hand.");
 
-        // 4. Verificamos que los otros slots importantes siguen vacíos.
+
         assertNull(newEquipment.leftHand(), "The left hand should remain empty.");
     }
+
+
+    @Test
+    @DisplayName("Should swap an equipped item correctly")
+    void equip_onOccupiedSlot_shouldSwapAndReturnOldItem() {
+
+        // ARRANGE
+
+        EquipInstance swordInstance = this.characterInventory.get(0); // SWORD_TPL instance
+        ActorState stateWithSword = equipmentService.equip(this.swordmanState, swordInstance, EquipmentSlot.RIGHT_HAND).updatedState();
+
+        EquipInstance knifeInstance = this.characterInventory.get(3);
+
+        assertSame(swordInstance, stateWithSword.equipment().get().rightHand(), "Precondition failed: Sword should be equipped.");
+
+        // ACT
+
+        EquipResult swapResult = equipmentService.equip(stateWithSword, knifeInstance, EquipmentSlot.RIGHT_HAND);
+
+        // ASSERT
+
+        List<EquipInstance> returnedItems = swapResult.returnedItems();
+        assertNotNull(returnedItems);
+        assertEquals(1, returnedItems.size(), "Exactly one item should have been returned.");
+        assertSame(swordInstance, returnedItems.get(0), "The returned item should be the original sword instance.");
+
+
+        ActorState finalState = swapResult.updatedState(); // <-- CORREGIDO
+        assertNotSame(stateWithSword, finalState, "A new state object should have been created.");
+        assertSame(knifeInstance, finalState.equipment().get().rightHand(), "The knife should now be in the right hand.");
+    }
+
+
+    @Test
+    @DisplayName("Should fail to equip an item if level requirement is not met")
+    void equip_whenLevelIsTooLow_shouldFailAndReturnOriginalState() {
+
+        // ARRANGE
+        ActorState initialState = this.swordmanState;
+        EquipInstance highLevelSword = new EquipInstance(HIGH_LEVEL_SWORD_TPL);
+
+        // ACT
+        EquipResult result = equipmentService.equip(initialState, highLevelSword, EquipmentSlot.RIGHT_HAND);
+
+        // ASSERT
+        ActorState finalState = result.updatedState();
+        List<EquipInstance> returnedItems = result.returnedItems();
+
+        assertSame(initialState, finalState, "State should not change on a failed operation.");
+        assertTrue(returnedItems.isEmpty(), "No items should be returned on a failed operation.");
+        assertNull(finalState.equipment().get().rightHand(), "The item should not have been equipped.");
+    }
+
+
+    @Test
+    @DisplayName("Should fail to equip an item if job requirement is not met")
+    void equip_whenJobIsInvalid_shouldFailAndReturnOriginalState() {
+        // ARRANGE
+        ActorState initialState = this.swordmanState;
+        EquipInstance assassinKatar = new EquipInstance(ASSASSIN_KATAR_TPL);
+
+        // ACT
+        EquipResult result = equipmentService.equip(initialState, assassinKatar, EquipmentSlot.RIGHT_HAND);
+
+        // ASSERT
+        ActorState finalState = result.updatedState();
+        List<EquipInstance> returnedItems = result.returnedItems();
+
+        assertSame(initialState, finalState, "State should not change on a failed operation.");
+        assertTrue(returnedItems.isEmpty(), "No items should be returned on a failed operation.");
+    }
+
+
+    @Test
+    @DisplayName("Should fail to equip an item in an incompatible slot")
+    void equip_whenSlotIsIncompatible_shouldFailAndReturnOriginalState() {
+        // ARRANGE
+        ActorState initialState = this.swordmanState;
+        EquipInstance shieldInstance = this.characterInventory.get(1); // SHIELD_TPL instance
+
+        // ACT
+        EquipResult result = equipmentService.equip(initialState, shieldInstance, EquipmentSlot.RIGHT_HAND);
+
+        // ASSERT
+        ActorState finalState = result.updatedState();
+        List<EquipInstance> returnedItems = result.returnedItems();
+
+        assertSame(initialState, finalState, "State should not change on a failed operation.");
+        assertTrue(returnedItems.isEmpty(), "No items should be returned on a failed operation.");
+    }
+
+    @Test
+    @DisplayName("Should equip a two-handed weapon on empty hands")
+    void equip_twoHandedWeaponOnEmptyHands_shouldOccupyRightHandAndClearLeftHand() {
+        // ARRANGE
+        ActorState initialState = this.swordmanState;
+        EquipInstance twoHandedSword = this.characterInventory.get(2); // TWO_HANDED_SWORD_TPL instance
+
+        // ACT
+        EquipResult result = equipmentService.equip(initialState, twoHandedSword, EquipmentSlot.RIGHT_HAND);
+
+        // ASSERT
+        ActorState finalState = result.updatedState();
+        CharacterEquipment newEquipment = finalState.equipment().get();
+
+        assertTrue(result.returnedItems().isEmpty(), "No items should be returned.");
+        assertNotSame(initialState, finalState, "A new state object should be created.");
+        assertSame(twoHandedSword, newEquipment.rightHand(), "The 2H sword should be in the right hand.");
+        assertNull(newEquipment.leftHand(), "The left hand should be empty when a 2H weapon is equipped.");
+    }
+
+    @Test
+    @DisplayName("Should equip 2H weapon over a sword and shield, returning both")
+    void equip_twoHandedWeaponOverOneHandedAndShield_shouldReturnBothItems() {
+        // ARRANGE
+        EquipInstance swordInstance = this.characterInventory.get(0);
+        EquipInstance shieldInstance = this.characterInventory.get(1);
+        EquipInstance twoHandedSword = this.characterInventory.get(2);
+
+        ActorState stateWithSword = equipmentService.equip(this.swordmanState, swordInstance, EquipmentSlot.RIGHT_HAND).updatedState();
+        ActorState initialState = equipmentService.equip(stateWithSword, shieldInstance, EquipmentSlot.LEFT_HAND).updatedState();
+
+        // ACT
+        EquipResult result = equipmentService.equip(initialState, twoHandedSword, EquipmentSlot.RIGHT_HAND);
+
+        // ASSERT
+        ActorState finalState = result.updatedState();
+        List<EquipInstance> returnedItems = result.returnedItems();
+        CharacterEquipment finalEquipment = finalState.equipment().get();
+
+        assertEquals(2, returnedItems.size(), "Should return two items.");
+        assertTrue(returnedItems.contains(swordInstance), "The returned items should include the sword.");
+        assertTrue(returnedItems.contains(shieldInstance), "The returned items should include the shield.");
+
+        assertSame(twoHandedSword, finalEquipment.rightHand(), "The 2H sword should be in the right hand.");
+        assertNull(finalEquipment.leftHand(), "The left hand should be empty.");
+    }
+
+    @Test
+    @DisplayName("Should unequip 2H weapon when equipping a shield")
+    void equip_shieldOverTwoHanded_shouldReturnTwoHandedWeapon() {
+        // ARRANGE
+        EquipInstance twoHandedSword = this.characterInventory.get(2);
+        EquipInstance shieldInstance = this.characterInventory.get(1);
+        ActorState initialState = equipmentService.equip(this.swordmanState, twoHandedSword, EquipmentSlot.RIGHT_HAND).updatedState();
+
+        // ACT
+        EquipResult result = equipmentService.equip(initialState, shieldInstance, EquipmentSlot.LEFT_HAND);
+
+        // ASSERT
+        ActorState finalState = result.updatedState();
+        List<EquipInstance> returnedItems = result.returnedItems();
+        CharacterEquipment finalEquipment = finalState.equipment().get();
+
+        assertEquals(1, returnedItems.size(), "Should return one item.");
+        assertSame(twoHandedSword, returnedItems.get(0), "The returned item should be the 2H sword.");
+
+        assertNotSame(initialState, finalState, "A new state object should be created.");
+        assertSame(shieldInstance, finalEquipment.leftHand(), "The shield should be in the left hand.");
+        assertNull(finalEquipment.rightHand(), "The right hand should now be empty.");
+    }
+
+    @Test
+    @DisplayName("Should successfully dual wield compatible weapons")
+    void equip_dualWieldWithCompatibleWeapon_shouldSucceed() {
+        // ARRANGE
+        EquipInstance swordInstance = this.characterInventory.get(0);
+        EquipInstance knifeInstance = this.characterInventory.get(3);
+        ActorState initialState = equipmentService.equip(this.assassinState, swordInstance, EquipmentSlot.RIGHT_HAND).updatedState();
+
+        // ACT
+        EquipResult result = equipmentService.equip(initialState, knifeInstance, EquipmentSlot.LEFT_HAND);
+
+        // ASSERT
+        ActorState finalState = result.updatedState();
+        CharacterEquipment finalEquipment = finalState.equipment().get();
+
+        assertTrue(result.returnedItems().isEmpty(), "No items should be returned.");
+        assertNotSame(initialState, finalState, "A new state object should be created.");
+
+        assertSame(swordInstance, finalEquipment.rightHand(), "The sword should remain in the right hand.");
+        assertSame(knifeInstance, finalEquipment.leftHand(), "The knife should be equipped in the left hand.");
+    }
+
+
 
 
 }

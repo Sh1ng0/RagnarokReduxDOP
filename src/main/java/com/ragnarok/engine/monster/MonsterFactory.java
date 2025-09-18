@@ -18,6 +18,8 @@ public class MonsterFactory {
                 data.intel(), data.dex(), data.luk()
         );
 
+
+        // REFACTOR : Move this to the StatCalculator
         Attack monsterAttack = new Attack(data.baseAttack(), 0);
         Defense monsterDefense = new Defense(0, data.vit());
         MagicDefense monsterMagicDefense = new MagicDefense(0, data.intel());
