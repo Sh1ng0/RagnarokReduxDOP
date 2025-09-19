@@ -281,6 +281,24 @@ class EquipmentServiceTest {
         assertSame(knifeInstance, finalEquipment.leftHand(), "The knife should be equipped in the left hand.");
     }
 
+    @Test
+    @DisplayName("Should fail to dual wield incompatible weapons")
+    void equip_dualWieldWithIncompatibleWeapon_shouldFailAndReturnOriginalState() {
+        // ARRANGE
+        EquipInstance swordInstance = this.characterInventory.get(0);
+        ActorState initialState = equipmentService.equip(this.assassinState, swordInstance, EquipmentSlot.RIGHT_HAND).updatedState();
+        EquipInstance incompatibleAxe = new EquipInstance(INCOMPATIBLE_AXE_TPL);
+
+        // ACT
+        EquipResult result = equipmentService.equip(initialState, incompatibleAxe, EquipmentSlot.LEFT_HAND);
+
+        // ASSERT
+        ActorState finalState = result.updatedState();
+
+        assertSame(initialState, finalState, "State should not change on a failed operation.");
+        assertTrue(result.returnedItems().isEmpty(), "No items should be returned on a failed operation.");
+    }
+
 
 
 

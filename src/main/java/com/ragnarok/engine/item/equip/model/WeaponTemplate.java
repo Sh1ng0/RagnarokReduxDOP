@@ -15,6 +15,7 @@ public record WeaponTemplate(
         String name,
         Element element,
         WeaponType type,
+        double speedRatio,  // ratio de velocidad del arma, se aplica como modificador a la velocidad de ataque
         EquipmentBonuses bonuses,
         int requiredLevel,
         List<String> equippableJobs,
@@ -29,9 +30,9 @@ public record WeaponTemplate(
 
 ) implements EquipmentTemplate {
     // Constructor compacto para simplificar la creación de items que no son dual-wieldables.
-    public WeaponTemplate(long id, String name, Element element, WeaponType type, EquipmentBonuses bonuses,
+    public WeaponTemplate(long id, String name, Element element, WeaponType type, double speedRatio, EquipmentBonuses bonuses,
                           int requiredLevel, List<String> equippableJobs, int cardSlots) {
-        this(id, name, element, type, bonuses, requiredLevel, equippableJobs, cardSlots, Collections.emptyList());
+        this(id, name, element, type, speedRatio, bonuses, requiredLevel, equippableJobs, cardSlots, Collections.emptyList());
     }
 
 }
