@@ -1,10 +1,11 @@
 package com.ragnarok.engine.stat;
 
 
+import com.ragnarok.engine.actor.ActorProfile;
 import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.actor.Position;
 import com.ragnarok.engine.character.CharacterData;
-import com.ragnarok.engine.actor.ActorState;
+
 import com.ragnarok.engine.enums.Element;
 import com.ragnarok.engine.enums.Race;
 import com.ragnarok.engine.enums.Size;
@@ -29,7 +30,7 @@ public class StatCalculator {
 
     private static final int TICKS_PER_SECOND = 20;
 
-    public ActorState buildState(CharacterData data, Job job) {
+    public ActorProfile buildState(CharacterData data, Job job) {
 
         StatBlock totalStats = calculateTotalStats(data, job);
 
@@ -67,22 +68,24 @@ public class StatCalculator {
 
         CharacterEquipment playerEquipment = CharacterEquipment.UNEQUIPPED;
 
-        // build
-        return new ActorState(
-                0,
-                Position.ORIGIN,
+        return new ActorProfile(
+                // Identificadores
                 data.id(),
                 data.name(),
                 data.baseLevel(),
                 job.getId(),
+
+                // Recursos (HP/SP)
                 maxHp,
-                maxHp,
-                maxSp,
-                maxSp,
+                maxSp, // <-- CORREGIDO: Usamos la variable maxSp calculada
+
+                // Stats y Propiedades
                 totalStats,
                 finalRace,
                 finalSize,
                 finalElement,
+
+                // Atributos de Combate
                 attack,
                 hitRate,
                 attackDelayInTicks,
@@ -91,13 +94,12 @@ public class StatCalculator {
                 defense,
                 magicDefense,
                 flee,
+
+                // Habilidades y Equipo
                 availableSkills,
                 Optional.of(playerEquipment)
-
-
-
         );
-    }
+        }
 
     private StatBlock calculateTotalStats(CharacterData data, Job job){
 

@@ -1,7 +1,8 @@
 package com.ragnarok.engine.monster;
 
 
-import com.ragnarok.engine.actor.ActorState;
+import com.ragnarok.engine.actor.ActorProfile;
+
 import com.ragnarok.engine.actor.Position;
 import com.ragnarok.engine.stat.*;
 
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 // this dictates monster generation, they lack progression, so a Factory is the more sound decish
 public class MonsterFactory {
-    public static ActorState createStateFrom(MonsterData data) {
+    public static ActorProfile createStateFrom(MonsterData data) {
 
         StatBlock monsterStats = new StatBlock(
                 data.str(), data.agi(), data.vit(),
@@ -27,18 +28,15 @@ public class MonsterFactory {
 
         MagicAttack monsterMagicAttack = new MagicAttack(0, 0);
 
-        return new ActorState(
+        return new ActorProfile(
 
-                0,
-                Position.ORIGIN,
+
                 data.id(),   // Este es el id del template del bicho, "Es un poring"
                 data.name(),
                 data.level(),
                 String.valueOf(data.id()), // Este es el id del actor en pantalla "Es ESE poring que tengo delante"git
                 data.maxHp(),    // El monstruo aparece con HP al máximo.
                 data.maxHp(),
-                data.maxSp(),    // Y con SP al máximo.
-                data.maxSp(),
                 monsterStats,    // El bloque de stats primarios.
                 data.race(),
                 data.size(),

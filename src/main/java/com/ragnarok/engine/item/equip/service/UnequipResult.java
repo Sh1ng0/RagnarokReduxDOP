@@ -1,6 +1,7 @@
 package com.ragnarok.engine.item.equip.service;
 
-import com.ragnarok.engine.actor.ActorState;
+import com.ragnarok.engine.actor.ActorProfile;
+
 import com.ragnarok.engine.item.instance.EquipInstance;
 
 import java.util.Optional;
@@ -11,4 +12,4 @@ import java.util.Optional;
  * @param updatedState    The new state of the actor after the item has been unequipped.
  * @param unequippedItem  An Optional containing the item that was removed, or empty if the slot was already empty.
  */
-public record UnequipResult(ActorState updatedState, Optional<EquipInstance> unequippedItem) {}
+public record UnequipResult(ActorProfile updatedState, Optional<EquipInstance> unequippedItem) {}

@@ -38,13 +38,13 @@ Esta capa representa los objetos que los jugadores realmente poseen.
 Esta capa captura el estado inmutable de un personaje en un momento dado.
 
   * **`CharacterEquipment (Record)`**: Una instantánea inmutable de los objetos `EquipInstance` únicos que un actor está usando actualmente en cada ranura.
-  * **`ActorState (Record)`**: El contenedor de datos de nivel superior para un personaje, que incluye su `CharacterEquipment`.
+  * **`ActorProfile (Record)`**: El contenedor de datos de nivel superior para un personaje, que incluye su `CharacterEquipment`.
 
 ### 4\. La Capa de Lógica (El "Motor")
 
 Esta capa contiene la lógica sin estado que actúa sobre los datos.
 
-  * **`EquipmentService`**: Un servicio sin estado cuya única responsabilidad es procesar las solicitudes de equipar/desequipar. Toma un `ActorState` y un `EquipInstance` como entrada y produce un nuevo `ActorState` como salida, sin modificar nunca el original.
+  * **`EquipmentService`**: Un servicio sin estado cuya única responsabilidad es procesar las solicitudes de equipar/desequipar. Toma un `ActorProfile` y un `EquipInstance` como entrada y produce un nuevo `ActorProfile` como salida, sin modificar nunca el original.
 
 -----
 
@@ -71,10 +71,10 @@ El siguiente diagrama ilustra el flujo de datos típico cuando un jugador equipa
 |   |                                                                                                        |
 |   +--> (5. Crea un nuevo `CharacterEquipment` con el `knifeInstance` en la mano derecha)                   |
 |   |                                                                                                        |
-|   +--> (6. Lo envuelve en un nuevo `ActorState`)                                                            |
+|   +--> (6. Lo envuelve en un nuevo `ActorProfile`)                                                            |
 |   |                                                                                                        |
 |   V                                                                                                        |
-| (7. Devuelve `EquipResult` conteniendo el nuevo `ActorState` y cualquier objeto previamente equipado)      |
+| (7. Devuelve `EquipResult` conteniendo el nuevo `ActorProfile` y cualquier objeto previamente equipado)      |
 |                                                                                                            |
 +------------------------------------------------------------------------------------------------------------+
 ```

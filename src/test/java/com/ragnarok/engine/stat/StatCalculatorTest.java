@@ -356,7 +356,7 @@ class StatCalculatorTest {
     }
 
     @Test
-    @DisplayName("debería construir un ActorState completo y correcto para un arquetipo de Swordman")
+    @DisplayName("debería construir un ActorProfile completo y correcto para un arquetipo de Swordman")
     void shouldCorrectlyBuildStateForSwordmanArchetype() {
         // ARRANGE
 

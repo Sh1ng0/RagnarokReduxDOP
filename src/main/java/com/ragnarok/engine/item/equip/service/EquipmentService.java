@@ -1,6 +1,6 @@
 package com.ragnarok.engine.item.equip.service;
 
-import com.ragnarok.engine.actor.ActorState;
+import com.ragnarok.engine.actor.ActorProfile;
 import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.enums.EquipmentSlot;
 import com.ragnarok.engine.item.equip.model.ArmorTemplate;
@@ -22,8 +22,8 @@ import java.util.Optional;
  * calls; each operation is atomic, and its result depends solely on the
  * input parameters.
  * <p>
- * It operates on an immutable {@link ActorState} and, upon success, returns a new,
- * modified {@code ActorState} via an {@link EquipResult} record. The original
+ * It operates on an immutable {@link ActorProfile} and, upon success, returns a new,
+ * modified {@code ActorProfile} via an {@link EquipResult} record. The original
  * state is never modified.
  * <p>
  * It manages complex use cases, including:
@@ -53,10 +53,10 @@ public class EquipmentService {
      * @param currentState    The actor's state <strong>before</strong> the operation.
      * @param instanceToEquip The unique {@link EquipInstance} to be equipped, taken from the player's inventory.
      * @param targetSlot      The {@link EquipmentSlot} where the user intends to place the item.
-     * @return An {@link EquipResult} containing the new {@code ActorState} after the operation,
+     * @return An {@link EquipResult} containing the new {@code ActorProfile} after the operation,
      * and a list of unique {@code EquipInstance} objects that were unequipped and should be returned to the inventory.
      */
-    public EquipResult equip(ActorState currentState, EquipInstance instanceToEquip, EquipmentSlot targetSlot) {
+    public EquipResult equip(ActorProfile currentState, EquipInstance instanceToEquip, EquipmentSlot targetSlot) {
 
         // GUARD ORDER
 
@@ -142,7 +142,7 @@ public class EquipmentService {
                     .with(EquipmentSlot.LEFT_HAND, null)
                     .with(EquipmentSlot.RIGHT_HAND, instanceToEquip);
 
-            ActorState newState = currentState.withEquipment(newSlots);
+            ActorProfile newState = currentState.withEquipment(newSlots);
 
             // This is the corrected line
             String returnedItemsNames = returnedItems.isEmpty()
@@ -166,7 +166,7 @@ public class EquipmentService {
                     .with(EquipmentSlot.RIGHT_HAND, null)
                     .with(targetSlot, instanceToEquip);
 
-            ActorState newState = currentState.withEquipment(newSlots);
+            ActorProfile newState = currentState.withEquipment(newSlots);
 
             String returnedItemsNames = String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
 
@@ -185,7 +185,7 @@ public class EquipmentService {
 
         CharacterEquipment newSlots = currentSlots.with(targetSlot, instanceToEquip);
 
-        ActorState newState = currentState.withEquipment(newSlots);
+        ActorProfile newState = currentState.withEquipment(newSlots);
 
 
         String returnedItemsNames = returnedItems.isEmpty()
@@ -204,7 +204,7 @@ public class EquipmentService {
     /**
      * Unequips an item from a specified slot on an actor.
      * <p>
-     * This method is pure and adheres to immutability. It will return a new ActorState
+     * This method is pure and adheres to immutability. It will return a new ActorProfile
      * if an item is successfully unequipped. If the target slot is already empty,
      * it will return the original state and an empty Optional.
      *
@@ -212,7 +212,7 @@ public class EquipmentService {
      * @param targetSlot   The {@link EquipmentSlot} to clear.
      * @return An {@link UnequipResult} containing the new state and the unique item instance that was removed.
      */
-    public UnequipResult unequip(ActorState currentState, EquipmentSlot targetSlot) {
+    public UnequipResult unequip(ActorProfile currentState, EquipmentSlot targetSlot) {
         var equipmentOptional = currentState.equipment();
 
         // Guard Clause: Actor cannot have equipment.
@@ -233,7 +233,7 @@ public class EquipmentService {
 
         // Create the new equipment state with the target slot set to null.
         CharacterEquipment newSlots = currentSlots.with(targetSlot, null);
-        ActorState newState = currentState.withEquipment(newSlots);
+        ActorProfile newState = currentState.withEquipment(newSlots);
 
         // REFACTOR: We use the getName() method from the instance for the log.
         System.out.printf("LOG: Item %s unequipped from %s.%n", itemInSlot.getName(), targetSlot);
@@ -294,7 +294,7 @@ public class EquipmentService {
      * @param item  The equipment template, containing the list of equippable job IDs.
      * @return {@code true} if the actor's job is valid for the item, {@code false} otherwise.
      */
-    private boolean canJobEquip(ActorState actor, EquipmentTemplate item) {
+    private boolean canJobEquip(ActorProfile actor, EquipmentTemplate item) {
         List<String> requiredJobs = item.equippableJobs();
         if (requiredJobs.isEmpty()) {
             return true;

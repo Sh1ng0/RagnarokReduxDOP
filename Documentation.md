@@ -12,13 +12,13 @@ MonsterData: Un record con los stats fijos y finales de un monstruo.
 
 La Cocina (Lógica de Cálculo): Servicios sin estado (stateless) responsables de transformar los datos crudos en un estado de combate funcional.
 
-StatCalculator: Para jugadores. Toma CharacterData y un Job para calcular el ActorState completo, aplicando fórmulas de stats, bonus de job, etc.
+StatCalculator: Para jugadores. Toma CharacterData y un Job para calcular el ActorProfile completo, aplicando fórmulas de stats, bonus de job, etc.
 
-MonsterFactory: Para monstruos. Un servicio más simple que mapea directamente un MonsterData a un ActorState.
+MonsterFactory: Para monstruos. Un servicio más simple que mapea directamente un MonsterData a un ActorProfile.
 
 El Plato (Estado de Combate): La estructura de datos unificada y final que representa a cualquier entidad en el combate.
 
-ActorState: El record inmutable central de todo el proyecto. Es la única "moneda" que el motor de combate entiende. Contiene todos los stats finales, la posición, y el estado temporal de una entidad.
+ActorProfile: El record inmutable central de todo el proyecto. Es la única "moneda" que el motor de combate entiende. Contiene todos los stats finales, la posición, y el estado temporal de una entidad.
 
 ### Diseño de Stats Complejos: El Patrón de Records
 Para evitar la complejidad de tener múltiples campos primitivos y capturar la "esencia" de las mecánicas del RO clásico, hemos encapsulado los stats de combate complejos en sus propios records.
@@ -45,7 +45,7 @@ Template Method Pattern: La clase Job define el algoritmo para calcular los bonu
 ### Preparación para Combate en Tiempo Real
 Aunque el motor de combate en sí es agnóstico al tiempo, está diseñado para ser "orquestado" por un sistema externo en tiempo real (como un GameLoop).
 
-El Contrato de Tiempo y Espacio: El ActorState incluye campos que forman un contrato con el GameLoop:
+El Contrato de Tiempo y Espacio: El ActorProfile incluye campos que forman un contrato con el GameLoop:
 
 Position position: Define el "dónde".
 

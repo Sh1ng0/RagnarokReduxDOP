@@ -9,7 +9,7 @@ Hemos completado la fase de cimentación de la lógica de equipamiento y ahora p
 ## ✅ Fase 1: Lógica y Testeo del Equipamiento (Completada)
 Esta fase está 100% finalizada y validada.
 
-* **Diseño de la Arquitectura Central:** Se ha establecido el patrón `Template` vs. `Instance`, la inmutabilidad del `ActorState` y los servicios *stateless*.
+* **Diseño de la Arquitectura Central:** Se ha establecido el patrón `Template` vs. `Instance`, la inmutabilidad del `ActorProfile` y los servicios *stateless*.
 * **Refactor de Jerarquía de Jobs:** Se ha implementado la lógica para que el sistema entienda las "familias" de jobs (ej. `Assassin` hereda de `Thief`), haciendo las definiciones de los ítems más limpias y robustas.
 * **Suite de Tests Completa:** El `EquipmentService` ha superado con éxito todos los casos de prueba de nuestra checklist, incluyendo:
     * Equipamiento básico y swaps.
@@ -22,13 +22,13 @@ Este es nuestro próximo objetivo. Consiste en hacer que las estadísticas de lo
 
 * **Añadir Velocidad de Ataque a las Armas:**
     * Añadir un campo `int attackSpeed` al record `WeaponTemplate`.
-    * Refactorizar el `StatCalculator` para que lea este nuevo atributo y calcule el `attackDelayInTicks` final del `ActorState`, incluyendo la lógica para el ASPD medio en caso de *dual wield*.
+    * Refactorizar el `StatCalculator` para que lea este nuevo atributo y calcule el `attackDelayInTicks` final del `ActorProfile`, incluyendo la lógica para el ASPD medio en caso de *dual wield*.
 
 ## 🚀 Fase 3: Sistemas de Juego Fundamentales (Futuro a Corto/Medio Plazo)
 Una vez que el `StatCalculator` sea más completo, podemos construir los sistemas de juego principales.
 
 * **Sistema de Inventario:** Crear el `record Inventory` y el `InventoryService` para gestionar el inventario del jugador, y el "orquestador" que coordine las acciones entre el inventario y el equipo.
-* **Motor de Combate (V1):** Implementar la primera versión del "gran switch de pattern matching" que tomará dos `ActorState` y resolverá un ataque, calculando el daño final.
+* **Motor de Combate (V1):** Implementar la primera versión del "gran switch de pattern matching" que tomará dos `ActorProfile` y resolverá un ataque, calculando el daño final.
 * **Sistema de Progresión:** Implementar la lógica de subida de nivel y la aplicación de los *Job Bonus* que ya están definidos en las clases de Job, centralizando este cálculo en el `StatCalculator`.
 
 ## 🎨 Fase 4: Pipeline de Animación (Futuro)
