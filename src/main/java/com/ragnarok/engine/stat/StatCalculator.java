@@ -10,6 +10,7 @@ import com.ragnarok.engine.enums.Element;
 import com.ragnarok.engine.enums.Race;
 import com.ragnarok.engine.enums.Size;
 import com.ragnarok.engine.job.Job;
+import com.ragnarok.engine.monster.MonsterData;
 
 import java.util.Collections;
 import java.util.Map;
@@ -21,10 +22,15 @@ import java.util.Optional;
 // - Stats de equipo
 // - Skill buffs (?) other (?)
 /**
- * El motor de cálculo de stats para JUGADORES.
- * Esta clase es un servicio "sin estado" (stateless). No almacena datos de un personaje,
- * sino que los recibe como parámetros, ejecuta las fórmulas y devuelve un estado final calculado.
- * Es la "cocina" de nuestra arquitectura.
+ * The central calculation engine for all actor profiles in the game.
+ * <p>
+ * This class operates as a stateless service. It does not hold any actor data itself;
+ * instead, it receives raw data objects (like {@code CharacterData} or {@code MonsterData})
+ * as input, applies the game's mathematical formulas, and returns a final,
+ * immutable {@link com.ragnarok.engine.actor.ActorProfile}.
+ * <p>
+ * It is the single source of truth for profile creation, ensuring that all actors,
+ * whether they are players or monsters, are built using a consistent set of rules.
  */
 public class StatCalculator {
 
@@ -225,6 +231,44 @@ public class StatCalculator {
 
         // 4. Convertimos el resultado final a ticks.
         return (int) (cappedDelay * TICKS_PER_SECOND);
+    }
+
+    // --- NUEVO MÉTODO PARA MONSTRUOS ---
+    public ActorProfile buildState(MonsterData data) {
+        StatBlock monsterStats = new StatBlock(
+                data.str(), data.agi(), data.vit(),
+                data.intel(), data.dex(), data.luk()
+        );
+
+        // La construcción de stats secundarios para monstruos queda centralizada aquí.
+        Attack monsterAttack = new Attack(data.baseAttack(), 0);
+        Defense monsterDefense = new Defense(0, data.vit());
+        MagicDefense monsterMagicDefense = new MagicDefense(0, data.intel());
+        Flee monsterFlee = new Flee(data.fleeRate(), 0);
+        MagicAttack monsterMagicAttack = new MagicAttack(0, 0); // Placeholder
+
+        return new ActorProfile(
+                data.id(),
+                data.name(),
+                data.level(),
+                "monster." + data.id(), // Convención para el "jobId" de un monstruo
+                data.maxHp(),
+                data.maxSp(),
+                monsterStats,
+                data.race(),
+                data.size(),
+                data.element(),
+                monsterAttack,
+                data.hitRate(),
+                data.attackDelayInTicks(),
+                data.criticalRate(),
+                monsterMagicAttack,
+                monsterDefense,
+                monsterMagicDefense,
+                monsterFlee,
+                Collections.emptyMap(), // Los monstruos podrían tener skills
+                Optional.empty()       // Los monstruos no tienen equipo
+        );
     }
 
 }

@@ -10,50 +10,22 @@ import java.util.Collections;
 import java.util.Optional;
 
 
-// this dictates monster generation, they lack progression, so a Factory is the more sound decish
+/**
+ * A factory class responsible for orchestrating the creation of monster actor profiles.
+ * <p>
+ * This class follows the Single Responsibility Principle by delegating the complex task
+ * of stat calculation and {@link com.ragnarok.engine.actor.ActorProfile} construction
+ * to the {@link StatCalculator}. Its primary role is to serve as a clear and convenient
+ * entry point for generating monster states from their base {@link MonsterData}.
+ */
 public class MonsterFactory {
-    public static ActorProfile createStateFrom(MonsterData data) {
-
-        StatBlock monsterStats = new StatBlock(
-                data.str(), data.agi(), data.vit(),
-                data.intel(), data.dex(), data.luk()
-        );
 
 
-        // REFACTOR : Move this to the StatCalculator
-        Attack monsterAttack = new Attack(data.baseAttack(), 0);
-        Defense monsterDefense = new Defense(0, data.vit());
-        MagicDefense monsterMagicDefense = new MagicDefense(0, data.intel());
-        Flee monsterFlee = new Flee(data.fleeRate(), 0);
-
-        MagicAttack monsterMagicAttack = new MagicAttack(0, 0);
-
-        return new ActorProfile(
+        public static ActorProfile createStateFrom (MonsterData data){
+            // La responsabilidad ahora se delega al StatCalculator,
+            // que centraliza toda la lógica de creación de ActorProfile.
+            return new StatCalculator().buildState(data);
+        }
 
 
-                data.id(),   // Este es el id del template del bicho, "Es un poring"
-                data.name(),
-                data.level(),
-                String.valueOf(data.id()), // Este es el id del actor en pantalla "Es ESE poring que tengo delante"git
-                data.maxHp(),    // El monstruo aparece con HP al máximo.
-                data.maxHp(),
-                monsterStats,    // El bloque de stats primarios.
-                data.race(),
-                data.size(),
-                data.element(),
-                monsterAttack,
-                data.hitRate(),
-                data.attackDelayInTicks(),
-                data.criticalRate(),
-                monsterMagicAttack,
-                monsterDefense,
-                monsterMagicDefense,
-                monsterFlee,
-                Collections.emptyMap(),// MIRAR ESTO UN MONSTRUO DEBE PODER TIRAR SKILLS
-                Optional.empty()
-        );
-
-
-
-    }
 }

@@ -1,0 +1,47 @@
+Documento de Diseño: La Economía Persistente como Capa Unificadora
+1. Resumen Ejecutivo (El "Santo Grial")
+El objetivo de diseño del proyecto es fusionar dos experiencias de juego opuestas: la simulación social profunda (estilo Space Station 13) y el combate de acción basado en habilidad (estilo Battlerite).
+
+La solución arquitectónica para lograr esta fusión sin un "infierno de programación" es una arquitectura de Zonas por Arquetipo, unificada por una capa de economía persistente y dirigida por el jugador. El mundo se siente como un todo no porque todos compartan el mismo espacio de simulación en todo momento, sino porque todos participan y afectan a la misma economía global.
+
+2. La Arquitectura de Zonas por Arquetipo
+El mundo del juego está dividido en Zonas, cada una ejecutando un "motor" o GameLoop especializado, lo que permite compartimentalizar la complejidad y optimizar el rendimiento.
+
+Zonas de Simulación (Ciudades, Estaciones, etc.):
+
+Operan con un "Tick Lento" (pocas actualizaciones por segundo).
+
+Priorizan la profundidad de la simulación de sistemas: economía, crafteo, interacciones sociales complejas, política.
+
+Son los centros de producción de valor (ítems crafteados, servicios).
+
+Zonas de Combate (Mazmorras, Campos, Arenas):
+
+Operan con un "Tick Rápido" (alta frecuencia de actualizaciones, ej. 60Hz).
+
+Priorizan la respuesta inmediata, la física de proyectiles y la detección de hitboxes.
+
+Son los centros de recolección de valor (loot de monstruos) y consumo (uso de pociones, durabilidad del equipo).
+
+3. El Pegamento del Mundo: La Economía Persistente
+La cohesión del mundo se mantiene a través de los bienes que los jugadores generan y comercian. Las acciones en una zona tienen consecuencias tangibles en la otra.
+
+Items y Dinero: Son los vehículos de estado que persisten a través de todas las zonas y sesiones de juego. Un arma forjada en una Zona de Simulación mantiene su UUID y propiedades únicas al ser llevada a una Zona de Combate.
+
+Flujo de Valor: El sistema crea un bucle económico natural. Los jugadores van a las Zonas de Combate para obtener recursos, los llevan a las Zonas de Simulación para craftear equipo de alto valor, y luego usan ese equipo de vuelta en las zonas de combate.
+
+4. Flujo de Datos y Tecnologías
+La economía se gestiona a través de la arquitectura de backend que hemos diseñado:
+
+PostgreSQL (El Libro Mayor / La Bóveda del Banco): Es la fuente de verdad absoluta y persistente para el inventario y la riqueza de todos los jugadores. Es lento pero seguro.
+
+Redis (La Caja Registradora de la Zona): Cada Zona tiene su propia instancia de Redis que actúa como una caché del inventario de los jugadores que están actualmente en esa zona. Permite consultas y modificaciones de latencia ultra-baja para el GameLoop.
+
+Kafka (El Sistema de Transacciones): Todos los cambios económicos significativos se emiten como eventos inmutables (ej. PlayerLootedItemEvent, PlayerCraftedItemEvent). Estos eventos son procesados por servicios en segundo plano que actualizan de forma asíncrona y en lotes la base de datos PostgreSQL, sin frenar nunca la experiencia en tiempo real del jugador.
+
+5. Potencial de Escalabilidad
+Este modelo está diseñado para una escala masiva.
+
+La lógica del juego escala horizontalmente añadiendo más servidores para las Zonas.
+
+El cuello de botella es la base de datos central, pero el uso de escrituras asíncronas, procesamiento en lotes y la separación de estado caliente/frío permite que el sistema soporte decenas de miles de usuarios concurrentes antes de necesitar técnicas de sharding de base de datos más complejas.
