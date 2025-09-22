@@ -4,6 +4,7 @@ import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.enums.Element;
 import com.ragnarok.engine.enums.Race;
 import com.ragnarok.engine.enums.Size;
+import com.ragnarok.engine.item.inventory.model.CharacterInventories;
 import com.ragnarok.engine.stat.*;
 
 import java.util.Map;
@@ -69,7 +70,12 @@ public record ActorProfile(
 
         // Habilidades y Equipo
         Map<String, Integer> availableSkills,
-        Optional<CharacterEquipment> equipment
+        Optional<CharacterEquipment> equipment,
+
+        // INventario
+        CharacterInventories inventory
+
+
 ) {
 
     public ActorProfile withEquipment(CharacterEquipment newEquipment) {
@@ -79,7 +85,24 @@ public record ActorProfile(
                 this.race, this.size, this.element, this.attack, this.hitRate,
                 this.attackDelayInTicks, this.criticalRate, this.magicAttack, this.defense,
                 this.magicDefense, this.flee, this.availableSkills,
-                Optional.of(newEquipment)
+                Optional.of(newEquipment), this.inventory
+        );
+    }
+
+
+    /**
+     * Returns a new ActorProfile instance with updated inventories.
+     * @param newInventories The new inventories state.
+     * @return A new, updated ActorProfile.
+     */
+    public ActorProfile withInventories(CharacterInventories newInventories) {
+        return new ActorProfile(
+                this.id, this.name, this.baseLevel, this.jobId,
+                this.maxHp, this.maxSp, this.totalStats,
+                this.race, this.size, this.element, this.attack, this.hitRate,
+                this.attackDelayInTicks, this.criticalRate, this.magicAttack, this.defense,
+                this.magicDefense, this.flee, this.availableSkills,
+                this.equipment, newInventories
         );
     }
 }

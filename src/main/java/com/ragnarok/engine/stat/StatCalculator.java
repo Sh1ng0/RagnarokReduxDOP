@@ -9,6 +9,7 @@ import com.ragnarok.engine.character.CharacterData;
 import com.ragnarok.engine.enums.Element;
 import com.ragnarok.engine.enums.Race;
 import com.ragnarok.engine.enums.Size;
+import com.ragnarok.engine.item.inventory.model.CharacterInventories;
 import com.ragnarok.engine.job.Job;
 import com.ragnarok.engine.monster.MonsterData;
 
@@ -103,7 +104,8 @@ public class StatCalculator {
 
                 // Habilidades y Equipo
                 availableSkills,
-                Optional.of(playerEquipment)
+                Optional.of(playerEquipment),  // REFACTOR WARNING ESTO DEBE IR A UN TERCER "ACTORITEM" YA QUE LOS MOBS SOLO TIENEN PROFILE
+                CharacterInventories.EMPTY
         );
         }
 
@@ -267,7 +269,8 @@ public class StatCalculator {
                 monsterMagicDefense,
                 monsterFlee,
                 Collections.emptyMap(), // Los monstruos podrían tener skills
-                Optional.empty()       // Los monstruos no tienen equipo
+                Optional.empty()  ,
+                CharacterInventories.EMPTY // REFACTOR WARNING, ESTO DEBE IR A UN TERCER ACTOR
         );
     }
 

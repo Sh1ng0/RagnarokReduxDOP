@@ -12,10 +12,13 @@ import java.util.UUID;
  * instance-specific properties like a unique ID, refine level, and embedded cards.
  * Two instances are considered equal if and only if their unique IDs match.
  */
-public class EquipInstance {
+
+// Class must be final for the sealed shenaigans to unfold
+public final class EquipInstance implements ItemInstance {
 
     private final UUID uniqueId;
     private final EquipmentTemplate itemTemplate;
+
 
     private int refineLevel;
     // private List<Card> cards; // Placeholder for future card system
@@ -39,6 +42,13 @@ public class EquipInstance {
         return itemTemplate.name();
     }
 
+    /**
+     * Gets the template ID of this item's archetype.
+     * This method fulfills the contract of the {@link ItemInstance} interface
+     * by delegating the call to the wrapped template.
+     *
+     * @return The template ID of the base item.
+     */
     public long getTemplateId() {
         return itemTemplate.id();
     }
