@@ -25,6 +25,20 @@ public record CharacterInventories(
             new Inventory<>(Collections.emptyList(), 100),
             new Inventory<>(Collections.emptyList(), 100)
     );
+
+    /**
+     * Returns a new CharacterInventories instance with an updated equipment inventory.
+     */
+    public CharacterInventories withEquipment(Inventory<EquipInstance> newEquipment) {
+        return new CharacterInventories(newEquipment, this.consumables, this.cards, this.miscellaneous);
+    }
+
+    /**
+     * Returns a new CharacterInventories instance with an updated consumables inventory.
+     */
+    public CharacterInventories withConsumables(Inventory<ItemStack> newConsumables) {
+        return new CharacterInventories(this.equipment, newConsumables, this.cards, this.miscellaneous);
+    }
 }
 
 
