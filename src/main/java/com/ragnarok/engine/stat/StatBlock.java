@@ -1,5 +1,7 @@
 package com.ragnarok.engine.stat;
 
+
+// Java Doc goes here hehe, this is a stat block for adding and in general manage stat generation
 public record StatBlock(
         int str,
         int agi,

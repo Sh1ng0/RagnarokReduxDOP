@@ -270,7 +270,7 @@ public class EquipmentService {
                     case GARMENT -> slot == EquipmentSlot.GARMENT;
                     case FOOTGEAR -> slot == EquipmentSlot.FOOTGEAR;
                     case ACCESSORY -> slot == EquipmentSlot.ACCESSORY_1 || slot == EquipmentSlot.ACCESSORY_2;
-                };
+                }; // NO DEFAULT
             }
 
 //            default -> false;   NO default gracias a las sealed interfaces

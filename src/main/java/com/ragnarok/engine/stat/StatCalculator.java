@@ -18,10 +18,9 @@ import java.util.Map;
 import java.util.Optional;
 
 
-// QUIZA ESTO DEBERÍA DIVIDIRSE EN 3 CALCULADORAS ya que conforme se escale, se puede volver muy monolítica
-// - Baseline
-// - Stats de equipo
-// - Skill buffs (?) other (?)
+// Los temas de equipo se refactorizarán en un segundo stat calc solo apra jugadores,
+// este será el de stats base compartido por jugadores y mobs
+
 /**
  * The central calculation engine for all actor profiles in the game.
  * <p>
