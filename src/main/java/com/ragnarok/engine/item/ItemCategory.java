@@ -1,4 +1,4 @@
-package com.ragnarok.engine.item.inventory.service;
+package com.ragnarok.engine.item;
 
 public enum ItemCategory {
 

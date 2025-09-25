@@ -2,15 +2,20 @@ package com.ragnarok.engine.item.inventory.service;
 
 
 import com.ragnarok.engine.actor.ActorProfile;
+import com.ragnarok.engine.item.ItemCategory;
 import com.ragnarok.engine.item.instance.EquipInstance;
 import com.ragnarok.engine.item.instance.ItemInstance;
 import com.ragnarok.engine.item.instance.ItemStack;
 import com.ragnarok.engine.item.inventory.model.CharacterInventories;
 import com.ragnarok.engine.item.inventory.model.Inventory;
+import com.ragnarok.engine.repository.ItemTemplateRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * A stateless service responsible for all inventory management logic.
@@ -23,128 +28,104 @@ import java.util.UUID;
 
 public class InventoryService {
 
+    private final ItemTemplateRepository itemTemplateRepository;
 
     /**
-     * Attempts to add an item to the appropriate inventory.
-     *
-     * @param currentInventories The current state of the inventories before the operation.
-     * @param itemToAdd The item instance to be added.
-     * @return An {@link InventoryUpdateResult} containing the new state of the inventories.
+     * Constructs the service with its required dependencies.
+     * @param itemTemplateRepository The repository for looking up item template information.
+     */
+    public InventoryService(ItemTemplateRepository itemTemplateRepository) {
+        this.itemTemplateRepository = itemTemplateRepository;
+    }
+
+    /**
+     * The main public method to add an item to the inventories.
+     * It determines the item's nature and delegates to the appropriate handler.
      */
     public InventoryUpdateResult addItem(CharacterInventories currentInventories, ItemInstance itemToAdd) {
-
-
         return switch (itemToAdd) {
             case EquipInstance equip -> handleEquipInstanceAddition(currentInventories, equip);
-            case ItemStack stack -> handleItemStackAddition(currentInventories, stack);
+            case ItemStack stack -> {
+                ItemCategory category = itemTemplateRepository.findCategoryById(stack.getTemplateId());
+                yield handleItemStackAddition(currentInventories, stack, category);
+            }
         };
     }
 
-
-
     /**
-     * Handles adding a unique, non-stackable equipment item.
+     * Handles adding a stackable item by routing it to the correct inventory
+     * based on its category, using a modern switch expression.
      */
-    private InventoryUpdateResult handleEquipInstanceAddition(CharacterInventories inventories, EquipInstance equipToAdd) {
-        Inventory<EquipInstance> equipInventory = inventories.equipment();
+    private InventoryUpdateResult handleItemStackAddition(CharacterInventories inventories, ItemStack stackToAdd, ItemCategory category) {
+        System.out.println("LOG: Adding ItemStack of category " + category);
 
-        // 1. Check for capacity
-        if (equipInventory.items().size() >= equipInventory.capacity()) {
-            System.out.println("LOG: Equipment inventory is full. Cannot add " + equipToAdd.getName());
-            return new InventoryUpdateResult(inventories); // Return original state
-        }
+        // This modern switch expression is exhaustive and returns the final, updated state.
+        CharacterInventories updatedInventories = switch (category) {
+            case CONSUMABLE ->
+                    addToStackableInventory(inventories, stackToAdd,
+                            CharacterInventories::consumables, CharacterInventories::withConsumables);
 
-        // 2. Create the new list of items (immutable update)
-        List<EquipInstance> newItems = new ArrayList<>(equipInventory.items());
-        newItems.add(equipToAdd);
+            case CARD ->
+                    addToStackableInventory(inventories, stackToAdd,
+                            CharacterInventories::cards, CharacterInventories::withCards);
 
-        // 3. Create the new inventory and then the new set of inventories
-        Inventory<EquipInstance> newEquipInventory = new Inventory<>(newItems, equipInventory.capacity());
-        CharacterInventories updatedInventories = inventories.withEquipment(newEquipInventory);
+            case MISCELLANEOUS ->
+                    addToStackableInventory(inventories, stackToAdd,
+                            CharacterInventories::miscellaneous, CharacterInventories::withMiscellaneous);
 
-        System.out.println("LOG: Added " + equipToAdd.getName() + " to equipment inventory.");
+            case EQUIPMENT -> {
+                // This case should not happen if an item is an ItemStack, but the switch must be exhaustive.
+                System.out.println("WARN: Tried to add an EQUIPMENT item as an ItemStack.");
+                yield inventories; // Return original state
+            }
+        };
+
         return new InventoryUpdateResult(updatedInventories);
     }
 
-
     /**
-     * Handles adding a stackable item. This is more complex as it involves finding the
-     * correct inventory and potentially merging with an existing stack.
+     * A generic helper method to add an ItemStack to a specific inventory.
+     * It handles both stacking with existing items and adding new items.
+     * This avoids duplicating the same logic for consumables, cards, and misc items.
      */
-    private InventoryUpdateResult handleItemStackAddition(CharacterInventories inventories, ItemStack stackToAdd) {
-        // --- ESTA PARTE ES UN ESBOZO QUE DEBERÁ SER COMPLETADO ---
-        // La lógica final aquí dependerá de un "ItemTemplateRepository" que nos dirá
-        // a qué categoría (consumable, card, etc.) pertenece el templateId del item.
+    private <T extends Inventory<ItemStack>> CharacterInventories addToStackableInventory(
+            CharacterInventories inventories,
+            ItemStack stackToAdd,
+            Function<CharacterInventories, T> inventoryGetter,
+            BiFunction<CharacterInventories, T, CharacterInventories> inventoryWither) {
 
-        // 1. **(FUTURO)** Consultar un ItemTemplateRepository para obtener el tipo del item.
-        // ItemTemplate template = ItemTemplateRepository.findById(stackToAdd.getTemplateId());
-        // ItemCategory category = template.getCategory(); // e.g., CONSUMABLE, CARD, MISC
+        T targetInventory = inventoryGetter.apply(inventories);
+        List<ItemStack> items = new ArrayList<>(targetInventory.items());
 
-        ItemCategory category = ItemCategory.CONSUMABLE; // Hardcoded for this example
+        // Try to find an existing stack to merge with
+        Optional<ItemStack> existingStackOpt = items.stream()
+                .filter(it -> it.getTemplateId() == stackToAdd.getTemplateId())
+                .findFirst();
 
-        // 2. Determinar el inventario de destino
-        switch (category) {
-            case CONSUMABLE:
-                // TODO: Implementar la lógica de apilamiento para el inventario de consumibles.
-                // a. Buscar si ya existe un ItemStack con el mismo templateId.
-                // b. Si existe, crear un nuevo stack con la cantidad sumada.
-                // c. Si no existe, añadir el nuevo stack si hay espacio.
-                // d. Devolver el CharacterInventories actualizado.
-                System.out.println("LOG: Placeholder for adding to CONSUMABLES inventory.");
-                break;
-            case CARD:
-                System.out.println("LOG: Placeholder for adding to CARDS inventory.");
-                break;
-            case MISCELLANEOUS:
-                System.out.println("LOG: Placeholder for adding to MISC inventory.");
-                break;
+        if (existingStackOpt.isPresent()) {
+            // Stack exists: remove the old one, add a new one with the combined quantity
+            ItemStack existingStack = existingStackOpt.get();
+            items.remove(existingStack);
+            items.add(existingStack.withQuantityChangedBy(stackToAdd.quantity()));
+        } else {
+            // No existing stack: add the new stack if there is capacity
+            if (items.size() >= targetInventory.capacity()) {
+                System.out.println("LOG: Inventory is full. Cannot add new item stack.");
+                return inventories; // Return original state
+            }
+            items.add(stackToAdd);
         }
 
-        return new InventoryUpdateResult(inventories); // Placeholder: Return original state for now
+        // Create the new inventory with the updated list of items
+        T newInventory = (T) new Inventory<>(items, targetInventory.capacity());
+
+        // Use the "wither" function to create the new, final set of inventories
+        return inventoryWither.apply(inventories, newInventory);
     }
 
-
-
-    /**
-     * Attempts to remove an item from the inventories.
-     *
-     * @param currentInventories The current state of the inventories before the operation.
-     * @param uniqueItemId The unique ID of the item to remove (primarily for EquipInstance).
-     * @param quantity The amount to remove (primarily for ItemStack).
-     * @return An {@link InventoryUpdateResult} containing the new state of the inventories.
-     */
-    public InventoryUpdateResult removeItem(CharacterInventories currentInventories, UUID uniqueItemId, int quantity) {
-        // TODO: Implement logic to find and remove an item.
-        // This method signature might need refinement to better handle both unique and stackable items.
-        System.out.println("Placeholder: Logic for removing item " + uniqueItemId);
-
-        return null; // Placeholder
+    // --- handleEquipInstanceAddition and other methods ---
+    private InventoryUpdateResult handleEquipInstanceAddition(CharacterInventories inventories, EquipInstance equipToAdd) {
+        // ... (implementation from previous discussion)
+        return new InventoryUpdateResult(inventories); // Placeholder
     }
-
-
-
-    /**
-     * Attempts to use an item from the inventory. This is the core "cartero" method.
-     *
-     * @param currentProfile The actor's profile before using the item.
-     * @param uniqueItemId The unique ID of the item to be used.
-     * @return A {@link UseItemResult} containing the potentially modified actor profile and inventories.
-     */
-    public UseItemResult useItem(ActorProfile currentProfile, UUID uniqueItemId) {
-        // TODO:
-        // 1. Find the item in the inventories based on its ID.
-        // 2. Use a "switch" with pattern matching on the ItemInstance type.
-        //    - case EquipInstance: Call EquipmentService.
-        //    - case ItemStack: Check the template to see if it's a consumable, etc., and apply the effect.
-        // 3. Return the new ActorProfile and CharacterInventories.
-        System.out.println("Placeholder: Logic for using item " + uniqueItemId);
-
-        return null; // Placeholder
-    }
-
-
-
-
-
-
 }

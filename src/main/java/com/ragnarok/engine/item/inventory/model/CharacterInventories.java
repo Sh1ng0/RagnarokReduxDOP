@@ -39,6 +39,24 @@ public record CharacterInventories(
     public CharacterInventories withConsumables(Inventory<ItemStack> newConsumables) {
         return new CharacterInventories(this.equipment, newConsumables, this.cards, this.miscellaneous);
     }
+
+    /**
+     * Returns a new CharacterInventories instance with an updated cards inventory.
+     * @param newCards The new cards inventory.
+     * @return A new, updated CharacterInventories record.
+     */
+    public CharacterInventories withCards(Inventory<ItemStack> newCards) {
+        return new CharacterInventories(this.equipment, this.consumables, newCards, this.miscellaneous);
+    }
+
+    /**
+     * Returns a new CharacterInventories instance with an updated miscellaneous inventory.
+     * @param newMiscellaneous The new miscellaneous inventory.
+     * @return A new, updated CharacterInventories record.
+     */
+    public CharacterInventories withMiscellaneous(Inventory<ItemStack> newMiscellaneous) {
+        return new CharacterInventories(this.equipment, this.consumables, this.cards, newMiscellaneous);
+    }
 }
 
 
