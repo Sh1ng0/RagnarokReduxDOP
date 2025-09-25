@@ -3,14 +3,17 @@ package com.ragnarok.engine.item.inventory.model;
 import com.ragnarok.engine.item.instance.ItemInstance;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * Un 'record' genérico e inmutable que representa un contenedor para un tipo específico de ítem.
- * Mantiene una lista de ítems y define la capacidad máxima que puede almacenar.
+ * A generic, immutable record representing a container for a specific type of item.
+ * It uses a Map for high-performance lookups (O(1)) while preserving insertion order
+ * by expecting a LinkedHashMap implementation.
  *
- * @param <T> El tipo de {@link ItemInstance} que este inventario puede contener.
- * @param items Una lista de los ítems actualmente en este inventario.
- * @param capacity El número máximo de ítems que este inventario puede contener.
+ * @param <K> The type of the key used to identify items (e.g., UUID for unique items, Long for templates).
+ * @param <V> The type of {@link ItemInstance} this inventory can hold.
+ * @param items A map of the items currently in this inventory.
+ * @param capacity The maximum number of unique item stacks/instances this inventory can hold.
  */
-public record Inventory<T extends ItemInstance>(List<T> items, int capacity) {
+public record Inventory<K, V extends ItemInstance>(Map<K, V> items, int capacity) {
 }
