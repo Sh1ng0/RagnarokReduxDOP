@@ -7,7 +7,10 @@ import com.ragnarok.engine.item.inventory.model.Inventory;
 import com.ragnarok.engine.item.instance.EquipInstance;
 import com.ragnarok.engine.item.instance.ItemInstance;
 import com.ragnarok.engine.item.instance.ItemStack;
+import com.ragnarok.engine.logger.LogEvent;
 import com.ragnarok.engine.repository.ItemTemplateRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,6 +37,8 @@ import java.util.function.Function;
  */
 public class InventoryService {
 
+    private static final Logger logger = LoggerFactory.getLogger(InventoryService.class);
+
     private final ItemTemplateRepository itemTemplateRepository;
 
     public InventoryService(ItemTemplateRepository itemTemplateRepository) {
@@ -54,11 +59,11 @@ public class InventoryService {
         // This is the main "postman" switch. It's the entry point for all item additions.
         return switch (itemToAdd) {
             case EquipInstance equip ->
-                // Case 1: The item is a unique piece of equipment. Delegate to its specific handler.
+
                     handleEquipInstanceAddition(currentInventories, equip);
 
             case ItemStack stack -> {
-                // Case 2: The item is a stackable. We need to find its category first.
+
                 ItemCategory category = itemTemplateRepository.findCategoryById(stack.getTemplateId());
 
                 // This nested switch routes the stackable item to the correct inventory.
@@ -73,12 +78,12 @@ public class InventoryService {
                             addToStackableInventory(currentInventories, stack,
                                     CharacterInventories::miscellaneous, CharacterInventories::withMiscellaneous);
                     case EQUIPMENT -> {
-                        // This case should not happen if an item is an ItemStack, but the switch must be exhaustive.
-                        System.out.println("WARN: Tried to add an EQUIPMENT-category item as an ItemStack. Item ID: " + stack.getTemplateId());
+
+                        LogEvent.INVALID_ITEM_CATEGORY.log(logger, stack.getTemplateId());
                         yield currentInventories; // Return original state
                     }
                 };
-                // Yield the final result for the ItemStack case.
+
                 yield new InventoryUpdateResult(updatedInventories);
             }
         };
@@ -93,31 +98,30 @@ public class InventoryService {
      * @return An {@link InventoryUpdateResult} with the new state of the inventories.
      */
     private InventoryUpdateResult handleEquipInstanceAddition(CharacterInventories inventories, EquipInstance equipToAdd) {
-        // 1. Get the specific inventory we want to modify.
+
         Inventory<UUID, EquipInstance> equipmentInventory = inventories.equipment();
 
-        // 2. Guard Clause: Check for capacity before doing anything else.
+
         if (equipmentInventory.items().size() >= equipmentInventory.capacity()) {
-            System.out.println("LOG: Equipment inventory is full. Cannot add " + equipToAdd.getName());
+            LogEvent.INVENTORY_FULL.log(logger, equipToAdd.getTemplateId());
             return new InventoryUpdateResult(inventories); // Return original, unmodified state.
         }
 
-        // 3. Create a new, mutable map from the old one to preserve immutability.
+
         // We use LinkedHashMap to maintain insertion order.
         Map<UUID, EquipInstance> newItemsMap = new LinkedHashMap<>(equipmentInventory.items());
 
-        // 4. Add the new item. The key is the instance's unique UUID.
-        newItemsMap.put(equipToAdd.getUniqueId(), equipToAdd);
-        System.out.println("LOG: Added unique equipment [" + equipToAdd.getName() + "] to inventory.");
 
-        // 5. Build the new state back up.
-        // Create the new inventory record with the updated map.
+        newItemsMap.put(equipToAdd.getUniqueId(), equipToAdd);
+        LogEvent.EQUIPMENT_ITEM_ADDED.log(logger, equipToAdd.getName(), equipToAdd.getUniqueId());
+
+
         Inventory<UUID, EquipInstance> newEquipmentInventory = new Inventory<>(newItemsMap, equipmentInventory.capacity());
 
-        // Use the wither to create the new, final CharacterInventories state.
+
         CharacterInventories updatedInventories = inventories.withEquipment(newEquipmentInventory);
 
-        // 6. Return the final result.
+
         return new InventoryUpdateResult(updatedInventories);
     }
 
@@ -165,16 +169,16 @@ public class InventoryService {
             ItemStack existingStack = newItemsMap.get(templateId);
             ItemStack mergedStack = existingStack.withQuantityChangedBy(stackToAdd.quantity());
             newItemsMap.put(templateId, mergedStack); // Replace the old stack with the new merged one.
-            System.out.println("LOG: Stacked " + stackToAdd.quantity() + " of item " + templateId);
+            LogEvent.ITEM_STACKED.log(logger, stackToAdd.quantity(), templateId, mergedStack.quantity());
 
         } else {
             // Case 2: No existing stack. Add a new one if there is capacity.
             if (newItemsMap.size() >= targetInventory.capacity()) {
-                System.out.println("LOG: Inventory is full. Cannot add new item stack with templateId " + templateId);
+                LogEvent.INVENTORY_FULL.log(logger, templateId);
                 return inventories; // Return original, unmodified state.
             }
             newItemsMap.put(templateId, stackToAdd);
-            System.out.println("LOG: Added new stack for item with templateId " + templateId);
+            LogEvent.ITEM_ADDED.log(logger, templateId);
         }
         // --- END OF CORE LOGIC ---
 
@@ -186,6 +190,9 @@ public class InventoryService {
     }
 
     // REMOVE ITEM
+
+
+
 
     // USE ITEM
 }

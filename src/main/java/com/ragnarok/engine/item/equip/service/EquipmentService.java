@@ -9,10 +9,14 @@ import com.ragnarok.engine.item.equip.model.WeaponTemplate;
 import com.ragnarok.engine.item.instance.EquipInstance;
 import com.ragnarok.engine.job.Job;
 import com.ragnarok.engine.repository.JobRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.ragnarok.engine.logger.LogEvent;
 
 /**
  * A stateless service responsible for managing all of an actor's equipment logic.
@@ -35,6 +39,8 @@ import java.util.Optional;
  * </ul>
  */
 public class EquipmentService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EquipmentService.class);
 
 
 
@@ -63,10 +69,11 @@ public class EquipmentService {
         //  Fast Guards -> Contextual Guards -> Specific Cases -> General Case
 
 
+
         var equipmentOptional = currentState.equipment();
 
         if (equipmentOptional.isEmpty()) {
-            System.out.println("LOG: Actor doesn't have an equip component");
+            LogEvent.ACTOR_HAS_NO_EQUIPMENT_COMPONENT.log(logger);
             return new EquipResult(currentState, List.of());
         }
 
@@ -74,8 +81,8 @@ public class EquipmentService {
 
         // LEVEL
         if (currentState.baseLevel() < itemTemplate.requiredLevel()) {
-            System.out.printf("LOG: Nivel insuficiente. Se requiere %d, el actor tiene %d.%n",
-                    itemTemplate.requiredLevel(), currentState.baseLevel());
+            LogEvent.EQUIP_FAIL_LEVEL.log(logger, itemTemplate.name(), itemTemplate.requiredLevel(), currentState.baseLevel());
+
             return new EquipResult(currentState, List.of());
         }
 
@@ -85,15 +92,17 @@ public class EquipmentService {
         if (!canJobEquip(currentState, itemTemplate)) {
             // El log ahora lo podemos mover dentro del método canJobEquip si queremos,
             // o dejarlo aquí, pero la lógica de la llamada es lo importante.
-            System.out.printf("LOG: Job incompatible. El item es para %s, el actor es %s.%n",
-                    itemTemplate.equippableJobs(), currentState.jobId());
+
+            LogEvent.EQUIP_FAIL_JOB.log(logger, itemTemplate.name(), currentState.jobId(), itemTemplate.equippableJobs());
+
             return new EquipResult(currentState, List.of());
         }
 
         // SLOT COMPATIBILITY
         boolean isSlotCompatible = isItemCompatibleWithSlot(itemTemplate, targetSlot);
         if (!isItemCompatibleWithSlot(itemTemplate, targetSlot)) {
-            System.out.printf("LOG: Item %s not compatible with slot %s.%n", itemTemplate.name(), targetSlot);
+            LogEvent.EQUIP_FAIL_SLOT.log(logger, itemTemplate.name(), targetSlot);
+
             return new EquipResult(currentState, List.of());
         }
 
@@ -119,8 +128,8 @@ public class EquipmentService {
                     prospectiveLeftHand.getItemTemplate() instanceof WeaponTemplate offHand) {
 
                 if (!mainHand.compatibleOffHandTypes().contains(offHand.type())) {
-                    System.out.printf("LOG: Incompatible Dual Wield. %s no permite %s en la mano secundaria.%n",
-                            mainHand.name(), offHand.type());
+                    LogEvent.EQUIP_FAIL_DUAL_WIELD.log(logger, mainHand.name(), offHand.name());
+
                     return new EquipResult(currentState, List.of());
                 }
             }
@@ -149,8 +158,8 @@ public class EquipmentService {
                     ? "ninguno"
                     : String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
 
-            System.out.printf("LOG: Item %s equipado (2H). Item(s) devuelto(s): %s.%n",
-                    itemTemplate.name(), returnedItemsNames);
+            LogEvent.EQUIP_SUCCESS.log(logger, instanceToEquip.getName(), targetSlot, returnedItemsNames);
+
 
             return new EquipResult(newState, returnedItems);
         }
@@ -170,8 +179,13 @@ public class EquipmentService {
 
             String returnedItemsNames = String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
 
-            System.out.printf("LOG: Item %s equipado en %s. Item(s) devuelto(s): %s.%n",
-                    itemTemplate.name(), targetSlot, returnedItemsNames);
+            LogEvent.EQUIP_SUCCESS.log(
+                    logger,
+                    instanceToEquip.getName(),
+                    targetSlot,
+                    returnedItemsNames
+            );
+
 
             return new EquipResult(newState, returnedItems);
         }
@@ -193,8 +207,8 @@ public class EquipmentService {
                 : String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
 
         // CUANDO SE CREE EL SERVICIO DE INVENTARIO HABRÁ QUE REFACTORIZAR ESTO
-        System.out.printf("LOG: Item %s equiped in %s. Item(s) retrieved: %s.%n",
-                instanceToEquip.getName(), targetSlot, returnedItemsNames);
+        LogEvent.EQUIP_SUCCESS.log(logger, instanceToEquip.getName(), targetSlot, returnedItemsNames);
+
 
         return new EquipResult(newState, returnedItems);
 
@@ -229,16 +243,14 @@ public class EquipmentService {
             return new UnequipResult(currentState, Optional.empty());
         }
 
-        // --- Success Case ---
 
-        // Create the new equipment state with the target slot set to null.
         CharacterEquipment newSlots = currentSlots.with(targetSlot, null);
         ActorProfile newState = currentState.withEquipment(newSlots);
 
-        // REFACTOR: We use the getName() method from the instance for the log.
-        System.out.printf("LOG: Item %s unequipped from %s.%n", itemInSlot.getName(), targetSlot);
 
-        // REFACTOR: The result now contains the unique instance that was removed.
+        LogEvent.UNEQUIP_SUCCESS.log(logger, itemInSlot.getName(), targetSlot);
+
+
         return new UnequipResult(newState, Optional.of(itemInSlot));
     }
 
@@ -306,7 +318,8 @@ public class EquipmentService {
             characterJob = JobRepository.findById(actor.jobId());
         } catch (IllegalArgumentException e) {
             // Si el JobId del actor no existe en el repo, es un estado inválido.
-            System.err.println("Error: Job no encontrado para el actor: " + actor.jobId());
+            LogEvent.JOB_NOT_FOUND_IN_REPOSITORY.log(logger, actor.jobId());
+
             return false;
         }
 
@@ -340,7 +353,7 @@ public class EquipmentService {
                     return true;
                 }
             } catch (IllegalArgumentException e) {
-                // Ignoramos si un job padre no se encuentra y continuamos.
+                LogEvent.JOB_HIERARCHY_BROKEN.log(logger, parentId);
                 continue;
             }
         }
