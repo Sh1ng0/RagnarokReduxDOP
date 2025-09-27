@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.ragnarok.engine.logger.LogEvent;
+
 
 /**
  * A stateless service responsible for managing all of an actor's equipment logic.
@@ -73,7 +73,7 @@ public class EquipmentService {
         var equipmentOptional = currentState.equipment();
 
         if (equipmentOptional.isEmpty()) {
-            LogEvent.ACTOR_HAS_NO_EQUIPMENT_COMPONENT.log(logger);
+            EquipmentLogEvent.ACTOR_HAS_NO_EQUIPMENT_COMPONENT.log(logger);
             return new EquipResult(currentState, List.of());
         }
 
@@ -81,7 +81,7 @@ public class EquipmentService {
 
         // LEVEL
         if (currentState.baseLevel() < itemTemplate.requiredLevel()) {
-            LogEvent.EQUIP_FAIL_LEVEL.log(logger, itemTemplate.name(), itemTemplate.requiredLevel(), currentState.baseLevel());
+            EquipmentLogEvent.EQUIP_FAIL_LEVEL.log(logger, itemTemplate.name(), itemTemplate.requiredLevel(), currentState.baseLevel());
 
             return new EquipResult(currentState, List.of());
         }
@@ -90,10 +90,9 @@ public class EquipmentService {
 //        List<String> equippableJobs = itemTemplate.equippableJobs();
         // Si el objeto es equipable por todos los jobs Collections.emptyList(), no pasa a la segunda parte de la puerta logica y da true igual
         if (!canJobEquip(currentState, itemTemplate)) {
-            // El log ahora lo podemos mover dentro del método canJobEquip si queremos,
-            // o dejarlo aquí, pero la lógica de la llamada es lo importante.
 
-            LogEvent.EQUIP_FAIL_JOB.log(logger, itemTemplate.name(), currentState.jobId(), itemTemplate.equippableJobs());
+
+            EquipmentLogEvent.EQUIP_FAIL_JOB.log(logger, itemTemplate.name(), currentState.jobId(), itemTemplate.equippableJobs());
 
             return new EquipResult(currentState, List.of());
         }
@@ -101,7 +100,7 @@ public class EquipmentService {
         // SLOT COMPATIBILITY
         boolean isSlotCompatible = isItemCompatibleWithSlot(itemTemplate, targetSlot);
         if (!isItemCompatibleWithSlot(itemTemplate, targetSlot)) {
-            LogEvent.EQUIP_FAIL_SLOT.log(logger, itemTemplate.name(), targetSlot);
+            EquipmentLogEvent.EQUIP_FAIL_SLOT.log(logger, itemTemplate.name(), targetSlot);
 
             return new EquipResult(currentState, List.of());
         }
@@ -128,7 +127,7 @@ public class EquipmentService {
                     prospectiveLeftHand.getItemTemplate() instanceof WeaponTemplate offHand) {
 
                 if (!mainHand.compatibleOffHandTypes().contains(offHand.type())) {
-                    LogEvent.EQUIP_FAIL_DUAL_WIELD.log(logger, mainHand.name(), offHand.name());
+                    EquipmentLogEvent.EQUIP_FAIL_DUAL_WIELD.log(logger, mainHand.name(), offHand.name());
 
                     return new EquipResult(currentState, List.of());
                 }
@@ -153,12 +152,12 @@ public class EquipmentService {
 
             ActorProfile newState = currentState.withEquipment(newSlots);
 
-            // This is the corrected line
+
             String returnedItemsNames = returnedItems.isEmpty()
                     ? "ninguno"
                     : String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
 
-            LogEvent.EQUIP_SUCCESS.log(logger, instanceToEquip.getName(), targetSlot, returnedItemsNames);
+            EquipmentLogEvent.EQUIP_SUCCESS.log(logger, instanceToEquip.getName(), targetSlot, returnedItemsNames);
 
 
             return new EquipResult(newState, returnedItems);
@@ -179,7 +178,7 @@ public class EquipmentService {
 
             String returnedItemsNames = String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
 
-            LogEvent.EQUIP_SUCCESS.log(
+            EquipmentLogEvent.EQUIP_SUCCESS.log(
                     logger,
                     instanceToEquip.getName(),
                     targetSlot,
@@ -206,8 +205,8 @@ public class EquipmentService {
                 ? "none"
                 : String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
 
-        // CUANDO SE CREE EL SERVICIO DE INVENTARIO HABRÁ QUE REFACTORIZAR ESTO
-        LogEvent.EQUIP_SUCCESS.log(logger, instanceToEquip.getName(), targetSlot, returnedItemsNames);
+        // CUANDO SE CREE EL SERVICIO DE INVENTARIO HABRÁ QUE REFACTORIZAR ESTO (Quizá no?)
+        EquipmentLogEvent.EQUIP_SUCCESS.log(logger, instanceToEquip.getName(), targetSlot, returnedItemsNames);
 
 
         return new EquipResult(newState, returnedItems);
@@ -248,7 +247,7 @@ public class EquipmentService {
         ActorProfile newState = currentState.withEquipment(newSlots);
 
 
-        LogEvent.UNEQUIP_SUCCESS.log(logger, itemInSlot.getName(), targetSlot);
+        EquipmentLogEvent.UNEQUIP_SUCCESS.log(logger, itemInSlot.getName(), targetSlot);
 
 
         return new UnequipResult(newState, Optional.of(itemInSlot));
@@ -318,7 +317,7 @@ public class EquipmentService {
             characterJob = JobRepository.findById(actor.jobId());
         } catch (IllegalArgumentException e) {
             // Si el JobId del actor no existe en el repo, es un estado inválido.
-            LogEvent.JOB_NOT_FOUND_IN_REPOSITORY.log(logger, actor.jobId());
+            EquipmentLogEvent.JOB_NOT_FOUND_IN_REPOSITORY.log(logger, actor.jobId());
 
             return false;
         }
@@ -353,7 +352,7 @@ public class EquipmentService {
                     return true;
                 }
             } catch (IllegalArgumentException e) {
-                LogEvent.JOB_HIERARCHY_BROKEN.log(logger, parentId);
+                EquipmentLogEvent.JOB_HIERARCHY_BROKEN.log(logger, parentId);
                 continue;
             }
         }

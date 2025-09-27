@@ -13,6 +13,8 @@ import java.text.MessageFormat;
  * within the game engine. It acts as a clean front-end to the underlying logging
  * framework (SLF4J + Logback), ensuring all log messages are consistent and centrally managed.
  */
+
+@Deprecated
 public enum LogEvent {
 
     // --- Inventory Events ---

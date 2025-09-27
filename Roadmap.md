@@ -32,6 +32,8 @@ Con el nuevo modelo de actor establecido, podemos construir los sistemas de jueg
 * **Sistema de Progresión:** Implementar la lógica de subida de nivel y la aplicación de *Job Bonus*.
 * **Impacto de Stats de Equipo:** Utilizar el `CharacterProfileBuilder` para que las estadísticas de los ítems tengan un impacto real en el combate.
 
+
+CLASE DE ORUQESTACIÓN DE METODOS QUE RECIBE LOS INPUTS DESDE EL UI, LLAMA A X METODO PARA HACER Y COSA (Por ejemplo, equipar un item, llama al servicio de equipar y al servicio de inventario)
 ## 🎨 Fase 4: Pipeline de Animación (Futuro)
 Paralelamente, se puede empezar a trabajar en el sistema que dará vida a los personajes.
 

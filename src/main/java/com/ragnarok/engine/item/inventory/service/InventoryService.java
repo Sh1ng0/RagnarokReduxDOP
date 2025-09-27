@@ -7,7 +7,7 @@ import com.ragnarok.engine.item.inventory.model.Inventory;
 import com.ragnarok.engine.item.instance.EquipInstance;
 import com.ragnarok.engine.item.instance.ItemInstance;
 import com.ragnarok.engine.item.instance.ItemStack;
-import com.ragnarok.engine.logger.LogEvent;
+
 import com.ragnarok.engine.repository.ItemTemplateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class InventoryService {
                                     CharacterInventories::miscellaneous, CharacterInventories::withMiscellaneous);
                     case EQUIPMENT -> {
 
-                        LogEvent.INVALID_ITEM_CATEGORY.log(logger, stack.getTemplateId());
+                        InventoryLogEvent.INVALID_ITEM_CATEGORY.log(logger, stack.getTemplateId());
                         yield currentInventories; // Return original state
                     }
                 };
@@ -103,7 +103,7 @@ public class InventoryService {
 
 
         if (equipmentInventory.items().size() >= equipmentInventory.capacity()) {
-            LogEvent.INVENTORY_FULL.log(logger, equipToAdd.getTemplateId());
+            InventoryLogEvent.INVENTORY_FULL.log(logger, equipToAdd.getTemplateId());
             return new InventoryUpdateResult(inventories); // Return original, unmodified state.
         }
 
@@ -113,7 +113,7 @@ public class InventoryService {
 
 
         newItemsMap.put(equipToAdd.getUniqueId(), equipToAdd);
-        LogEvent.EQUIPMENT_ITEM_ADDED.log(logger, equipToAdd.getName(), equipToAdd.getUniqueId());
+        InventoryLogEvent.EQUIPMENT_ITEM_ADDED.log(logger, equipToAdd.getName(), equipToAdd.getUniqueId());
 
 
         Inventory<UUID, EquipInstance> newEquipmentInventory = new Inventory<>(newItemsMap, equipmentInventory.capacity());
@@ -169,18 +169,18 @@ public class InventoryService {
             ItemStack existingStack = newItemsMap.get(templateId);
             ItemStack mergedStack = existingStack.withQuantityChangedBy(stackToAdd.quantity());
             newItemsMap.put(templateId, mergedStack); // Replace the old stack with the new merged one.
-            LogEvent.ITEM_STACKED.log(logger, stackToAdd.quantity(), templateId, mergedStack.quantity());
+            InventoryLogEvent.ITEM_STACKED.log(logger, stackToAdd.quantity(), templateId, mergedStack.quantity());
 
         } else {
             // Case 2: No existing stack. Add a new one if there is capacity.
             if (newItemsMap.size() >= targetInventory.capacity()) {
-                LogEvent.INVENTORY_FULL.log(logger, templateId);
-                return inventories; // Return original, unmodified state.
+                InventoryLogEvent.INVENTORY_FULL.log(logger, templateId);
+                return inventories;
             }
             newItemsMap.put(templateId, stackToAdd);
-            LogEvent.ITEM_ADDED.log(logger, templateId);
+            InventoryLogEvent.ITEM_ADDED.log(logger, templateId);
         }
-        // --- END OF CORE LOGIC ---
+
 
         // Create the new inventory record with the updated map.
         Inventory<Long, ItemStack> newInventory = new Inventory<>(newItemsMap, targetInventory.capacity());
@@ -189,10 +189,146 @@ public class InventoryService {
         return inventoryWither.apply(inventories, newInventory);
     }
 
+
     // REMOVE ITEM
 
+    /**
+     * The main public method to remove an item from the inventories.
+     * <p>
+     * It uses a modern switch expression to determine the item's nature and
+     * delegate the removal logic to the appropriate private handler. The amount
+     * to remove from a stack is determined by the {@code quantity} property of the
+     * passed {@link ItemStack}.
+     *
+     * @param currentInventories The current state of the inventories.
+     * @param itemToRemove       The item instance to be removed. For {@code ItemStack}, the quantity to remove is specified within the object.
+     * @return An {@link InventoryUpdateResult} with the new state of the inventories.
+     */
+    public InventoryUpdateResult removeItem(CharacterInventories currentInventories, ItemInstance itemToRemove) {
+        return switch (itemToRemove) {
+            case EquipInstance equip ->
+                // Aún no lo hemos implementado, pero ya lo dejamos enlazado.
+                    handleEquipInstanceRemoval(currentInventories, equip);
+
+            case ItemStack stack -> {
+                // Obtenemos la categoría para saber a qué inventario dirigirnos.
+                ItemCategory category = itemTemplateRepository.findCategoryById(stack.getTemplateId());
+
+                // Este switch interno despacha al handler genérico con las funciones correctas.
+                CharacterInventories updatedInventories = switch (category) {
+                    case CONSUMABLE ->
+                                removeFromStackableInventory(currentInventories, stack,
+                                    CharacterInventories::consumables, CharacterInventories::withConsumables);
+                    case CARD ->
+                            removeFromStackableInventory(currentInventories, stack,
+                                    CharacterInventories::cards, CharacterInventories::withCards);
+                    case MISCELLANEOUS ->
+                            removeFromStackableInventory(currentInventories, stack,
+                                    CharacterInventories::miscellaneous, CharacterInventories::withMiscellaneous);
+                    case EQUIPMENT -> {
+
+                        InventoryLogEvent.INVALID_ITEM_CATEGORY.log(logger, stack.getTemplateId());
+                        yield currentInventories;
+                    }
+                };
+
+
+                yield new InventoryUpdateResult(updatedInventories);
+            }
+        };
+    }
+
+    /**
+     * Handles removing a unique, non-stackable equipment item from the equipment inventory.
+     *
+     * @param inventories    The current state of all inventories.
+     * @param equipToRemove  The unique EquipInstance to be removed.
+     * @return An {@link InventoryUpdateResult} with the new state of the inventories.
+     */
+    private InventoryUpdateResult handleEquipInstanceRemoval(CharacterInventories inventories, EquipInstance equipToRemove) {
+        Inventory<UUID, EquipInstance> equipmentInventory = inventories.equipment();
+
+
+        // No aseguramos de que el item existe
+        if (!equipmentInventory.items().containsKey(equipToRemove.getUniqueId())) {
+            InventoryLogEvent.UNIQUE_ITEM_NOT_FOUND_FOR_REMOVAL.log(logger, equipToRemove.getName(), equipToRemove.getUniqueId());
+            return new InventoryUpdateResult(inventories); // Si no existe, no hacemos nada y devolvemos el estado original.
+        }
+
+
+        Map<UUID, EquipInstance> newItemsMap = new LinkedHashMap<>(equipmentInventory.items());
+
+
+        newItemsMap.remove(equipToRemove.getUniqueId());
+        InventoryLogEvent.EQUIPMENT_ITEM_REMOVED.log(logger, equipToRemove.getName(), equipToRemove.getUniqueId());
+
+
+        Inventory<UUID, EquipInstance> newEquipmentInventory = new Inventory<>(newItemsMap, equipmentInventory.capacity());
+        CharacterInventories updatedInventories = inventories.withEquipment(newEquipmentInventory);
+
+
+        return new InventoryUpdateResult(updatedInventories);
+    }
+
+
+    /**
+     * A generic helper method to immutably remove a quantity of an ItemStack from a specific stackable inventory.
+     * <p>
+     * This method contains the core logic for removal. It accepts a "getter" and a "wither"
+     * function, allowing the same logic to be reused for consumables, cards, etc. (DRY principle).
+     * <p>
+     * It handles two main scenarios:
+     * 1. If the quantity to remove is less than the current stack size, it creates a new stack with the reduced quantity.
+     * 2. If the quantity to remove is greater than or equal to the stack size, it removes the entire stack from the inventory.
+     * It operates immutably by creating a copy of the inventory map.
+     *
+     * @param inventories       The current, immutable state of all character inventories.
+     * @param stackToRemove     The item stack containing the templateId and the quantity to remove.
+     * @param inventoryGetter   A method reference (e.g., {@code CharacterInventories::cards}) to get the target inventory.
+     * @param inventoryWither   A method reference (e.g., {@code CharacterInventories::withCards}) to create the new state.
+     * @return A new {@code CharacterInventories} instance with the item removed/reduced, or the original if the item isn't found.
+     */
+    private CharacterInventories removeFromStackableInventory(
+            CharacterInventories inventories,
+            ItemStack stackToRemove,
+            Function<CharacterInventories, Inventory<Long, ItemStack>> inventoryGetter,
+            BiFunction<CharacterInventories, Inventory<Long, ItemStack>, CharacterInventories> inventoryWither) {
+
+        Inventory<Long, ItemStack> targetInventory = inventoryGetter.apply(inventories);
+        Map<Long, ItemStack> itemsMap = targetInventory.items();
+        long templateId = stackToRemove.getTemplateId();
+        int quantityToRemove = stackToRemove.quantity();
+
+
+        if (!itemsMap.containsKey(templateId)) {
+            InventoryLogEvent.STACKABLE_ITEM_NOT_FOUND_FOR_REMOVAL.log(logger, templateId);
+            return inventories;
+        }
+
+
+        Map<Long, ItemStack> newItemsMap = new LinkedHashMap<>(itemsMap);
+        ItemStack existingStack = newItemsMap.get(templateId);
+
+        int newQuantity = existingStack.quantity() - quantityToRemove;
+
+        if (newQuantity > 0) {
+
+            ItemStack updatedStack = existingStack.withNewQuantity(newQuantity);
+            newItemsMap.put(templateId, updatedStack);
+            InventoryLogEvent.ITEM_QUANTITY_REDUCED.log(logger, templateId, quantityToRemove, newQuantity);
+        } else {
+
+            newItemsMap.remove(templateId);
+            InventoryLogEvent.ITEM_REMOVED_FULLY.log(logger, templateId);
+        }
+
+        // new state using wither
+        Inventory<Long, ItemStack> newInventory = new Inventory<>(newItemsMap, targetInventory.capacity());
+        return inventoryWither.apply(inventories, newInventory);
+    }
 
 
 
-    // USE ITEM
+
+
 }

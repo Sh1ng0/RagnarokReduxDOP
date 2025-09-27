@@ -22,4 +22,17 @@ public record ItemStack(long templateId, int quantity) implements ItemInstance {
     public ItemStack withQuantityChangedBy(int amount) {
         return new ItemStack(this.templateId, this.quantity + amount);
     }
+
+
+    /**
+     * Devuelve una NUEVA instancia de ItemStack con una cantidad absoluta específica.
+     * Es ideal para cuando ya hemos calculado la cantidad final deseada.
+     *
+     * @param newQuantity La nueva cantidad total para el stack.
+     * @return Un nuevo ItemStack con la cantidad especificada.
+     */
+    public ItemStack withNewQuantity(int newQuantity) {
+        // Aseguramos que la cantidad nunca sea negativa.
+        return new ItemStack(this.templateId, Math.max(0, newQuantity));
+    }
 }
