@@ -1,6 +1,6 @@
 package com.ragnarok.engine.item.equip.model;
 
-import com.ragnarok.engine.enums.StatusEffect;
+import com.ragnarok.engine.mechanics.AutocastData;
 import com.ragnarok.engine.stat.StatBlock;
 
 import java.util.Collections;
@@ -25,8 +25,8 @@ public record EquipmentBonuses(
 
         // Efectos especiales y habilidades (3)
         Map<String, Integer> grantSkills,
-        List<AutocastBonus> autocastOnHit,
-        List<AutocastBonus> autocastWhenHit
+        List<AutocastData> autocastEffects
+
 ) {
     /**
      * A constant representing zero bonuses across the board.
@@ -35,7 +35,7 @@ public record EquipmentBonuses(
             StatBlock.ZERO, // primaryStats
             0, 0, 0, 0, 0, 0, 0, 0, 0, // 9 flat bonuses
             0.0, 0.0, 0.0,             // 3 percent bonuses
-            Collections.emptyMap(), Collections.emptyList(), Collections.emptyList() // 3 special effects
+                Collections.emptyMap(), Collections.emptyList() // 3 special effects
     );
 
     /**
@@ -52,23 +52,23 @@ public record EquipmentBonuses(
     // --- Wither Methods for Convenience ---
 
     public EquipmentBonuses withPrimaryStats(StatBlock primaryStats) {
-        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastOnHit, autocastWhenHit);
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
     }
 
     public EquipmentBonuses withMaxHp(int maxHp) {
-        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastOnHit, autocastWhenHit);
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
     }
 
     public EquipmentBonuses withMaxSp(int maxSp) {
-        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastOnHit, autocastWhenHit);
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
     }
 
     public EquipmentBonuses withAttack(int attack) {
-        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastOnHit, autocastWhenHit);
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
     }
 
     public EquipmentBonuses withDefense(int defense) {
-        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastOnHit, autocastWhenHit);
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
     }
 
     // ... (and so on for other fields as needed)

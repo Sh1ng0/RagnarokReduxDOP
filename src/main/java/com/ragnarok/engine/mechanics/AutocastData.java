@@ -1,4 +1,4 @@
-package com.ragnarok.engine.item.equip.model;
+package com.ragnarok.engine.mechanics;
 
 /**
  * Represents an auto-cast (proc) effect on a piece of equipment.
@@ -7,4 +7,4 @@ package com.ragnarok.engine.item.equip.model;
  * @param skillLevel The level at which the skill is cast.
  * @param chance     The probability of the effect triggering (e.g., 0.03 for 3%).
  */
-public record AutocastBonus(String skillId, int skillLevel, double chance) {}
+public record AutocastData(String skillId, int skillLevel, double chance, Trigger on) {}
