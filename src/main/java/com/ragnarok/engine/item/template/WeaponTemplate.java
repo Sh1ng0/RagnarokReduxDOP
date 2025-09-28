@@ -1,6 +1,9 @@
-package com.ragnarok.engine.item.equip.model;
+package com.ragnarok.engine.item.template;
 
 import com.ragnarok.engine.enums.Element;
+import com.ragnarok.engine.item.equip.model.EquipmentBonuses;
+import com.ragnarok.engine.item.equip.model.EquipmentType;
+import com.ragnarok.engine.item.equip.model.WeaponType;
 
 import java.util.Collections;
 import java.util.List;

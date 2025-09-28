@@ -1,11 +1,13 @@
-package com.ragnarok.engine.item.equip.model;
+package com.ragnarok.engine.item.template;
 
 import com.ragnarok.engine.enums.Element;
+import com.ragnarok.engine.item.equip.model.EquipmentBonuses;
+import com.ragnarok.engine.item.equip.model.EquipmentType;
 
 import java.util.List;
 
 
-public sealed interface EquipmentTemplate permits WeaponTemplate, ArmorTemplate {
+public sealed interface EquipmentTemplate extends ItemTemplate permits WeaponTemplate, ArmorTemplate {
     long id();
     String name();
     Element element();

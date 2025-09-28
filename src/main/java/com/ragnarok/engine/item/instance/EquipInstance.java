@@ -1,6 +1,6 @@
 package com.ragnarok.engine.item.instance;
 
-import com.ragnarok.engine.item.equip.model.EquipmentTemplate;
+import com.ragnarok.engine.item.template.EquipmentTemplate;
 
 import java.util.Objects;
 import java.util.UUID;

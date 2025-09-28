@@ -1,10 +1,9 @@
 package com.ragnarok.engine.repository;
 
-import com.ragnarok.engine.item.equip.model.EquipmentTemplate;
+import com.ragnarok.engine.item.template.EquipmentTemplate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

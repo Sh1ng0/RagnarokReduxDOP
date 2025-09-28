@@ -3,6 +3,9 @@ package com.ragnarok.engine.repository;
 import com.ragnarok.engine.enums.Element;
 import com.ragnarok.engine.item.defaults.EquipmentDefaults;
 import com.ragnarok.engine.item.equip.model.*;
+import com.ragnarok.engine.item.template.ArmorTemplate;
+import com.ragnarok.engine.item.template.EquipmentTemplate;
+import com.ragnarok.engine.item.template.WeaponTemplate;
 
 import java.util.Collections;
 import java.util.List;
