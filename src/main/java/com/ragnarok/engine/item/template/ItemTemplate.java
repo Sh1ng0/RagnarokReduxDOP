@@ -11,7 +11,7 @@ package com.ragnarok.engine.item.template;
  * </ol>
  * It enforces a common contract that every item template must have an ID and a name.
  */
-public sealed interface ItemTemplate permits EquipmentTemplate, ConsumableTemplate, MiscTemplate {
+public sealed interface ItemTemplate permits EquipmentTemplate, ConsumableTemplate, MiscTemplate, CardTemplate {
     long id();
     String name();
 }
