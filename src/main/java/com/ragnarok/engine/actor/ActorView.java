@@ -20,7 +20,7 @@ import java.util.UUID;
  * @param currentHp      The actor's current health points.
  * @param currentSp      The actor's current spirit points.
  * @param nextActionTick The game tick on which the actor is allowed to perform its next action (e.g., attack).
- * @param profile        A reference to the actor's profile, containing all stable combat stats.
+ * @param profile        A reference to  the actor's profile, containing all stable combat stats.
  */
 public record ActorView(
         UUID uniqueId,

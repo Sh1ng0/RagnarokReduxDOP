@@ -1,0 +1,59 @@
+Humm can't we also use the (Race race, int percent) for either damage or defense percent? (Thara frog card/Hydra card) or we would need an enum... humm
+
+
+
+Ver razonamiento
+Es una gran pregunta que va al corazón del diseño de datos. No deberíamos reutilizar el mismo record para ambos casos.
+
+Tu intuición de que "necesitaríamos un enum" es la solución perfecta para evitar ambigüedad.
+
+El Problema: La Ambigüedad
+Si usamos el mismo record DamageVsRace(Race race, int percent) para ambos casos, su significado dependería del contexto en el que se usa.
+
+Si está en un arma (Hydra Card), significa "+20% de daño infligido".
+
+Si está en un escudo (Thara Frog Card), significa "-30% de daño recibido".
+
+Esto es peligroso porque la lógica para interpretar el dato ya no está en el dato mismo, sino oculta en el StatCalculator. El record deja de ser auto-descriptivo, lo cual va en contra de nuestra filosofía.
+
+La Solución: Hacer los Datos Explícitos
+Como bien sugieres, usamos un enum para que el propio dato nos diga exactamente qué hace.
+
+1. Creamos un enum para el Tipo de Modificador:
+Este enum describe la naturaleza del bonus.
+
+Java
+
+// Podría vivir en un paquete como .../mechanics/
+public enum ModifierType {
+    DAMAGE_DEALT_TO,      // Aumenta el daño que HACES a un objetivo
+    DAMAGE_RECEIVED_FROM  // Reduce el daño que RECIBES de un objetivo
+}
+2. Creamos un record más genérico y explícito:
+Ahora, en lugar de DamageVsRace, creamos un record que use este enum.
+
+Java
+
+// En CardEffect.java, anidado o en su propio fichero.
+// Reemplazaría a DamageVsRace
+
+/**
+ * An effect that modifies damage based on the opponent's race.
+ * @param race The target race.
+ * @param percent The percentage value of the modification.
+ * @param type The type of modification (e.g., dealing more damage or receiving less).
+ */
+public record RacialModifier(Race race, int percent, ModifierType type) implements CardEffect {
+}
+¿Cómo se Usaría?
+Ahora tus cartas se definen de forma inequívoca:
+
+Hydra Card (+20% daño a Demi-Human):
+new RacialModifier(Race.DEMI_HUMAN, 20, ModifierType.DAMAGE_DEALT_TO)
+
+Thara Frog Card (-30% daño de Demi-Human):
+new RacialModifier(Race.DEMI_HUMAN, 30, ModifierType.DAMAGE_RECEIVED_FROM)
+
+Cuando el StatCalculator vea este record, no tendrá que adivinar nada. Simplemente mirará el type y sabrá exactamente cómo aplicar el percent (como un bonus al ataque o como una reducción a la defensa).
+
+Este enfoque es mucho más robusto, explícito y escalable.
