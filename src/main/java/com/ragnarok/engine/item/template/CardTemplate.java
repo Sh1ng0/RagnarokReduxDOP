@@ -1,6 +1,7 @@
 package com.ragnarok.engine.item.template;
 
 import com.ragnarok.engine.item.card.model.CardEffect;
+import com.ragnarok.engine.item.card.model.CardSocketType;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
 public record CardTemplate(
         long id,
         String name,
-        List<CardEffect> effects
+        List<CardEffect> effects,
+        CardSocketType socketType
 ) implements ItemTemplate {
 }
