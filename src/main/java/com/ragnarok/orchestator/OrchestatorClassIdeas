@@ -1,0 +1,36 @@
+El candidato ideal está en el pseudocódigo del Orquestador que diseñamos para el método handleUseItem.
+
+El switch del Orquestador
+Cuando discutimos cómo el Orquestador decidiría qué hacer con un ítem, propusimos un switch con pattern matching sobre la ItemTemplate. En el caso de un MiscTemplate, la acción era no hacer nada.
+
+El Código "Antes"
+En nuestro diseño, la rama para los ítems misceláneos se vería así:
+
+Java
+
+// En el Orquestador...
+switch (template) {
+    case WeaponTemplate w -> equipmentService.equip(...);
+    case ConsumableTemplate c -> consumableService.use(...);
+
+    // Aquí, la variable 'm' se declara pero nunca se usa.
+    case MiscTemplate m -> {
+        // No hacer nada. La 'm' es una variable no usada.
+        // Un linter podría marcar esto como una advertencia.
+    }
+}
+El Código "Después" (con Unnamed Variables)
+Aplicando la característica que muestras, podemos usar el guion bajo (_) para indicar explícitamente que no nos interesa la variable, haciendo el código más limpio y la intención más clara.
+
+Java
+
+// En el Orquestador...
+switch (template) {
+    case WeaponTemplate w -> equipmentService.equip(...);
+    case ConsumableTemplate c -> consumableService.use(...);
+
+    // Perfecto. El '_' indica que ignoramos la variable a propósito.
+    case MiscTemplate _ -> {
+        // No hacer nada.
+    }
+}

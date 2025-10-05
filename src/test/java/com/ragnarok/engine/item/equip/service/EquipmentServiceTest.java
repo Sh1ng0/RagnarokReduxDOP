@@ -6,6 +6,7 @@ import com.ragnarok.engine.character.CharacterData;
 import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.enums.EquipmentSlot;
 import com.ragnarok.engine.item.instance.EquipInstance;
+import com.ragnarok.engine.item.inventory.model.CharacterInventories;
 import com.ragnarok.engine.item.template.ArmorTemplate;
 import com.ragnarok.engine.item.template.WeaponTemplate;
 import com.ragnarok.engine.job.Job;
@@ -300,6 +301,7 @@ class EquipmentServiceTest {
         assertSame(initialState, finalState, "State should not change on a failed operation.");
         assertTrue(result.returnedItems().isEmpty(), "No items should be returned on a failed operation.");
     }
+
 
 
 

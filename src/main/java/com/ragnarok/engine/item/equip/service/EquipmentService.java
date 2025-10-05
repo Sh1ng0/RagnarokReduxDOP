@@ -150,17 +150,7 @@ public class EquipmentService {
                     .with(EquipmentSlot.LEFT_HAND, null)
                     .with(EquipmentSlot.RIGHT_HAND, instanceToEquip);
 
-            ActorProfile newState = currentState.withEquipment(newSlots);
-
-
-            String returnedItemsNames = returnedItems.isEmpty()
-                    ? "ninguno"
-                    : String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
-
-            EquipmentLogEvent.EQUIP_SUCCESS.log(logger, instanceToEquip.getName(), targetSlot, returnedItemsNames);
-
-
-            return new EquipResult(newState, returnedItems);
+            return createSuccessResult(currentState, newSlots, instanceToEquip, returnedItems, targetSlot);
         }
 
 
@@ -174,19 +164,7 @@ public class EquipmentService {
                     .with(EquipmentSlot.RIGHT_HAND, null)
                     .with(targetSlot, instanceToEquip);
 
-            ActorProfile newState = currentState.withEquipment(newSlots);
-
-            String returnedItemsNames = String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
-
-            EquipmentLogEvent.EQUIP_SUCCESS.log(
-                    logger,
-                    instanceToEquip.getName(),
-                    targetSlot,
-                    returnedItemsNames
-            );
-
-
-            return new EquipResult(newState, returnedItems);
+            return createSuccessResult(currentState, newSlots, instanceToEquip, returnedItems, targetSlot);
         }
 
 
@@ -197,19 +175,7 @@ public class EquipmentService {
         if (itemPreviouslyInSlot != null) returnedItems.add(itemPreviouslyInSlot);
 
         CharacterEquipment newSlots = currentSlots.with(targetSlot, instanceToEquip);
-
-        ActorProfile newState = currentState.withEquipment(newSlots);
-
-
-        String returnedItemsNames = returnedItems.isEmpty()
-                ? "none"
-                : String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
-
-        // CUANDO SE CREE EL SERVICIO DE INVENTARIO HABRÁ QUE REFACTORIZAR ESTO (Quizá no?)
-        EquipmentLogEvent.EQUIP_SUCCESS.log(logger, instanceToEquip.getName(), targetSlot, returnedItemsNames);
-
-
-        return new EquipResult(newState, returnedItems);
+        return createSuccessResult(currentState, newSlots, instanceToEquip, returnedItems, targetSlot);
 
 
     }
@@ -252,6 +218,9 @@ public class EquipmentService {
 
         return new UnequipResult(newState, Optional.of(itemInSlot));
     }
+
+
+    // HELPER METHODS
 
 
     /**
@@ -358,6 +327,37 @@ public class EquipmentService {
         }
 
         return false;
+    }
+
+
+    /**
+     * Creates a successful equip result by updating the actor's state,
+     * logging the event, and packaging the final return value.
+     * This helper method centralizes the success logic to avoid code duplication.
+     *
+     * @param currentState  The original state of the actor before the equip.
+     * @param newSlots      The newly calculated state of the character's equipment.
+     * @param itemEquipped  The item that was just successfully equipped.
+     * @param returnedItems The list of items unequipped during the process.
+     * @param targetSlot    The slot where the new item was placed.
+     * @return A fully populated {@link EquipResult} for a successful operation.
+     */
+    private EquipResult createSuccessResult(
+            ActorProfile currentState,
+            CharacterEquipment newSlots,
+            EquipInstance itemEquipped,
+            List<EquipInstance> returnedItems,
+            EquipmentSlot targetSlot) {
+
+        ActorProfile newState = currentState.withEquipment(newSlots);
+
+        String returnedItemsNames = returnedItems.isEmpty()
+                ? "ninguno"
+                : String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
+
+        EquipmentLogEvent.EQUIP_SUCCESS.log(logger, itemEquipped.getName(), targetSlot, returnedItemsNames);
+
+        return new EquipResult(newState, returnedItems);
     }
 
 }
