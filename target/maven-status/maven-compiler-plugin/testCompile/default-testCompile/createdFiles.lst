@@ -1,0 +1,4 @@
+com\ragnarok\engine\repository\EquipmentRepositoryTest.class
+com\ragnarok\engine\item\inventory\service\InventoryServiceTest.class
+com\ragnarok\engine\stat\StatCalculatorTest.class
+com\ragnarok\engine\item\equip\service\EquipmentServiceTest.class

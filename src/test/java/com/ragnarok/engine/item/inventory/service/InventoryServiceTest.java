@@ -8,6 +8,8 @@ import com.ragnarok.engine.item.template.ConsumableTemplate;
 import com.ragnarok.engine.item.template.WeaponTemplate;
 import com.ragnarok.engine.repository.ItemTemplateRepository;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,8 @@ class InventoryServiceTest {
 
 
     private InventoryService inventoryService;
+
+
     private static final ConsumableTemplate RED_POTION_TEMPLATE = new ConsumableTemplate(1501L, "Red Potion", List.of());
     private static final WeaponTemplate DAGGER_TEMPLATE = new WeaponTemplate(1201L, "Dagger", null, null, 0, null, 1, List.of(), 1);
     private static final ConsumableTemplate BLUE_POTION_TEMPLATE = new ConsumableTemplate(1502L, "Blue Potion", List.of());
@@ -36,13 +40,16 @@ class InventoryServiceTest {
     void setUp() {
 
         ItemTemplateRepository itemTemplateRepository = ItemTemplateRepository.INSTANCE;
+
+        itemTemplateRepository.addTemporaryTemplate(BLUE_POTION_TEMPLATE.id(), ItemCategory.CONSUMABLE);
+
         inventoryService = new InventoryService(itemTemplateRepository);
 
 
         daggerInstance = new EquipInstance(DAGGER_TEMPLATE);
         tenRedPotions = new ItemStack(RED_POTION_TEMPLATE.id(), 10);
         fiveRedPotions = new ItemStack(RED_POTION_TEMPLATE.id(), 5);
-
+        bluePotionStack = new ItemStack(BLUE_POTION_TEMPLATE.id(), 1);
 
     }
 
@@ -129,20 +136,33 @@ class InventoryServiceTest {
         assertThat(finalState.miscellaneous().items()).isEmpty();
     }
 
-    @DisplayName("✅ Test 4: No debe añadir un nuevo stack a un inventario lleno")
+
+
     @Test
+    @DisplayName("Test 4: No añadir un nuevo stack a un inventario lleno")
     void shouldNotAdd_NewItemStack_ToFullInventory() {
         // ARRANGE
+        // 1. Creamos un estado donde el inventario de consumibles está en su máxima capacidad.
+        //    Este método ya lo teníamos preparado.
         CharacterInventories initialState = createFullConsumablesInventory();
-        ItemTemplateRepository.INSTANCE.addTemporaryTemplate(BLUE_POTION_TEMPLATE.id(), ItemCategory.CONSUMABLE);
-        System.out.println("Contenido del Repositorio: " + ItemTemplateRepository.INSTANCE.getTemporaryCategories());
+
+        // 2. El 'bluePotionStack' que intentaremos añadir ya está inicializado en el setUp().
+        //    Es un ítem que NO existe en el inventario lleno.
+
         // ACT
+        // 3. Intentamos añadir el nuevo ítem.
         InventoryUpdateResult result = inventoryService.addItem(initialState, bluePotionStack);
         CharacterInventories finalState = result.updatedInventories();
 
         // ASSERT
-        // The most important check: the state should not have changed at all.
+        // 4. El estado final DEBE SER IDÉNTICO al inicial.
+        //    Como usamos 'records', el método .equals() compara todos los campos,
+        //    siendo esta la aserción más potente y concisa.
         assertThat(finalState).isEqualTo(initialState);
+
+        // 5. (Opcional pero recomendable) Verificación extra para asegurar que la poción azul no se añadió.
+        assertThat(finalState.consumables().items())
+                .doesNotContainKey(BLUE_POTION_TEMPLATE.id());
     }
 
 

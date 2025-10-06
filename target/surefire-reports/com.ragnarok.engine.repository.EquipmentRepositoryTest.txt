@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: com.ragnarok.engine.repository.EquipmentRepositoryTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.031 s <<< FAILURE! -- in com.ragnarok.engine.repository.EquipmentRepositoryTest
+com.ragnarok.engine.repository.EquipmentRepositoryTest.shouldThrowExceptionForNonExistentItemId -- Time elapsed: 0.016 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+
+expected: "No se encontró ningún EquipmentItem con el ID: 9999"
+ but was: "No EquipmentItem found with ID: 9999"
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at com.ragnarok.engine.repository.EquipmentRepositoryTest.shouldThrowExceptionForNonExistentItemId(EquipmentRepositoryTest.java:45)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

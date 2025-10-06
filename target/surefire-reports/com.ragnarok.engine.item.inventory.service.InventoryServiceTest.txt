@@ -1,0 +1,13 @@
+-------------------------------------------------------------------------------
+Test set: com.ragnarok.engine.item.inventory.service.InventoryServiceTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.089 s <<< FAILURE! -- in com.ragnarok.engine.item.inventory.service.InventoryServiceTest
+com.ragnarok.engine.item.inventory.service.InventoryServiceTest.shouldNotAdd_NewItemStack_ToFullInventory -- Time elapsed: 0.015 s <<< ERROR!
+java.lang.NullPointerException
+	at java.base/java.util.Objects.requireNonNull(Objects.java:220)
+	at com.ragnarok.engine.item.inventory.service.InventoryService.addItem(InventoryService.java:60)
+	at com.ragnarok.engine.item.inventory.service.InventoryServiceTest.shouldNotAdd_NewItemStack_ToFullInventory(InventoryServiceTest.java:140)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

@@ -73,7 +73,7 @@ public record ActorProfile(
         Optional<CharacterEquipment> equipment,
 
         // INventario
-        CharacterInventories inventory
+        CharacterInventories inventory  // Esto se tendrá que separar de los monstruos
 
 
 ) {

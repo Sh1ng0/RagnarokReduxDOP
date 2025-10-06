@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.ragnarok.engine.item.inventory.service.InventoryServiceTest" time="0.089" tests="4" errors="1" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="25"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\JoseJava\Documents\Programacion\RagnarokOnlineMechanics\target\test-classes;C:\Users\JoseJava\Documents\Programacion\RagnarokOnlineMechanics\target\classes;C:\Users\JoseJava\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\JoseJava\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\JoseJava\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\JoseJava\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\JoseJava\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\JoseJava\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;C:\Users\JoseJava\.m2\repository\org\assertj\assertj-core\3.25.3\assertj-core-3.25.3.jar;C:\Users\JoseJava\.m2\repository\net\bytebuddy\byte-buddy\1.14.11\byte-buddy-1.14.11.jar;C:\Users\JoseJava\.m2\repository\org\slf4j\slf4j-api\2.0.7\slf4j-api-2.0.7.jar;C:\Users\JoseJava\.m2\repository\ch\qos\logback\logback-classic\1.4.8\logback-classic-1.4.8.jar;C:\Users\JoseJava\.m2\repository\ch\qos\logback\logback-core\1.4.8\logback-core-1.4.8.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Europe/Madrid"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="25"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="ES"/>
+    <property name="sun.boot.library.path" value="C:\Users\JoseJava\.jdks\openjdk-25\bin"/>
+    <property name="sun.java.command" value="C:\Users\JoseJava\AppData\Local\Temp\surefire215166655691765220\surefirebooter-20251005112749277_3.jar C:\Users\JoseJava\AppData\Local\Temp\surefire215166655691765220 2025-10-05T11-27-48_422-jvmRun1 surefire-20251005112749277_1tmp surefire_0-20251005112749277_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Users\JoseJava\Documents\Programacion\RagnarokOnlineMechanics\target\test-classes;C:\Users\JoseJava\Documents\Programacion\RagnarokOnlineMechanics\target\classes;C:\Users\JoseJava\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\JoseJava\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\JoseJava\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\JoseJava\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\JoseJava\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\JoseJava\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;C:\Users\JoseJava\.m2\repository\org\assertj\assertj-core\3.25.3\assertj-core-3.25.3.jar;C:\Users\JoseJava\.m2\repository\net\bytebuddy\byte-buddy\1.14.11\byte-buddy-1.14.11.jar;C:\Users\JoseJava\.m2\repository\org\slf4j\slf4j-api\2.0.7\slf4j-api-2.0.7.jar;C:\Users\JoseJava\.m2\repository\ch\qos\logback\logback-classic\1.4.8\logback-classic-1.4.8.jar;C:\Users\JoseJava\.m2\repository\ch\qos\logback\logback-core\1.4.8\logback-core-1.4.8.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\JoseJava"/>
+    <property name="user.language" value="es"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-09-16"/>
+    <property name="java.home" value="C:\Users\JoseJava\.jdks\openjdk-25"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\JoseJava\Documents\Programacion\RagnarokOnlineMechanics"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\JoseJava\AppData\Local\Temp\surefire215166655691765220\surefirebooter-20251005112749277_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="25+36-3489"/>
+    <property name="user.name" value="JoseJava"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\JoseJava\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\JoseJava\AppData\Local\Temp\"/>
+    <property name="java.version" value="25"/>
+    <property name="user.dir" value="C:\Users\JoseJava\Documents\Programacion\RagnarokOnlineMechanics"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Users\JoseJava\.jdks\openjdk-25\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\JoseJava\.jdks\openjdk-25\bin;C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot\bin;C:\Python313\Scripts\;C:\Python313\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Users\Don José\Documents\Programación\mongosh-2.3.1-win32-x64\mongosh-2.3.1-win32-x64\bin;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\Docker\Docker\resources\bin;C:\Users\JoseJava\Documents\Programacion\GRADLE\gradle-8.11.1-all\gradle-8.11.1\bin;C:\Users\JoseJava\Documents\Programacion\curl-8.12.1_4-win64-mingw\curl-8.12.1_4-win64-mingw\bin;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\tools\maven\maven-3.9.10\bin;;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="25+36-3489"/>
+    <property name="stdin.encoding" value="Cp1252"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="69.0"/>
+  </properties>
+  <testcase name="shouldStack_Items_OnExistingStack" classname="com.ragnarok.engine.item.inventory.service.InventoryServiceTest" time="0.06">
+    <system-out><![CDATA[11:27:49.982 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 1.501.
+11:27:49.983 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Stacked 5 of item 1.501. New quantity: 15.
+]]></system-out>
+  </testcase>
+  <testcase name="shouldNotAdd_NewItemStack_ToFullInventory" classname="com.ragnarok.engine.item.inventory.service.InventoryServiceTest" time="0.015">
+    <error type="java.lang.NullPointerException"><![CDATA[java.lang.NullPointerException
+	at java.base/java.util.Objects.requireNonNull(Objects.java:220)
+	at com.ragnarok.engine.item.inventory.service.InventoryService.addItem(InventoryService.java:60)
+	at com.ragnarok.engine.item.inventory.service.InventoryServiceTest.shouldNotAdd_NewItemStack_ToFullInventory(InventoryServiceTest.java:140)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+]]></error>
+    <system-out><![CDATA[11:27:50.039 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.000.
+11:27:50.039 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.001.
+11:27:50.039 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.002.
+11:27:50.040 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.003.
+11:27:50.040 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.004.
+11:27:50.040 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.005.
+11:27:50.040 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.006.
+11:27:50.040 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.007.
+11:27:50.040 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.008.
+11:27:50.040 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.009.
+11:27:50.040 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.010.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.011.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.012.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.013.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.014.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.015.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.016.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.017.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.018.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.019.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.020.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.021.
+11:27:50.041 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.022.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.023.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.024.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.025.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.026.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.027.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.028.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.029.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.030.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.031.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.032.
+11:27:50.042 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.033.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.034.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.035.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.036.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.037.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.038.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.039.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.040.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.041.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.042.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.043.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.044.
+11:27:50.043 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.045.
+11:27:50.044 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.046.
+11:27:50.044 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.047.
+11:27:50.044 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.048.
+11:27:50.044 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.049.
+11:27:50.044 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.050.
+11:27:50.044 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.051.
+11:27:50.044 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.052.
+11:27:50.044 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.053.
+11:27:50.044 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.054.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.055.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.056.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.057.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.058.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.059.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.060.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.061.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.062.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.063.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.064.
+11:27:50.045 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.065.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.066.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.067.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.068.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.069.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.070.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.071.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.072.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.073.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.074.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.075.
+11:27:50.046 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.076.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.077.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.078.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.079.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.080.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.081.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.082.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.083.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.084.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.085.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.086.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.087.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.088.
+11:27:50.047 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.089.
+11:27:50.048 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.090.
+11:27:50.048 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.091.
+11:27:50.048 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.092.
+11:27:50.048 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.093.
+11:27:50.048 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.094.
+11:27:50.048 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.095.
+11:27:50.048 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.096.
+11:27:50.048 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.097.
+11:27:50.048 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.098.
+11:27:50.048 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 9.099.
+Contenido del Repositorio: {9000=CONSUMABLE, 9001=CONSUMABLE, 9002=CONSUMABLE, 9003=CONSUMABLE, 9004=CONSUMABLE, 9005=CONSUMABLE, 9006=CONSUMABLE, 9007=CONSUMABLE, 9008=CONSUMABLE, 9009=CONSUMABLE, 9010=CONSUMABLE, 9011=CONSUMABLE, 9012=CONSUMABLE, 9013=CONSUMABLE, 9014=CONSUMABLE, 9015=CONSUMABLE, 9016=CONSUMABLE, 9017=CONSUMABLE, 9018=CONSUMABLE, 9019=CONSUMABLE, 9020=CONSUMABLE, 9021=CONSUMABLE, 9022=CONSUMABLE, 9023=CONSUMABLE, 9024=CONSUMABLE, 9025=CONSUMABLE, 9026=CONSUMABLE, 9027=CONSUMABLE, 9028=CONSUMABLE, 9029=CONSUMABLE, 9030=CONSUMABLE, 9031=CONSUMABLE, 9032=CONSUMABLE, 9033=CONSUMABLE, 9034=CONSUMABLE, 9035=CONSUMABLE, 9036=CONSUMABLE, 9037=CONSUMABLE, 9038=CONSUMABLE, 9039=CONSUMABLE, 9040=CONSUMABLE, 9041=CONSUMABLE, 9042=CONSUMABLE, 9043=CONSUMABLE, 9044=CONSUMABLE, 9045=CONSUMABLE, 9046=CONSUMABLE, 9047=CONSUMABLE, 9048=CONSUMABLE, 9049=CONSUMABLE, 9050=CONSUMABLE, 9051=CONSUMABLE, 9052=CONSUMABLE, 9053=CONSUMABLE, 9054=CONSUMABLE, 9055=CONSUMABLE, 9056=CONSUMABLE, 9057=CONSUMABLE, 9058=CONSUMABLE, 9059=CONSUMABLE, 9060=CONSUMABLE, 9061=CONSUMABLE, 9062=CONSUMABLE, 9063=CONSUMABLE, 9064=CONSUMABLE, 9065=CONSUMABLE, 9066=CONSUMABLE, 9067=CONSUMABLE, 9068=CONSUMABLE, 9069=CONSUMABLE, 9070=CONSUMABLE, 9071=CONSUMABLE, 9072=CONSUMABLE, 9073=CONSUMABLE, 9074=CONSUMABLE, 9075=CONSUMABLE, 9076=CONSUMABLE, 9077=CONSUMABLE, 9078=CONSUMABLE, 9079=CONSUMABLE, 9080=CONSUMABLE, 9081=CONSUMABLE, 9082=CONSUMABLE, 9083=CONSUMABLE, 9084=CONSUMABLE, 9085=CONSUMABLE, 9086=CONSUMABLE, 9087=CONSUMABLE, 9088=CONSUMABLE, 9089=CONSUMABLE, 9090=CONSUMABLE, 9091=CONSUMABLE, 9092=CONSUMABLE, 9093=CONSUMABLE, 9094=CONSUMABLE, 9095=CONSUMABLE, 9096=CONSUMABLE, 9097=CONSUMABLE, 9098=CONSUMABLE, 9099=CONSUMABLE, 1502=CONSUMABLE}
+]]></system-out>
+  </testcase>
+  <testcase name="shouldAdd_UniqueEquipInstance_ToEmptyInventory" classname="com.ragnarok.engine.item.inventory.service.InventoryServiceTest" time="0.004">
+    <system-out><![CDATA[11:27:50.058 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added unique equipment 'Dagger' (UUID: 84871ac0-5987-4fe3-8a28-05570f4eaf69) to inventory.
+]]></system-out>
+  </testcase>
+  <testcase name="shouldAdd_NewItemStack_ToEmptyInventory" classname="com.ragnarok.engine.item.inventory.service.InventoryServiceTest" time="0.002">
+    <system-out><![CDATA[11:27:50.062 [main] DEBUG com.ragnarok.engine.item.inventory.service.InventoryService -- Added new stack for item with templateId 1.501.
+]]></system-out>
+  </testcase>
+</testsuite>
