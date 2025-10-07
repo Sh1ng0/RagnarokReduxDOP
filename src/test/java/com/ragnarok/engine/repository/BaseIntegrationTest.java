@@ -32,9 +32,10 @@ public abstract class BaseIntegrationTest {
     @Container
     protected static final MySQLContainer<?> mysqlContainer =
             new MySQLContainer<>("mysql:8.0")
-                    .withDatabaseName("helheim_db_test")
+                    .withDatabaseName("helheim_db")
                     .withUsername("testuser")
                     .withPassword("testpass");
+
 
     // These components will be initialized once and then shared with all subclass tests.
     protected static DSLContext dslContext;
@@ -72,6 +73,7 @@ public abstract class BaseIntegrationTest {
 
     /**
      * Helper method to read a SQL script from the classpath and execute it.
+     *
      * @param fileName The name of the script file in src/test/resources.
      */
     private static void runScript(String fileName) {
@@ -80,13 +82,21 @@ public abstract class BaseIntegrationTest {
                 throw new RuntimeException("Cannot find script file: " + fileName);
             }
             String script = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            dslContext.execute(script);
+
+            // Split the script into individual statements using the semicolon as a delimiter.
+            String[] statements = script.split(";");
+
+            // Execute each statement one by one.
+            for (String statement : statements) {
+                // Trim the statement to remove whitespace and ignore if it's empty.
+                if (!statement.trim().isEmpty()) {
+                    dslContext.execute(statement);
+                }
+            }
         } catch (IOException e) {
             throw new RuntimeException("Failed to read or execute script: " + fileName, e);
         }
     }
-
-
 
 
 }
