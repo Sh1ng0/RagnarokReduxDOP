@@ -26,19 +26,18 @@ class DbItemTemplateRepositoryIT extends BaseIntegrationTest {
         // Act
         Optional<ItemTemplate> result = dbItemTemplateRepository.findById(existingId);
 
-        // Assert: Verify the outcome is correct.
-        // 1. Ensure the Optional is not empty.
+        // Assert
+
         assertThat(result).isPresent();
 
-        // 2. Confirm the object is the correct type (a WeaponTemplate).
-        // This proves our deserialization logic based on 'category' works.
+
         ItemTemplate item = result.get();
         assertThat(item).isInstanceOf(WeaponTemplate.class);
 
-        // 3. Cast to the specific type to check detailed properties.
+
         WeaponTemplate dagger = (WeaponTemplate) item;
 
-        // 4. Verify the data was deserialized correctly from the JSON.
+
         assertThat(dagger.id()).isEqualTo(1201L);
         assertThat(dagger.name()).isEqualTo("Dagger");
         assertThat(dagger.bonuses().attack()).isEqualTo(15);
@@ -46,5 +45,19 @@ class DbItemTemplateRepositoryIT extends BaseIntegrationTest {
         assertThat(dagger.compatibleOffHandTypes()).containsExactlyInAnyOrder(
                 WeaponType.DAGGER, WeaponType.ONE_HANDED_SWORD, ArmorType.SHIELD
         );
+    }
+
+
+    @Test
+    @DisplayName("findById should return empty when ID does not exist")
+    void findById_shouldReturnEmpty_whenIdDoesNotExist() {
+        // Arrange
+        long nonExistentId = 9999L;
+
+        // Act
+        Optional<ItemTemplate> result = dbItemTemplateRepository.findById(nonExistentId);
+
+        // Assert
+        assertThat(result).isEmpty();
     }
 }

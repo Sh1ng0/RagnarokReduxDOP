@@ -22,7 +22,7 @@ public final class DatabaseManager {
     static {
         try {
             // Load database properties from the classpath
-            Properties dbProps = loadProperties("application.properties");
+            Properties dbProps = loadProperties("application.yaml");
 
             HikariConfig config = new HikariConfig();
             config.setJdbcUrl(dbProps.getProperty("db.url"));

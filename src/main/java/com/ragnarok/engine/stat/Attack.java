@@ -6,7 +6,7 @@ package com.ragnarok.engine.stat;
  * que proviene de sus stats (Status ATK) del que proviene de su
  * equipo (Weapon ATK).
  */
-public record Attack(
+public record   Attack(
         int statAttack,
         int weaponAttack
 ) {

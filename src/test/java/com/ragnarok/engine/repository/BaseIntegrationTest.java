@@ -37,7 +37,7 @@ public abstract class BaseIntegrationTest {
                     .withPassword("testpass");
 
 
-    // These components will be initialized once and then shared with all subclass tests.
+
     protected static DSLContext dslContext;
     protected static DbItemTemplateRepository dbItemTemplateRepository;
     protected static ObjectMapper objectMapper; // We'll need this too.
@@ -49,25 +49,22 @@ public abstract class BaseIntegrationTest {
      */
     @BeforeAll
     static void setup() {
-        // Step 1: Create a DataSource pointing to the running container.
-        // We use HikariCP for a robust connection pool.
+
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(mysqlContainer.getJdbcUrl());
         config.setUsername(mysqlContainer.getUsername());
         config.setPassword(mysqlContainer.getPassword());
         DataSource dataSource = new HikariDataSource(config);
 
-        // Step 2: Create the jOOQ DSLContext.
         dslContext = DSL.using(dataSource, SQLDialect.MYSQL);
 
-        // Step 3: Run our SQL scripts to prepare the database schema and data.
         runScript("schema.sql");
         runScript("data.sql");
 
-        // Step 4: Instantiate the ObjectMapper for JSON processing.
+
         objectMapper = new ObjectMapper();
 
-        // Step 5: Instantiate the repository we want to test.
+
         dbItemTemplateRepository = new DbItemTemplateRepository(dslContext, objectMapper);
     }
 
@@ -83,12 +80,11 @@ public abstract class BaseIntegrationTest {
             }
             String script = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
-            // Split the script into individual statements using the semicolon as a delimiter.
+
             String[] statements = script.split(";");
 
-            // Execute each statement one by one.
             for (String statement : statements) {
-                // Trim the statement to remove whitespace and ignore if it's empty.
+
                 if (!statement.trim().isEmpty()) {
                     dslContext.execute(statement);
                 }
