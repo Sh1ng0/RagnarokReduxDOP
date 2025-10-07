@@ -1,0 +1,71 @@
+Base de Datos del Proyecto Helheim
+Este documento describe la arquitectura, filosofía y diseño de la base de datos para el proyecto Helheim.
+
+✨ Filosofía Principal: Modelo Híbrido (Relacional + JSON)
+La base de datos del proyecto adopta un enfoque híbrido que combina lo mejor del mundo relacional y el de documentos para alinearse con los principios de la Programación Orientada a Datos (DOP) del backend.
+
+La estrategia se basa en dividir la responsabilidad de los datos:
+
+Columnas Relacionales: Se usan para metadatos simples, comunes e indexables. Contienen la información necesaria para filtrar y encontrar registros de forma eficiente (ej: id, category). Son las "etiquetas" de nuestros datos.
+
+Columnas JSON: Se usan para almacenar los datos complejos, semi-estructurados y variables. En esta columna se guarda el record completo de Java serializado. Esto nos da una flexibilidad inmensa, ya que los cambios en el modelo de datos de Java no requieren migraciones en el esquema de la base de datos.
+
+Ventajas de este enfoque:
+
+Flexibilidad Máxima: Se pueden añadir o modificar campos en los records de Java sin necesidad de ejecutar ALTER TABLE.
+
+Alto Rendimiento: Se aprovechan los índices de las columnas relacionales para búsquedas rápidas, mientras que la lectura del objeto completo se hace en una sola operación, evitando JOINs complejos.
+
+Alineación con DOP: El esquema de la base de datos es un reflejo 1:1 de los records inmutables del backend, minimizando la fricción entre la capa de persistencia y la de lógica.
+
+🛠️ Stack Tecnológico
+Base de Datos: MySQL 8.0+ (con soporte nativo para el tipo JSON).
+
+Pool de Conexiones: HikariCP.
+
+Acceso a Datos: jOOQ, para la construcción de consultas seguras en tiempo de compilación (type-safe).
+
+Serialización: Jackson, para la conversión entre records de Java y String JSON.
+
+🗺️ Diseño de Tablas
+Tabla: item_templates
+Almacena los "planos" (blueprints) de todos los ítems del juego, desde armas y armaduras hasta consumibles y cartas.
+
+Columna	Tipo	Descripción
+id	BIGINT PK	El ID único del ItemTemplate. Es la clave primaria para búsquedas directas.
+category	VARCHAR(50)	La categoría principal del ítem (EQUIPMENT, CONSUMABLE, etc.). Se usa para filtrar y está indexada.
+data	JSON	El record completo de Java (WeaponTemplate, ConsumableTemplate, etc.) serializado a JSON.
+
+Exportar a Hojas de cálculo
+Ejemplo de una fila (Daga):
+
+id: 1201
+
+category: 'EQUIPMENT'
+
+data: {"id": 1201, "name": "Dagger", "type": "DAGGER", "bonuses": {"attack": 15, ...}, ...}
+
+Tablas Futuras (Patrón Idéntico)
+monster_templates: Seguirá el mismo patrón. Contendrá un id relacional y una columna data de tipo JSON con el record del monstruo (stats, loot table, etc.).
+
+actors: Almacenará los datos de los personajes ("partidas guardadas"). Usará columnas relacionales para datos clave (id, name, level) y columnas JSON para datos complejos como el inventario (CharacterInventories) y el equipo.
+
+🧬 Flujo de Datos y Herramientas
+El ciclo de vida de los datos entre la aplicación y la base de datos es el siguiente:
+
+Lectura (Base de Datos → Java)
+jOOQ construye una consulta SELECT segura en tipos para buscar una fila (ej. WHERE id = ?).
+
+La base de datos devuelve la fila. jOOQ extrae el contenido de la columna data como un String a través del método .data().
+
+El código del repositorio usa Jackson para deserializar ese String JSON en el record de Java específico (WeaponTemplate, ConsumableTemplate, etc.), usando la columna category para decidir a qué clase convertirlo.
+
+Escritura (Java → Base de Datos)
+El código de la aplicación tiene un record de Java que necesita ser guardado.
+
+Jackson serializa ese record en un String JSON.
+
+jOOQ construye una consulta INSERT o UPDATE segura en tipos, pasando el String JSON como un parámetro que se guardará en la columna data.
+
+⚙️ Generación de Código
+Para garantizar la seguridad de tipos, se utiliza el generador de código de jOOQ a través de Maven. El comando mvn jooq-codegen:generate se conecta a la base de datos, lee el esquema y crea clases de Java que representan las tablas y columnas, eliminando la posibilidad de errores de tipeo en las consultas SQL.

@@ -9,6 +9,8 @@ import java.io.IOException;
 
 import java.util.Optional;
 
+// DEUDA TECNICA MIRAR BIEN EL DESERIALIZADOR DE ARMAS/ARMADURAS DEBE MEJORARSE!
+
 import static com.ragnarok.engine.db.generated.tables.ItemTemplates.ITEM_TEMPLATES;
 
 /**
@@ -35,25 +37,23 @@ public class DbItemTemplateRepository {
      * @return An Optional containing the ItemTemplate if found, otherwise empty.
      */
     public Optional<ItemTemplate> findById(long id) {
-        // Step 1: Use jOOQ to build and execute the SQL query.
-        // We ask for the row where the 'id' column matches our parameter.
-        // fetchOne() retrieves at most one record.
+        // JOOQ for the magical type safe query
         org.jooq.Record dbRecord  = jooq.select(ITEM_TEMPLATES.CATEGORY, ITEM_TEMPLATES.DATA)
                 .from(ITEM_TEMPLATES)
                 .where(ITEM_TEMPLATES.ID.eq(id))
                 .fetchOne();
 
-        // Step 2: Handle the case where the item was not found.
+
         if (dbRecord == null) {
             return Optional.empty();
         }
 
-        // Step 3: Extract the raw data from the jOOQ Record.
+        // Extract data from the jooq record
         String category = dbRecord.get(ITEM_TEMPLATES.CATEGORY);
         String jsonData = dbRecord.get(ITEM_TEMPLATES.DATA).data();
 
-        // Step 4: Use Jackson to deserialize the JSON string into the correct Java Record.
-        // This is where we use the 'category' to decide which class to create.
+        // We decide through "category" the kind of record we need the deserialization to coalesce into,
+        // Jackson does the rest
         try {
             ItemTemplate template = switch (category) {
                 case "CONSUMABLE" -> objectMapper.readValue(jsonData, ConsumableTemplate.class);
@@ -65,7 +65,7 @@ public class DbItemTemplateRepository {
             return Optional.of(template);
         } catch (IOException e) {
             // This error is critical. It means our DB data is corrupt or out of sync with our code.
-            // We wrap it in a RuntimeException because we can't recover from it here.
+
             throw new RuntimeException("Failed to deserialize item template JSON for id: " + id, e);
         }
     }
@@ -83,7 +83,20 @@ public class DbItemTemplateRepository {
 
         // Finally, deserialize into the specific record class
         return switch (WeaponType.valueOf(type)) {
-            case DAGGER, ONE_HANDED_SWORD, TWO_HANDED_SWORD, KATAR, BOW -> // Add all weapon types here
+            case DAGGER,
+                 ONE_HANDED_SWORD,
+                 TWO_HANDED_SWORD,
+                 KATAR,
+                 BOW,
+                 GUN,
+                 KNUCKLE,
+                 ONE_HANDED_ROD,
+                 SPEAR,
+                 ONE_HANDED_AXE,
+                 BOOK,
+                 HUUMA_SHURIKEN,
+                 INSTRUMENT,
+                 TWO_HANDED_ROD ->
                     objectMapper.treeToValue(node, WeaponTemplate.class);
             default ->
                 // We assume if it's not a known weapon type, it must be an armor type.
