@@ -1,9 +1,8 @@
 package com.ragnarok.engine.stat;
 
 
-import com.ragnarok.engine.actor.ActorProfile;
+import com.ragnarok.engine.actor.*;
 import com.ragnarok.engine.character.CharacterEquipment;
-import com.ragnarok.engine.actor.Position;
 import com.ragnarok.engine.character.CharacterData;
 
 import com.ragnarok.engine.enums.Element;
@@ -36,7 +35,7 @@ public class StatCalculator {
 
     private static final int TICKS_PER_SECOND = 20;
 
-    public ActorProfile buildState(CharacterData data, Job job) {
+    public BaseProfile buildState(CharacterData data, Job job) {
 
         StatBlock totalStats = calculateTotalStats(data, job);
 
@@ -72,9 +71,9 @@ public class StatCalculator {
 
         // Equipment stuff
 
-        CharacterEquipment playerEquipment = CharacterEquipment.UNEQUIPPED;
 
-        return new ActorProfile(
+
+        return new NakedProfile(
                 // Identificadores
                 data.id(),
                 data.name(),
@@ -102,9 +101,8 @@ public class StatCalculator {
                 flee,
 
                 // Habilidades y Equipo
-                availableSkills,
-                Optional.of(playerEquipment),  // REFACTOR WARNING ESTO DEBE IR A UN TERCER "ACTORITEM" YA QUE LOS MOBS SOLO TIENEN PROFILE
-                CharacterInventories.EMPTY
+                availableSkills
+
         );
         }
 
@@ -235,7 +233,7 @@ public class StatCalculator {
     }
 
     // --- NUEVO MÉTODO PARA MONSTRUOS ---
-    public ActorProfile buildState(MonsterData data) {
+    public MonsterProfile buildState(MonsterData data) {
         StatBlock monsterStats = new StatBlock(
                 data.str(), data.agi(), data.vit(),
                 data.intel(), data.dex(), data.luk()
@@ -248,7 +246,7 @@ public class StatCalculator {
         Flee monsterFlee = new Flee(data.fleeRate(), 0);
         MagicAttack monsterMagicAttack = new MagicAttack(0, 0); // Placeholder
 
-        return new ActorProfile(
+        return new MonsterProfile(
                 data.id(),
                 data.name(),
                 data.level(),
@@ -267,10 +265,11 @@ public class StatCalculator {
                 monsterDefense,
                 monsterMagicDefense,
                 monsterFlee,
-                Collections.emptyMap(), // Los monstruos podrían tener skills
-                Optional.empty()  ,
-                CharacterInventories.EMPTY // REFACTOR WARNING, ESTO DEBE IR A UN TERCER ACTOR
+                Collections.emptyMap() // Los monstruos podrían tener skills
         );
     }
+
+
+
 
 }

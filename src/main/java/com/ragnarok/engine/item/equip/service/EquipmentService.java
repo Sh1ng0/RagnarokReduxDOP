@@ -1,6 +1,8 @@
 package com.ragnarok.engine.item.equip.service;
 
+
 import com.ragnarok.engine.actor.ActorProfile;
+import com.ragnarok.engine.actor.PlayerProfile;
 import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.enums.EquipmentSlot;
 import com.ragnarok.engine.item.template.ArmorTemplate;
@@ -26,7 +28,7 @@ import java.util.Optional;
  * calls; each operation is atomic, and its result depends solely on the
  * input parameters.
  * <p>
- * It operates on an immutable {@link ActorProfile} and, upon success, returns a new,
+ * It operates on an immutable {@link PlayerProfile} and, upon success, returns a new,
  * modified {@code ActorProfile} via an {@link EquipResult} record. The original
  * state is never modified.
  * <p>
@@ -44,25 +46,25 @@ public class EquipmentService {
 
 
 
-    /**
-     * Attempts to equip an item to an actor, handling all validation and game logic.
-     * <p>
-     * This is the primary method of the service. It follows a strict order of operations:
-     * <ol>
-     * <li><b>Pre-validation (Guard Clauses):</b> Checks for level, job, and basic slot compatibility based on the item's template. If any check fails, the operation is aborted.</li>
-     * <li><b>Dual Wield Compatibility:</b> If equipping a weapon, it performs a symmetric check to ensure compatibility with the weapon in the other hand.</li>
-     * <li><b>Two-Handed Weapon Logic:</b> Manages the logic for equipping and unequipping two-handed weapons, correctly handling both hand slots.</li>
-     * <li><b>Standard Equip:</b> For any other case, it performs a simple swap.</li>
-     * </ol>
-     * The method is pure and adheres to immutability. It never modifies the input {@code currentState}.
-     *
-     * @param currentState    The actor's state <strong>before</strong> the operation.
-     * @param instanceToEquip The unique {@link EquipInstance} to be equipped, taken from the player's inventory.
-     * @param targetSlot      The {@link EquipmentSlot} where the user intends to place the item.
-     * @return An {@link EquipResult} containing the new {@code ActorProfile} after the operation,
-     * and a list of unique {@code EquipInstance} objects that were unequipped and should be returned to the inventory.
-     */
-    public EquipResult equip(ActorProfile currentState, EquipInstance instanceToEquip, EquipmentSlot targetSlot) {
+//    /**
+//     * Attempts to equip an item to an actor, handling all validation and game logic.
+//     * <p>
+//     * This is the primary method of the service. It follows a strict order of operations:
+//     * <ol>
+//     * <li><b>Pre-validation (Guard Clauses):</b> Checks for level, job, and basic slot compatibility based on the item's template. If any check fails, the operation is aborted.</li>
+//     * <li><b>Dual Wield Compatibility:</b> If equipping a weapon, it performs a symmetric check to ensure compatibility with the weapon in the other hand.</li>
+//     * <li><b>Two-Handed Weapon Logic:</b> Manages the logic for equipping and unequipping two-handed weapons, correctly handling both hand slots.</li>
+//     * <li><b>Standard Equip:</b> For any other case, it performs a simple swap.</li>
+//     * </ol>
+//     * The method is pure and adheres to immutability. It never modifies the input {@code currentState}.
+//     *
+//     * @param currentState    The actor's state <strong>before</strong> the operation.
+//     * @param instanceToEquip The unique {@link EquipInstance} to be equipped, taken from the player's inventory.
+//     * @param targetSlot      The {@link EquipmentSlot} where the user intends to place the item.
+//     * @return An {@link EquipResult} containing the new {@code PlayerProfile} after the operation,
+//     * and a list of unique {@code EquipInstance} objects that were unequipped and should be returned to the inventory.
+//     */
+    public EquipResult equip(PlayerProfile currentState, EquipInstance instanceToEquip, EquipmentSlot targetSlot) {
 
         // GUARD ORDER
 
@@ -70,12 +72,6 @@ public class EquipmentService {
 
 
 
-        var equipmentOptional = currentState.equipment();
-
-        if (equipmentOptional.isEmpty()) {
-            EquipmentLogEvent.ACTOR_HAS_NO_EQUIPMENT_COMPONENT.log(logger);
-            return new EquipResult(currentState, List.of());
-        }
 
         EquipmentTemplate itemTemplate = instanceToEquip.getItemTemplate();
 
@@ -98,15 +94,13 @@ public class EquipmentService {
         }
 
         // SLOT COMPATIBILITY
-        boolean isSlotCompatible = isItemCompatibleWithSlot(itemTemplate, targetSlot);
         if (!isItemCompatibleWithSlot(itemTemplate, targetSlot)) {
             EquipmentLogEvent.EQUIP_FAIL_SLOT.log(logger, itemTemplate.name(), targetSlot);
-
             return new EquipResult(currentState, List.of());
         }
 
+        CharacterEquipment currentSlots = currentState.equipment();
 
-        CharacterEquipment currentSlots = equipmentOptional.get();
 
         // DUAL WIELD
 
@@ -191,15 +185,12 @@ public class EquipmentService {
      * @param targetSlot   The {@link EquipmentSlot} to clear.
      * @return An {@link UnequipResult} containing the new state and the unique item instance that was removed.
      */
-    public UnequipResult unequip(ActorProfile currentState, EquipmentSlot targetSlot) {
+    public UnequipResult unequip(PlayerProfile currentState, EquipmentSlot targetSlot) {
         var equipmentOptional = currentState.equipment();
 
-        // Guard Clause: Actor cannot have equipment.
-        if (equipmentOptional.isEmpty()) {
-            return new UnequipResult(currentState, Optional.empty());
-        }
+        CharacterEquipment currentSlots = currentState.equipment();
 
-        CharacterEquipment currentSlots = equipmentOptional.get();
+
         // REFACTOR: The item in the slot is now a unique EquipInstance.
         EquipInstance itemInSlot = currentSlots.get(targetSlot);
 
@@ -210,7 +201,7 @@ public class EquipmentService {
 
 
         CharacterEquipment newSlots = currentSlots.with(targetSlot, null);
-        ActorProfile newState = currentState.withEquipment(newSlots);
+        PlayerProfile newState = currentState.withEquipment(newSlots);
 
 
         EquipmentLogEvent.UNEQUIP_SUCCESS.log(logger, itemInSlot.getName(), targetSlot);
@@ -274,7 +265,7 @@ public class EquipmentService {
      * @param item  The equipment template, containing the list of equippable job IDs.
      * @return {@code true} if the actor's job is valid for the item, {@code false} otherwise.
      */
-    private boolean canJobEquip(ActorProfile actor, EquipmentTemplate item) {
+    private boolean canJobEquip(PlayerProfile actor, EquipmentTemplate item) {
         List<String> requiredJobs = item.equippableJobs();
         if (requiredJobs.isEmpty()) {
             return true;
@@ -343,13 +334,13 @@ public class EquipmentService {
      * @return A fully populated {@link EquipResult} for a successful operation.
      */
     private EquipResult createSuccessResult(
-            ActorProfile currentState,
+            PlayerProfile currentState,
             CharacterEquipment newSlots,
             EquipInstance itemEquipped,
             List<EquipInstance> returnedItems,
             EquipmentSlot targetSlot) {
 
-        ActorProfile newState = currentState.withEquipment(newSlots);
+        PlayerProfile newState = currentState.withEquipment(newSlots);
 
         String returnedItemsNames = returnedItems.isEmpty()
                 ? "ninguno"
