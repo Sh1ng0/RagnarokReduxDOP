@@ -1,4 +1,0 @@
-db:
-  url: jdbc:mysql://localhost:3306/helheim_db
-  user: '${db.user}'
-  password: '${db.password}'

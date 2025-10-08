@@ -88,33 +88,18 @@ public class DbItemTemplateRepository {
      * Helper method to handle the polymorphic nature of EquipmentTemplate.
      */
     private EquipmentTemplate deserializeEquipment(String jsonData) throws IOException {
-        // First, parse into a generic JSON tree to inspect its contents
+
         JsonNode node = objectMapper.readTree(jsonData);
 
-        // Then, get the 'type' field to know if it's a weapon or armor
-        String type = node.get("type").asText();
 
-        // Finally, deserialize into the specific record class
-        return switch (WeaponType.valueOf(type)) {
-            case DAGGER,
-                 ONE_HANDED_SWORD,
-                 TWO_HANDED_SWORD,
-                 KATAR,
-                 BOW,
-                 GUN,
-                 KNUCKLE,
-                 ONE_HANDED_ROD,
-                 SPEAR,
-                 ONE_HANDED_AXE,
-                 BOOK,
-                 HUUMA_SHURIKEN,
-                 INSTRUMENT,
-                 TWO_HANDED_ROD ->
-                    objectMapper.treeToValue(node, WeaponTemplate.class);
-            default ->
-                // We assume if it's not a known weapon type, it must be an armor type.
-                // A more robust solution might use a different field for armor vs weapon.
-                    objectMapper.treeToValue(node, ArmorTemplate.class);
+        String equipmentCategory = node.has("equipmentCategory") ? node.get("equipmentCategory").asText() : "ARMOR";
+
+     // Fàcil oi? This change dictates how the database is populated when itcomes to weapons
+        // REFER TO THE DATA.SQL IN THE TESTING!
+        return switch (equipmentCategory) {
+            case "WEAPON" -> objectMapper.treeToValue(node, WeaponTemplate.class);
+            case "ARMOR" -> objectMapper.treeToValue(node, ArmorTemplate.class);
+            default -> throw new IOException("Unknown equipment category: " + equipmentCategory);
         };
     }
 }

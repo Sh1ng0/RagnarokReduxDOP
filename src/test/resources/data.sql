@@ -9,8 +9,10 @@ VALUES (
     '{
       "id" : 1201,
       "name" : "Dagger",
+      "equipmentCategory": "WEAPON",
       "element" : "NEUTRAL",
       "type" : "DAGGER",
+
       "speedRatio" : 0.7,
       "bonuses" : {
         "primaryStats" : null,

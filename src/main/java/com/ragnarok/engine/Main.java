@@ -1,6 +1,7 @@
 package com.ragnarok.engine;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ragnarok.engine.db.DatabaseManager;
 import com.ragnarok.engine.enums.Element;
@@ -13,6 +14,7 @@ import com.ragnarok.engine.item.template.WeaponTemplate;
 import org.jooq.DSLContext;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.ragnarok.engine.item.consumable.enums.Stat.HP;
 
@@ -46,37 +48,44 @@ public class Main {
 
         // --- Plantillas de los ítems que queremos visualizar ---
 
+        // --- Template for the Dagger ---
         var daggerTemplate = new WeaponTemplate(
                 1201L, "Dagger", Element.NEUTRAL, WeaponType.DAGGER, 0.7,
-                new EquipmentBonuses(null, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0, null, null), // Usando el constructor canónico por claridad
+                new EquipmentBonuses(null, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0, null, null),
                 1, List.of("THIEF","SWORDMAN"), 1, List.of(WeaponType.DAGGER,WeaponType.ONE_HANDED_SWORD, ArmorType.SHIELD)
         );
 
+        // --- Template for the Red Potion ---
         var redPotionTemplate = new ConsumableTemplate(
-                1501L,
-                "Red Potion",
-                List.of(new HealEffect(HP,50)) // Asumimos que HealEffect es un record que contiene la cantidad a curar
+                1501L, "Red Potion", List.of(new HealEffect(HP, 50))
         );
 
-        // --- Proceso de Generación de JSON ---
-
+        // --- JSON Generation Process ---
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            // 1. Generamos y mostramos el JSON para la Daga
+            // 1. Generate JSON for the Dagger
             System.out.println("--- Dagger JSON (id: 1201) ---");
-            String daggerJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(daggerTemplate);
+
+            // Convert the record to a Map to add the extra field
+            Map<String, Object> daggerMap = mapper.convertValue(daggerTemplate, new TypeReference<>() {});
+
+            // Inject the new field required by the deserializer
+            daggerMap.put("equipmentCategory", "WEAPON");
+
+            // Serialize the modified map to JSON
+            String daggerJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(daggerMap);
             System.out.println(daggerJson);
 
-            System.out.println("\n"); // Añadimos un separador para mayor claridad
+            System.out.println("\n");
 
-            // 2. Generamos y mostramos el JSON para la Poción Roja
+            // 2. Generate JSON for the Red Potion (no changes needed here)
             System.out.println("--- Red Potion JSON (id: 1501) ---");
             String potionJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(redPotionTemplate);
             System.out.println(potionJson);
 
         } catch (JsonProcessingException e) {
-            System.err.println("Error al generar el JSON:");
+            System.err.println("Error generating JSON:");
             e.printStackTrace();
         }
     }

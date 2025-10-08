@@ -21,25 +21,26 @@ public final class DatabaseManager {
 
     static {
         try {
-            // Load database properties from the classpath
-            Properties dbProps = loadProperties("application.yaml");
 
-            HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(dbProps.getProperty("db.url"));
-            config.setUsername(dbProps.getProperty("db.user"));
-            config.setPassword(dbProps.getProperty("db.password"));
+            DatabaseConfig dbConfig = DatabaseConfig.Loader.load("application.properties");
+
+
+            HikariConfig hikariConfig = new HikariConfig();
+            hikariConfig.setJdbcUrl(dbConfig.url());
+            hikariConfig.setUsername(dbConfig.user());
+            hikariConfig.setPassword(dbConfig.password());
 
             // Performance settings
-            config.addDataSourceProperty("cachePrepStmts", "true");
-            config.addDataSourceProperty("prepStmtCacheSize", "250");
-            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-            config.setMaximumPoolSize(10);
+            hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
+            hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+            hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+            hikariConfig.setMaximumPoolSize(10);
 
-            dataSource = new HikariDataSource(config);
+
+            dataSource = new HikariDataSource(hikariConfig);
             jooq = new DefaultDSLContext(dataSource, SQLDialect.MYSQL);
 
         } catch (IOException e) {
-            // If the properties file is missing, the application cannot start.
             throw new RuntimeException("Failed to load database properties", e);
         }
     }
@@ -59,7 +60,7 @@ public final class DatabaseManager {
     }
 
     private DatabaseManager() {
-        // Utility class
+
     }
 
     public static DSLContext getJooqContext() {
