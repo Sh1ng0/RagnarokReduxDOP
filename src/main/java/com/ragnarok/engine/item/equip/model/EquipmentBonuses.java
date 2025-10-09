@@ -45,8 +45,28 @@ public record EquipmentBonuses(
      * @return A new EquipmentBonuses instance with the combined bonuses.
      */
     public EquipmentBonuses add(EquipmentBonuses other) {
-        // NOTE: La implementación de la suma se hará más adelante.
-        return this; // Placeholder
+        if (other == null) {
+            return this;
+        }
+        return new EquipmentBonuses(
+                this.primaryStats.add(other.primaryStats),
+                this.maxHp + other.maxHp,
+                this.maxSp + other.maxSp,
+                this.attack + other.attack,
+                this.defense + other.defense,
+                this.magicAttack + other.magicAttack,
+                this.magicDefense + other.magicDefense,
+                this.criticalRate + other.criticalRate,
+                this.flee + other.flee,
+                this.hit + other.hit,
+                this.maxHpPercent + other.maxHpPercent,
+                this.maxSpPercent + other.maxSpPercent,
+                this.attackPercent + other.attackPercent,
+                // NOTA: La lógica para fusionar mapas y listas se puede añadir después.
+                // De momento nos centramos en los stats numéricos.
+                this.grantSkills,
+                this.autocastEffects
+        );
     }
 
     // --- Wither Methods for Convenience ---
@@ -71,5 +91,7 @@ public record EquipmentBonuses(
         return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
     }
 
-    // ... (and so on for other fields as needed)
+    public EquipmentBonuses withMaxHpPercent(double maxHpPercent) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
+    }
 }

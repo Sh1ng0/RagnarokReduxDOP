@@ -2,13 +2,15 @@ package com.ragnarok.engine.actor;
 
 
     import com.ragnarok.engine.character.CharacterEquipment;
-import com.ragnarok.engine.item.inventory.model.CharacterInventories;
+    import com.ragnarok.engine.item.card.model.CardEffect;
+    import com.ragnarok.engine.item.inventory.model.CharacterInventories;
 import com.ragnarok.engine.enums.Element;
 import com.ragnarok.engine.enums.Race;
 import com.ragnarok.engine.enums.Size;
 import com.ragnarok.engine.stat.*;
 
-import java.util.Map;
+    import java.util.List;
+    import java.util.Map;
 
     /**
      * An immutable record representing a player's complete "stat sheet".
@@ -19,7 +21,8 @@ import java.util.Map;
     public record PlayerProfile(
             BaseProfile baseProfile,
             CharacterEquipment equipment,
-            CharacterInventories inventories
+            CharacterInventories inventories,
+            List<CardEffect> cardEffects
     ) implements BaseProfile {
 
         // --- Delegated Methods from BaseProfile ---
@@ -45,13 +48,14 @@ import java.util.Map;
         @Override public Flee flee() { return baseProfile.flee(); }
         @Override public Map<String, Integer> availableSkills() { return baseProfile.availableSkills(); }
 
+
         /**
          * Returns a new PlayerProfile instance with updated equipment.
          * @param newEquipment The new equipment state.
          * @return A new, updated PlayerProfile.
          */
         public PlayerProfile withEquipment(CharacterEquipment newEquipment) {
-            return new PlayerProfile(this.baseProfile, newEquipment, this.inventories);
+            return new PlayerProfile(this.baseProfile, newEquipment, this.inventories, this.cardEffects);
         }
 
         /**
@@ -60,7 +64,7 @@ import java.util.Map;
          * @return A new, updated PlayerProfile.
          */
         public PlayerProfile withInventories(CharacterInventories newInventories) {
-            return new PlayerProfile(this.baseProfile, this.equipment, newInventories);
+            return new PlayerProfile(this.baseProfile, this.equipment, newInventories, this.cardEffects);
         }
 
 

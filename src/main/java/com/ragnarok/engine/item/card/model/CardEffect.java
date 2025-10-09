@@ -1,9 +1,6 @@
 package com.ragnarok.engine.item.card.model;
 
-import com.ragnarok.engine.enums.Element;
-import com.ragnarok.engine.enums.Race;
-import com.ragnarok.engine.enums.Size;
-import com.ragnarok.engine.enums.StatusEffect;
+import com.ragnarok.engine.enums.*;
 import com.ragnarok.engine.item.consumable.enums.Stat;
 import com.ragnarok.engine.mechanics.AutocastData;
 import com.ragnarok.engine.mechanics.Trigger;
@@ -16,11 +13,11 @@ public sealed interface CardEffect {
 
     /**
      * Effect that gives a bonus to a primary or secondary stat.
-     * @param stat The stat to change (e.g., Stat.STR, Stat.MAX_HP).
+     * @param attribute The stat to change (e.g., Stat.STR, Stat.MAX_HP).
      * @param value The value of the bonus.
-     * @param isPercentage True if the bonus is a percentage.
+
      */
-    record StatBonus(Stat stat, int value, boolean isPercentage) implements CardEffect {}
+    record StatBonus(Attribute attribute, int value) implements CardEffect {}
 
     /**
      * Effect that increases damage against a specific race.

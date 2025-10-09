@@ -1,7 +1,11 @@
 package com.ragnarok.engine.item.instance;
 
+import com.ragnarok.engine.item.template.CardTemplate;
 import com.ragnarok.engine.item.template.EquipmentTemplate;
 
+import javax.smartcardio.Card;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -19,9 +23,14 @@ public final class EquipInstance implements ItemInstance {
     private final UUID uniqueId;
     private final EquipmentTemplate itemTemplate;
 
+    public List<CardTemplate> getSocketedCards() {
+        return socketedCards;
+    }
+
+    private final List<CardTemplate> socketedCards;
 
     private int refineLevel;
-    // private List<Card> cards; // Placeholder for future card system
+    // Placeholder for future card system
 
     /**
      * Creates a new, unique item instance from an equipment template.
@@ -33,7 +42,7 @@ public final class EquipInstance implements ItemInstance {
         this.uniqueId = UUID.randomUUID();
         this.itemTemplate = Objects.requireNonNull(itemTemplate);
         this.refineLevel = 0;
-        // this.cards = new ArrayList<>();
+        this.socketedCards = new ArrayList<>();
     }
 
     // --- Getters for Template Properties (Delegation) ---
@@ -91,5 +100,11 @@ public final class EquipInstance implements ItemInstance {
     public String toString() {
         String refineString = refineLevel > 0 ? "+" + refineLevel + " " : "";
         return refineString + getName() + " [" + uniqueId.toString().substring(0, 8) + "]";
+    }
+
+
+    public void addCard(CardTemplate card) {
+        // Aquí iría la lógica para comprobar si hay slots disponibles
+        this.socketedCards.add(card);
     }
 }
