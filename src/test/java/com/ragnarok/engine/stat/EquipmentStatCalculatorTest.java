@@ -12,6 +12,7 @@ import com.ragnarok.engine.item.card.model.CardSocketType;
 import com.ragnarok.engine.item.equip.model.ArmorType;
 import com.ragnarok.engine.item.equip.model.EquipmentBonuses;
 import com.ragnarok.engine.item.equip.model.WeaponType;
+import com.ragnarok.engine.item.instance.EquipInstance;
 import com.ragnarok.engine.item.inventory.model.CharacterInventories;
 import com.ragnarok.engine.item.template.ArmorTemplate;
 import com.ragnarok.engine.item.template.CardTemplate;
@@ -57,6 +58,22 @@ class EquipmentStatCalculatorTest {
             List.of(new CardEffect.StatBonus(Attribute.STR, 2)), // Efecto: +2 STR
             CardSocketType.ACCESSORY // Asumiendo que existe este tipo
     );
+
+    // --- Lógica para crear el anillo y engarzar la carta ---
+
+    // 1. Creas una instancia única del anillo a partir de su template.
+    // En este punto, 'myRing' es un objeto mutable con su propio UUID.
+//    EquipInstance myRing = new EquipInstance(RING_TPL); [cite: 1]
+//
+//            // 2. Engarzas la carta en la instancia del anillo.
+//            // Esto modifica el estado interno de 'myRing', añadiendo la carta a su lista de 'socketedCards'.
+//            myRing.addCard(MANTIS_CARD_TPL); [cite: 1]
+
+
+    // 3. ¡Listo! El objeto 'myRing' ya está preparado.
+    // Ahora es una instancia única de "Ring" que contiene una "Mantis Card".
+    // Este es el objeto que le pasarías al EquipmentService para ser equipado.
+    // Su bono total implícito es +3 STR (+1 del anillo, +2 de la carta).
 
     // --- Accesorios ---
     private static final ArmorTemplate RING_TPL = new ArmorTemplate(
