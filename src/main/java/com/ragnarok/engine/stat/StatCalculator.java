@@ -11,6 +11,8 @@ import com.ragnarok.engine.enums.Size;
 import com.ragnarok.engine.item.inventory.model.CharacterInventories;
 import com.ragnarok.engine.job.Job;
 import com.ragnarok.engine.monster.MonsterData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
@@ -33,9 +35,12 @@ import java.util.Optional;
  */
 public class StatCalculator {
 
+    private static final Logger logger = LoggerFactory.getLogger(StatCalculator.class);
     private static final int TICKS_PER_SECOND = 20;
 
     public BaseProfile buildState(CharacterData data, Job job) {
+
+        StatLogEvent.NAKED_CALC_START.log(logger, data.name(), data.id());
 
         StatBlock totalStats = calculateTotalStats(data, job);
 
@@ -74,46 +79,29 @@ public class StatCalculator {
 
 
 
-        return new NakedProfile(
-                // Identificadores
-                data.id(),
-                data.name(),
-                data.baseLevel(),
-                job.getId(),
-
-                // Recursos (HP/SP)
-                maxHp,
-                maxSp,
-
-                // Stats y Propiedades
-                totalStats,
-                finalRace,
-                finalSize,
-                finalAttackElement,
-                finalDefenseElement,
-
-
-                // Atributos de Combate
-                attack,
-                hitRate,
-                attackDelayInTicks,
-                criticalRate,
-                magicAttack,
-                defense,
-                magicDefense,
-                flee,
-
-                // Habilidades y Equipo
+        var nakedProfile = new NakedProfile(
+                data.id(), data.name(), data.baseLevel(), job.getId(),
+                maxHp, maxSp,
+                totalStats, finalRace, finalSize, finalAttackElement, finalDefenseElement,
+                attack, hitRate, attackDelayInTicks, criticalRate, magicAttack,
+                defense, magicDefense, flee,
                 availableSkills
-
         );
+
+        // --- LOGGING ---
+        StatLogEvent.NAKED_PROFILE_CREATED.log(logger, nakedProfile.name(), nakedProfile);
+        return nakedProfile;
+
+
         }
 
     private StatBlock calculateTotalStats(CharacterData data, Job job){
 
         StatBlock baseStats = new StatBlock(data.baseStr(), data.baseAgi(), data.baseVit(), data.baseInt(), data.baseDex(), data.baseLuk());
         StatBlock jobBonuses = job.getJobStatBonuses(data.jobLevel());
+        StatLogEvent.JOB_BONUS_APPLIED.log(logger, job.getId(), jobBonuses);
         return baseStats.add(jobBonuses);
+
 
     }
 
@@ -235,8 +223,10 @@ public class StatCalculator {
         return (int) (cappedDelay * TICKS_PER_SECOND);
     }
 
-    // --- NUEVO MÉTODO PARA MONSTRUOS ---
+    // Monster stuff
     public MonsterProfile buildState(MonsterData data) {
+        StatLogEvent.MONSTER_CALC_START.log(logger, data.name(), data.id());
+
         StatBlock monsterStats = new StatBlock(
                 data.str(), data.agi(), data.vit(),
                 data.intel(), data.dex(), data.luk()
@@ -249,28 +239,19 @@ public class StatCalculator {
         Flee monsterFlee = new Flee(data.fleeRate(), 0);
         MagicAttack monsterMagicAttack = new MagicAttack(0, 0); // Placeholder
 
-        return new MonsterProfile(
-                data.id(),
-                data.name(),
-                data.level(),
-                "monster." + data.id(), // Convención para el "jobId" de un monstruo
-                data.maxHp(),
-                data.maxSp(),
-                monsterStats,
-                data.race(),
-                data.size(),
-                data.attackElement(),
-                data.defenseElement(),
-                monsterAttack,
-                data.hitRate(),
-                data.attackDelayInTicks(),
-                data.criticalRate(),
-                monsterMagicAttack,
-                monsterDefense,
-                monsterMagicDefense,
-                monsterFlee,
-                Collections.emptyMap() // Los monstruos podrían tener skills
+        var monsterProfile = new MonsterProfile(
+                data.id(), data.name(), data.level(), "monster." + data.id(),
+                data.maxHp(), data.maxSp(), monsterStats,
+                data.race(), data.size(),
+                data.attackElement(), data.defenseElement(),
+                monsterAttack, data.hitRate(), data.attackDelayInTicks(), data.criticalRate(),
+                monsterMagicAttack, monsterDefense, monsterMagicDefense, monsterFlee,
+                Collections.emptyMap()
         );
+
+        // --- LOGGING ---
+        StatLogEvent.MONSTER_PROFILE_CREATED.log(logger, monsterProfile.name(), monsterProfile);
+        return monsterProfile;
     }
 
 

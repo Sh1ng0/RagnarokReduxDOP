@@ -5,11 +5,14 @@ import com.ragnarok.engine.actor.NakedProfile;
 import com.ragnarok.engine.actor.PlayerProfile;
 import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.enums.Attribute;
+import com.ragnarok.engine.enums.Element;
 import com.ragnarok.engine.item.card.model.CardEffect;
 import com.ragnarok.engine.item.equip.model.EquipmentBonuses;
 import com.ragnarok.engine.item.instance.EquipInstance;
 import com.ragnarok.engine.item.inventory.model.CharacterInventories;
 import com.ragnarok.engine.item.template.CardTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,8 @@ import java.util.stream.Stream;
 
 public class EquipmentStatCalculator {
 
+    private static final Logger logger = LoggerFactory.getLogger(EquipmentStatCalculator.class);
+
     /**
      * Calcula el perfil completo de un jugador, incluyendo equipo.
      *
@@ -31,6 +36,8 @@ public class EquipmentStatCalculator {
      */
     public PlayerProfile calculate(BaseProfile nakedProfile, CharacterEquipment equipment, CharacterInventories inventories) {
 
+
+        StatLogEvent.EQUIP_CALC_START.log(logger, nakedProfile.name());
         // --- Acumulador de Bonos ---
         record BonusAccumulator(
                 StatBlock primaryBonuses,
@@ -97,7 +104,7 @@ public class EquipmentStatCalculator {
                 equipment.accessory1(), equipment.accessory2()
         ).filter(Objects::nonNull).toList();
 
-        // --- Paso 2: Acumular Bonos usando el enfoque Híbrido ---
+        // --- Paso 2: Acumular Bonos ---
         var accumulator = BonusAccumulator.ZERO;
         for (EquipInstance item : equippedItems) {
             accumulator = accumulator.add(item.getItemTemplate().bonuses());
@@ -115,7 +122,29 @@ public class EquipmentStatCalculator {
         List<CardEffect> specialEffects = accumulator.specialEffects();
         EquipmentBonuses totalBonuses = accumulator.secondaryBonuses().withPrimaryStats(totalPrimaryBonuses);
 
-        // --- Paso 4: Aplicar los bonos acumulados al perfil base ---
+        StatLogEvent.BONUS_ACCUMULATION_COMPLETE.log(logger, totalPrimaryBonuses, totalBonuses);
+        StatLogEvent.SPECIAL_EFFECTS_COLLECTED.log(logger, specialEffects.size());
+
+        Element finalAttackElement = nakedProfile.attackElement(); // Base: NEUTRAL
+        if (equipment.rightHand() != null) {
+            finalAttackElement = equipment.rightHand().getItemTemplate().element();
+        }
+        // Futuro: Aquí se podría añadir un override de una carta tipo "EndowWeapon"
+
+        // 3.2: Cálculo del Elemento de Defensa (con cadena de prioridad)
+        Element finalDefenseElement = nakedProfile.defenseElement(); // Base: NEUTRAL
+        if (equipment.armor() != null && equipment.armor().getItemTemplate().element() != Element.NONE) {
+            finalDefenseElement = equipment.armor().getItemTemplate().element(); // Prioridad 1: Armadura
+        }
+        for (CardEffect effect : specialEffects) {
+            if (effect instanceof CardEffect.EndowArmorWithElement endowEffect) {
+                finalDefenseElement = endowEffect.element(); // Prioridad 2: Carta
+            }
+        }
+
+        StatLogEvent.ELEMENTS_DETERMINED.log(logger, finalAttackElement, finalDefenseElement);
+
+        // --- Paso 4: Aplicar bonos numéricos al perfil base ---
         StatBlock finalStats = nakedProfile.totalStats().add(totalPrimaryBonuses);
         int finalMaxHp = (int) (nakedProfile.maxHp() * (1 + totalBonuses.maxHpPercent())) + totalBonuses.maxHp();
         int finalMaxSp = (int) (nakedProfile.maxSp() * (1 + totalBonuses.maxSpPercent())) + totalBonuses.maxSp();
@@ -125,17 +154,24 @@ public class EquipmentStatCalculator {
         int finalHit = nakedProfile.hitRate() + totalBonuses.hit();
         int finalCrit = nakedProfile.criticalRate() + totalBonuses.criticalRate();
         Flee finalFlee = new Flee(nakedProfile.flee().normalFlee() + totalBonuses.flee(), nakedProfile.flee().luckyDodge());
+        // TODO: Aplicar bonos de MATK y ASPD
 
         // --- Paso 5: Ensamblar el Perfil Final ---
         BaseProfile finalBaseProfile = new NakedProfile(
                 nakedProfile.id(), nakedProfile.name(), nakedProfile.baseLevel(), nakedProfile.jobId(),
-                finalMaxHp, finalMaxSp, finalStats, nakedProfile.race(), nakedProfile.size(), nakedProfile.element(),
+                finalMaxHp, finalMaxSp, finalStats, nakedProfile.race(), nakedProfile.size(),
+                finalAttackElement,
+                finalDefenseElement,
                 finalAttack, finalHit, nakedProfile.attackDelayInTicks(), finalCrit,
-                nakedProfile.magicAttack(), // TODO: Aplicar bonos de MATK
+                nakedProfile.magicAttack(),
                 finalDefense, finalMagicDefense, finalFlee,
                 nakedProfile.availableSkills()
         );
 
-        return new PlayerProfile(finalBaseProfile, equipment, inventories, specialEffects);
+        var finalPlayerProfile = new PlayerProfile(finalBaseProfile, equipment, inventories, specialEffects);
+
+
+        StatLogEvent.FINAL_PROFILE_ASSEMBLED.log(logger, finalPlayerProfile.name(), finalPlayerProfile);
+        return finalPlayerProfile;
     }
 }
