@@ -1,0 +1,71 @@
+Documento de Diseño: Animación y Mecánicas de Interacción
+Este documento recopila las ideas y sistemas de animación propuestos, diseñados para conectar la arquitectura del backend con una experiencia de usuario fluida, reactiva y divertida, siguiendo el lema rector: "If it's not fun, why bother?".
+
+1. Sistema de Estado de Combate y Desenfundado
+El objetivo es hacer que la transición entre el combate y la exploración sea una decisión táctica y deliberada.
+
+Entrada Manual al Combate: El jugador debe pulsar un botón dedicado para desenfundar y entrar en modo de combate. Hacer clic en un enemigo fuera de combate no inicia una agresión.
+
+"Lock Animation": Las acciones de enfundar y desenfundar son animaciones que bloquean al jugador. La propia animación actúa como cooldown y ventana de vulnerabilidad, añadiendo un componente de timing y riesgo.
+
+Habilidades de Apertura: Ciertas habilidades ("Quick Draw") solo se pueden usar desde el estado "fuera de combate", funcionando como "openers" o ataques sorpresa.
+
+Desenfundado Secuencial (Dual Wield): Al usar dos armas, la animación de desenfundado es secuencial (primero un arma, luego la otra), aumentando el tiempo de preparación. Una habilidad como "Quick Draw" podría ejecutar la primera parte de la animación para un ataque rápido y luego completar la segunda parte automáticamente.
+
+2. Animaciones Dinámicas Basadas en Stats
+Las animaciones deben reflejar la progresión y el poder del personaje, proporcionando un feedback visual constante.
+
+Umbrales de Animación: En lugar de simplemente acelerar una animación, se usan sets de animación completamente diferentes basados en umbrales de estadísticas.
+
+Ejemplo (Casteo): Un mago con poca DEX usará una animación de casteo "novata". Al superar un umbral de DEX, la animación cambiará a una "experta", más fluida y profesional.
+
+Idle "Vivo": La animación de "estar quieto" (idle) cambia según el estado.
+
+Fuera de Combate: Una animación tranquila y estática.
+
+En Combate: Una animación más dinámica y "viva". Su velocidad aumenta sutilmente con la velocidad de ataque (ASPD) del personaje, reforzando visualmente su build.
+
+Ataques Variables: Como en League of Legends, los ataques básicos pueden tener un ciclo de animaciones (Ataque 1, Ataque 2, Ataque Crítico) para evitar la monotonía.
+
+3. Sistema de Defensa Activa y Semántica de Ataques
+Se busca crear un sistema de defensa basado en la habilidad del jugador que interactúe de forma inteligente con los ataques.
+
+Ventana Defensiva Única (ActiveGuard): En lugar de múltiples estados (bloqueando, parando), el jugador activa una única "ventana defensiva" temporal.
+
+Las Habilidades Definen el Resultado: La habilidad que se usa para activar esta ventana es la que determina qué sucede si un ataque es interceptado (ej. "Parry Normal", "Contraataque Riposte", "Bloqueo Pesado"). Esto permite múltiples tipos de defensa con la misma arma.
+
+Semántica de Ataques: Cada ataque se etiqueta con propiedades (FÍSICO, RANGO, PROYECTIL, etc.). Las habilidades defensivas pueden ser condicionales a estas etiquetas.
+
+Ejemplo: Una habilidad de Gunslinger puede interceptar solo ataques con las etiquetas RANGO y PROYECTIL, activando una animación única en la que dispara al proyectil en el aire.
+
+4. Estrategia de Spritesheets y Producción de Arte
+El objetivo es lograr animaciones de alta calidad y fluidas sin que el tamaño de los assets sea inmanejable.
+
+Modelo Híbrido:
+
+Spritesheet Base Fluido: Animaciones completas para el cuerpo del personaje, asegurando un movimiento coherente.
+
+Módulos Superpuestos: Las armas y los cascos son sprites separados que se "pegan" a puntos de anclaje (placeholders) en la animación base, permitiendo una personalización masiva.
+
+Sistema de "Stances" (Posturas): El cliente solo carga en memoria el set de animaciones que necesita en cada momento, basado en la combinación de Job + Tipo de Arma.
+
+Ejemplo: Un Knight con una espada de dos manos carga el set knight_2h_sword.png. Si cambia a un arma de una mano (solo fuera de combate), el cliente descargará el set anterior y cargará knight_1h_sword.png al entrar en el siguiente combate.
+
+8 Direcciones con Mirroring: Para lograr un movimiento fluido sin duplicar el trabajo de arte, se animarán 5 direcciones únicas y las 3 restantes se obtendrán espejando las originales.
+
+5. Ideas Específicas de Clase
+Mecánicas que refuerzan la fantasía de cada rol y resuelven problemas de animación.
+
+Mago:
+
+Escudo Mágico: Una habilidad "absorbe" un escudo del inventario, aplicando sus stats como un aura mágica en lugar de un objeto físico.
+
+Combate sin Armas: Una "stance" para Sages que luchan sin bastón, con animaciones únicas de gestos manuales y bonificaciones específicas.
+
+Bardo:
+
+Escudo Musical: Similar al mago, la protección del escudo se manifiesta como una barrera sónica mientras toca una canción.
+
+Mecánica de "Afinación": Similar al filo de Monster Hunter, los instrumentos pierden "afinado" al golpear, reduciendo su daño y la efectividad de las canciones hasta que se use una habilidad para "afinarlo".
+
+Instrumento Jugable: Una UI de teclado en el juego para tocar música libremente.
