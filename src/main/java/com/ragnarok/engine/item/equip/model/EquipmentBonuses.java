@@ -94,4 +94,33 @@ public record EquipmentBonuses(
     public EquipmentBonuses withMaxHpPercent(double maxHpPercent) {
         return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
     }
+
+    public EquipmentBonuses withMagicAttack(int magicAttack) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
+    }
+
+    public EquipmentBonuses withMagicDefense(int magicDefense) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
+    }
+
+    public EquipmentBonuses withCriticalRate(int criticalRate) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
+    }
+
+    public EquipmentBonuses withFlee(int flee) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
+    }
+
+    public EquipmentBonuses withHit(int hit) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
+    }
+
+
+    public EquipmentBonuses withMaxSpPercent(double maxSpPercent) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
+    }
+
+    public EquipmentBonuses withAttackPercent(double attackPercent) {
+        return new EquipmentBonuses(primaryStats, maxHp, maxSp, attack, defense, magicAttack, magicDefense, criticalRate, flee, hit, maxHpPercent, maxSpPercent, attackPercent, grantSkills, autocastEffects);
+    }
 }

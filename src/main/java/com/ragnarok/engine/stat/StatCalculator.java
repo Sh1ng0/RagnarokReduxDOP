@@ -62,9 +62,10 @@ public class StatCalculator {
         int attackDelayInTicks = calculateAttackDelayInTicks(job, totalStats);
 
         // RACE / SIZE / ELEMENT
-        Race finalRace = job.getBaseRace();
-        Size finalSize = job.getBaseSize();
-        Element finalElement = job.getBaseElement();
+        Race finalRace = Race.DEMI_HUMAN;
+        Size finalSize = Size.MEDIUM;
+        Element finalAttackElement = Element.NEUTRAL;
+        Element finalDefenseElement = Element.NEUTRAL;
 
         // empty for now (Still to be implemented the skill stuff
         Map<String, Integer> availableSkills = Collections.emptyMap();
@@ -82,13 +83,15 @@ public class StatCalculator {
 
                 // Recursos (HP/SP)
                 maxHp,
-                maxSp, // <-- CORREGIDO: Usamos la variable maxSp calculada
+                maxSp,
 
                 // Stats y Propiedades
                 totalStats,
                 finalRace,
                 finalSize,
-                finalElement,
+                finalAttackElement,
+                finalDefenseElement,
+
 
                 // Atributos de Combate
                 attack,
@@ -256,7 +259,8 @@ public class StatCalculator {
                 monsterStats,
                 data.race(),
                 data.size(),
-                data.element(),
+                data.attackElement(),
+                data.defenseElement(),
                 monsterAttack,
                 data.hitRate(),
                 data.attackDelayInTicks(),

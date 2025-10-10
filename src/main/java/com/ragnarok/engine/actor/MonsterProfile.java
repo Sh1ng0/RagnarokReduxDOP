@@ -28,7 +28,8 @@ public record MonsterProfile(
         StatBlock totalStats,
         Race race,
         Size size,
-        Element element,
+        Element attackElement,
+        Element defenseElement,
 
         // Calculated Combat Attributes
         Attack attack,

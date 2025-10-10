@@ -50,17 +50,6 @@ public abstract class Job {
     // Cada job debe asegurarse de implementar su propio método
     public abstract double getBaseAttackDelaySeconds();
 
-    public Race getBaseRace() {
-        return Race.DEMI_HUMAN; // Por defecto para la mayoría de jobs de jugador
-    }
-
-    public Size getBaseSize() {
-        return Size.MEDIUM; // Por defecto
-    }
-
-    public Element getBaseElement() {
-        return Element.NEUTRAL; // Por defecto
-    }
 
     /**
      * Devuelve 'true' si esta clase de personaje tiene la habilidad

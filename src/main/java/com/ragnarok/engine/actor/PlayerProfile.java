@@ -37,7 +37,8 @@ import com.ragnarok.engine.stat.*;
         @Override public StatBlock totalStats() { return baseProfile.totalStats(); }
         @Override public Race race() { return baseProfile.race(); }
         @Override public Size size() { return baseProfile.size(); }
-        @Override public Element element() { return baseProfile.element(); }
+        @Override public Element attackElement() { return baseProfile.attackElement(); }
+        @Override public Element defenseElement() { return baseProfile.defenseElement(); }
         @Override public Attack attack() { return baseProfile.attack(); }
         @Override public int hitRate() { return baseProfile.hitRate(); }
         @Override public int attackDelayInTicks() { return baseProfile.attackDelayInTicks(); }

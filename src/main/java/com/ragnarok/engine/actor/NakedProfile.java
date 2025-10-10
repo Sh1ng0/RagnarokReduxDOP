@@ -17,7 +17,8 @@ public record NakedProfile(
         StatBlock totalStats,
         Race race,
         Size size,
-        Element element,
+        Element attackElement,
+        Element defenseElement,
         Attack attack,
         int hitRate,
         int attackDelayInTicks,
@@ -27,4 +28,5 @@ public record NakedProfile(
         MagicDefense magicDefense,
         Flee flee,
         Map<String, Integer> availableSkills
-) implements BaseProfile {}
+) implements BaseProfile {
+}

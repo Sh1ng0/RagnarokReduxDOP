@@ -18,7 +18,8 @@ public record MonsterData(
         // Propiedades
         Race race,
         Size size,
-        Element element,
+        Element attackElement,
+        Element defenseElement,
 
         // Stats secundarios de combate
         int baseAttack,
