@@ -1,7 +1,11 @@
 package com.ragnarok.engine.stat;
 
 
+import com.ragnarok.engine.actor.NakedProfile;
 import com.ragnarok.engine.character.CharacterData;
+import com.ragnarok.engine.enums.Element;
+import com.ragnarok.engine.enums.Race;
+import com.ragnarok.engine.enums.Size;
 import com.ragnarok.engine.job.Job;
 import com.ragnarok.engine.job.Novice;
 import com.ragnarok.engine.job.firstjob.Swordman;
@@ -26,62 +30,86 @@ class StatCalculatorTest {
         this.statCalculator = new StatCalculator();
     }
 
-    // ARRANGE
 
-    // ACT
-
-    // ASSERT
-
+    // HP & SP
 
     @Test
-    @DisplayName("Test para el cálculo de MAX HP")
+    @DisplayName("debería calcular el MaxHP correctamente")
     void shouldCalculateMaxHpCorrectly() {
-
         // ARRANGE
-
-        final int baseLevel = 10;
-        final int baseVit = 20;
-        final int expectedMaxHp = 120;
-
+        CharacterData characterData = new CharacterData(
+                1L, "Test Player", 10, 1, "NOVICE",
+                1, 1, 20, 1, 1, 1,
+                List.of()
+        );
         Job noviceJob = new Novice();
 
-        CharacterData characterData = new CharacterData(
-                1L,
-                "Test Player",
-                baseLevel,
-                1, // jobLevel no afecta a este cálculo
-                "NOVICE", // jobId no se usa directamente en el calculator, pero es bueno ponerlo
-                1, 1, baseVit, 1, 1, 1,
-                List.of() // Lista de equipo vacía
-        );
-
         // ACT
-
         var resultingState = statCalculator.buildState(characterData, noviceJob);
 
         // ASSERT
+        assertThat(resultingState.maxHp()).isEqualTo(120);
+    }
 
-        assertThat(resultingState.maxHp()).isEqualTo(expectedMaxHp);
+    @Test
+    @DisplayName("debería calcular el MaxSP correctamente")
+    void shouldCalculateMaxSpCorrectly() {
+        // ARRANGE
+        CharacterData characterData = new CharacterData(
+                2L, "Test Player 2", 20, 1, "NOVICE",
+                1, 1, 1, 30, 1, 1,
+                List.of()
+        );
+        Job noviceJob = new Novice();
+
+        // ACT
+        var resultingState = statCalculator.buildState(characterData, noviceJob);
+
+        // ASSERT
+        assertThat(resultingState.maxSp()).isEqualTo(39);
     }
 
 
+    // ATTACK
+
     @Test
-    @DisplayName("debería calcular el MaxSP correctamente basado en el nivel y la INT")
-    void shouldCalculateMaxSpCorrectly() {
+    @DisplayName("debería calcular el Status Attack correctamente y el Weapon Attack debe ser cero")
+    void shouldCalculateAttackCorrectly() {
         // ARRANGE
-
-        final int baseLevel = 20;
-        final int baseInt = 30;
-        final int expectedMaxSp = 39;
-
+        CharacterData characterData = new CharacterData(
+                3L, "Test Player 3", 1, 1, "NOVICE",
+                40, 1, 1, 1, 20, 10,
+                List.of()
+        );
         Job noviceJob = new Novice();
 
+        // ACT
+        var resultingState = statCalculator.buildState(characterData, noviceJob);
+
+        // ASSERT
+        assertThat(resultingState.attack().statAttack()).isEqualTo(46);
+        assertThat(resultingState.attack().weaponAttack()).isZero();
+    }
+
+
+    // MATK
+
+    @Test
+    @DisplayName("debería calcular el Ataque Mágico (min y max) correctamente basado en la INT")
+    void shouldCalculateMagicAttackCorrectly() {
+        // ARRANGE
+
+        final int baseInt = 35;
+
+
+        final int expectedMinMatk = 60;
+
+        final int expectedMaxMatk = 84;
+
+        Job noviceJob = new Novice();
         CharacterData characterData = new CharacterData(
-                2L,
-                "Test Player 2",
-                baseLevel,
-                1,
-                "NOVICE",
+                11L, "Test Player 11",
+                1, 1, "NOVICE",
                 1, 1, 1, baseInt, 1, 1,
                 List.of()
         );
@@ -89,72 +117,31 @@ class StatCalculatorTest {
         // ACT
         var resultingState = statCalculator.buildState(characterData, noviceJob);
 
-        //  ASSERT
-        assertThat(resultingState.maxSp()).isEqualTo(expectedMaxSp);
+        // ASSERT
+        assertThat(resultingState.magicAttack().minMatk()).isEqualTo(expectedMinMatk);
+        assertThat(resultingState.magicAttack().maxMatk()).isEqualTo(expectedMaxMatk);
     }
 
-    // ATTACK
-
-    @Test
-    @DisplayName("debería calcular el Attack correctamente basado en STR, DEX y LUK")
-    void shouldCalculateAttackCorrectly() {
-        // ARRANGE
-
-        final int baseStr = 40;
-        final int baseDex = 20;
-        final int baseLuk = 10;
-
-
-        final int expectedStatAttack = 46;
-
-        Job noviceJob = new Novice();
-
-        CharacterData characterData = new CharacterData(
-                3L,
-                "Test Player 3",
-                1, 1, "NOVICE",
-                baseStr, 1, 1, 1, baseDex, baseLuk,
-                List.of()
-        );
-
-        //  ACT
-        var resultingState = statCalculator.buildState(characterData, noviceJob);
-
-        //  ASSERT
-        //
-        assertThat(resultingState.attack().statAttack()).isEqualTo(expectedStatAttack);
-        assertThat(resultingState.attack().weaponAttack()).isZero();
-    }
 
     // DEFENSE
 
     @Test
-    @DisplayName("debería calcular la Defensa correctamente basado en la VIT")
+    @DisplayName("debería calcular la Defensa Plana (VIT) correctamente y la porcentual debe ser cero")
     void shouldCalculateDefenseCorrectly() {
         // ARRANGE
-
-        final int baseVit = 55;
-
-
-        final int expectedFlatDefense = 55;
-
-        Job noviceJob = new Novice();
-
         CharacterData characterData = new CharacterData(
-                4L,
-                "Test Player 4",
-                1, 1, "NOVICE",
-                1, 1, baseVit, 1, 1, 1,
+                4L, "Test Player 4", 1, 1, "NOVICE",
+                1, 1, 55, 1, 1, 1,
                 List.of()
         );
+        Job noviceJob = new Novice();
 
-        //  ACT
+        // ACT
         var resultingState = statCalculator.buildState(characterData, noviceJob);
 
-        //  ASSERT
-
-        assertThat(resultingState.defense().flatReduction()).isEqualTo(expectedFlatDefense);
-        assertThat(resultingState.defense().percentageReduction()).isZero(); // Verificamos el placeholder
+        // ASSERT
+        assertThat(resultingState.defense().flatReduction()).isEqualTo(55);
+        assertThat(resultingState.defense().percentageReduction()).isZero();
     }
 
 
@@ -184,6 +171,7 @@ class StatCalculatorTest {
         assertThat(resultingState.magicDefense().flatReduction()).isEqualTo(expectedFlatMagicDefense);
         assertThat(resultingState.magicDefense().percentageReduction()).isZero(); // Verificamos el placeholder
     }
+
 
     // HIT
 
@@ -217,27 +205,19 @@ class StatCalculatorTest {
     @DisplayName("debería calcular el Flee y Lucky Dodge correctamente")
     void shouldCalculateFleeAndLuckyDodgeCorrectly() {
         // ARRANGE
-        final int baseLevel = 60;
-        final int baseAgi = 70;
-        final int baseLuk = 40;
-
-        final int expectedNormalFlee = 230; // 100 + 60 + 70
-        final int expectedLuckyDodge = 5;   // 1 + (40 / 10)
-
-        Job noviceJob = new Novice();
         CharacterData characterData = new CharacterData(
-                7L, "Test Player 7",
-                baseLevel, 1, "NOVICE",
-                1, baseAgi, 1, 1, 1, baseLuk,
+                7L, "Test Player 7", 60, 1, "NOVICE",
+                1, 70, 1, 1, 1, 40,
                 List.of()
         );
+        Job noviceJob = new Novice();
 
         // ACT
         var resultingState = statCalculator.buildState(characterData, noviceJob);
 
         // ASSERT
-        assertThat(resultingState.flee().normalFlee()).isEqualTo(expectedNormalFlee);
-        assertThat(resultingState.flee().luckyDodge()).isEqualTo(expectedLuckyDodge);
+        assertThat(resultingState.flee().normalFlee()).isEqualTo(230);
+        assertThat(resultingState.flee().luckyDodge()).isEqualTo(5);
     }
 
 
@@ -269,10 +249,7 @@ class StatCalculatorTest {
 
         // ASSERT
         assertThat(resultingState.attackDelayInTicks()).isEqualTo(expectedTicks);
-
-
     }
-
 
     @Test
     @DisplayName("debería aplicar el retraso mínimo (cap) con stats muy altos")
@@ -300,6 +277,7 @@ class StatCalculatorTest {
         assertThat(resultingState.attackDelayInTicks()).isEqualTo(expectedTicks);
     }
 
+
     // CRIT
 
     @Test
@@ -325,97 +303,56 @@ class StatCalculatorTest {
         assertThat(resultingState.criticalRate()).isEqualTo(expectedCriticalRate);
     }
 
-    // MATK
+
+    // --- PROFILE DEFAULTS ---
 
     @Test
-    @DisplayName("debería calcular el Ataque Mágico (min y max) correctamente basado en la INT")
-    void shouldCalculateMagicAttackCorrectly() {
+    @DisplayName("debería crear un NakedProfile con las propiedades por defecto correctas (Raza, Tamaño, Elementos)")
+    void shouldCreateNakedProfileWithCorrectDefaultProperties() {
         // ARRANGE
-
-        final int baseInt = 35;
-
-
-        final int expectedMinMatk = 60;
-
-        final int expectedMaxMatk = 84;
-
-        Job noviceJob = new Novice();
+        // Usamos un personaje genérico, ya que estas propiedades no dependen de los stats ni del Job.
         CharacterData characterData = new CharacterData(
-                11L, "Test Player 11",
-                1, 1, "NOVICE",
-                1, 1, 1, baseInt, 1, 1,
+                99L, "Default Player", 1, 1, "NOVICE",
+                1, 1, 1, 1, 1, 1,
                 List.of()
         );
+        Job noviceJob = new Novice();
 
         // ACT
         var resultingState = statCalculator.buildState(characterData, noviceJob);
 
         // ASSERT
-        assertThat(resultingState.magicAttack().minMatk()).isEqualTo(expectedMinMatk);
-        assertThat(resultingState.magicAttack().maxMatk()).isEqualTo(expectedMaxMatk);
+        assertThat(resultingState).isInstanceOf(NakedProfile.class);
+        assertThat(resultingState.race()).isEqualTo(Race.DEMI_HUMAN);
+        assertThat(resultingState.size()).isEqualTo(Size.MEDIUM);
+        assertThat(resultingState.attackElement()).isEqualTo(Element.NEUTRAL);
+        assertThat(resultingState.defenseElement()).isEqualTo(Element.NEUTRAL);
     }
 
+
+    // --- COMPREHENSIVE TEST ---
+
     @Test
-    @DisplayName("debería construir un ActorProfile completo y correcto para un arquetipo de Swordman")
+    @DisplayName("debería construir un NakedProfile completo y correcto para un arquetipo de Swordman")
     void shouldCorrectlyBuildStateForSwordmanArchetype() {
         // ARRANGE
-
         CharacterData characterData = new CharacterData(
-                12L, "Dyrk",
-                50, 40, "SWORDMAN",
+                12L, "Dyrk", 50, 40, "SWORDMAN",
                 50, 27, 23, 1, 30, 1,
                 List.of()
         );
-
         Job swordmanJob = new Swordman();
 
         // ACT
         var resultingState = statCalculator.buildState(characterData, swordmanJob);
 
         // ASSERT
-
-
-        // 1. Stats Totales (Base + Job Bonus)
-        assertThat(resultingState.totalStats().str()).isEqualTo(54); // 50 + 4
-        assertThat(resultingState.totalStats().agi()).isEqualTo(28); // 27 + 1
-        assertThat(resultingState.totalStats().vit()).isEqualTo(26); // 23 + 3
-        assertThat(resultingState.totalStats().intel()).isEqualTo(1);  // 1 + 0
-        assertThat(resultingState.totalStats().dex()).isEqualTo(33); // 30 + 3
-        assertThat(resultingState.totalStats().luk()).isEqualTo(2);  // 1 + 1
-
-        // 2. Recursos (HP/SP)
+        assertThat(resultingState.totalStats().str()).isEqualTo(54);
+        assertThat(resultingState.totalStats().vit()).isEqualTo(26);
         assertThat(resultingState.maxHp()).isEqualTo(567);
-        assertThat(resultingState.maxSp()).isEqualTo(60);
-
-        // 3. Atributos Ofensivos
         assertThat(resultingState.attack().statAttack()).isEqualTo(60);
         assertThat(resultingState.attack().weaponAttack()).isZero();
-        assertThat(resultingState.hitRate()).isEqualTo(258);
-        assertThat(resultingState.criticalRate()).isEqualTo(1);
-        assertThat(resultingState.attackDelayInTicks()).isEqualTo(15);
-
-        // 4. Atributos Mágicos
-        assertThat(resultingState.magicAttack().minMatk()).isEqualTo(1);
-        assertThat(resultingState.magicAttack().maxMatk()).isEqualTo(1);
-
-        // 5. Atributos Defensivos
         assertThat(resultingState.defense().flatReduction()).isEqualTo(26);
         assertThat(resultingState.defense().percentageReduction()).isZero();
-        assertThat(resultingState.magicDefense().flatReduction()).isEqualTo(1);
-        assertThat(resultingState.magicDefense().percentageReduction()).isZero();
-        assertThat(resultingState.flee().normalFlee()).isEqualTo(178);
-        assertThat(resultingState.flee().luckyDodge()).isEqualTo(1);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-    }
+}

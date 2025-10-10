@@ -1,14 +1,8 @@
 package com.ragnarok.engine.monster;
 
 
-import com.ragnarok.engine.actor.ActorProfile;
-
 import com.ragnarok.engine.actor.MonsterProfile;
-import com.ragnarok.engine.actor.Position;
 import com.ragnarok.engine.stat.*;
-
-import java.util.Collections;
-import java.util.Optional;
 
 
 /**

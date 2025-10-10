@@ -1,7 +1,6 @@
 package com.ragnarok.engine.item.equip.service;
 
 
-import com.ragnarok.engine.actor.ActorProfile;
 import com.ragnarok.engine.actor.PlayerProfile;
 import com.ragnarok.engine.character.CharacterEquipment;
 import com.ragnarok.engine.enums.EquipmentSlot;
@@ -343,7 +342,7 @@ public class EquipmentService {
         PlayerProfile newState = currentState.withEquipment(newSlots);
 
         String returnedItemsNames = returnedItems.isEmpty()
-                ? "ninguno"
+                ? "none"
                 : String.join(", ", returnedItems.stream().map(EquipInstance::getName).toList());
 
         EquipmentLogEvent.EQUIP_SUCCESS.log(logger, itemEquipped.getName(), targetSlot, returnedItemsNames);

@@ -1,7 +1,5 @@
 package com.ragnarok.engine.item.equip.service;
 
-import com.ragnarok.engine.actor.ActorProfile;
-
 import com.ragnarok.engine.actor.PlayerProfile;
 import com.ragnarok.engine.item.instance.EquipInstance;
 
